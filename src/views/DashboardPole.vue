@@ -1,35 +1,36 @@
 <template>
-  <div>
-    <input type="text" maxlength="100" placeholder="article" v-model="article.title" />
-    <button @click.prevent="saveArticle()">Save</button>
-  </div>
-  <div>
-    <ul v-for="article in articles" :key="article.title">
-      <li>{{ article.title }}</li>
-      <button @click.prevent="likedArticle(article)">{{ article.likes }} Like(s)</button>
-    </ul>
-  </div>
+  <button @click="toggleCreate">Create Article</button>
+  <CreateArticle v-if="isCreateArticleShowing" :article="article" @saveArticle="saveArticle" />
+  <ArticleList :articles="articles" @likedArticle="likedArticle" />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import CreateArticle from '../components/articles/CreateArticle.vue'
+import ArticleList from '../components/articles/ArticleList.vue'
 import Article from '../types/article'
 
+const isCreateArticleShowing = ref(false)
 const articles = ref<Article[]>([])
 const article = ref<Article>({
   title: 'Article Title',
+  datePublished: new Date(),
   likes: 0,
 })
 
-function saveArticle() {
-  if (!article.value.title.length) {
-    return
-  }
-  console.log(article.value)
-  articles.value.push(article.value)
+function toggleCreate() {
+  isCreateArticleShowing.value = !isCreateArticleShowing.value
 }
 
-function likedArticle(article: Article) {
-  return article.likes++
+function saveArticle(article: Article) {
+  articles.value.push(article)
+  toggleCreate()
+}
+
+function likedArticle(likes: number, date: Date) {
+  const updatedArticle = articles.value.find((article) => article.datePublished === date)
+  if (updatedArticle) {
+    updatedArticle.likes = likes
+  }
 }
 </script>
