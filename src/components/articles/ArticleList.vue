@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import ArticlePreview from './PreviewArticle.vue'
-import Article from '../../types/Article'
+import { Article } from '../../types/article.ts'
 
 interface Props {
   articles: Article[]

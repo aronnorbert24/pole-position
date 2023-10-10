@@ -8,7 +8,7 @@
 import { ref } from 'vue'
 import CreateArticle from '../components/articles/CreateArticle.vue'
 import ArticleList from '../components/articles/ArticleList.vue'
-import Article from '../types/article'
+import { Article } from '../types/article.ts'
 
 const isCreateArticleShowing = ref(false)
 const articles = ref<Article[]>([])
