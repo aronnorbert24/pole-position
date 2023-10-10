@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import Article from '../../types/Article'
+import { Article } from '../../types/article.ts'
 
 interface Props {
   article: Article

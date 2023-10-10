@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import Article from '../types/article'
+import { Article } from '../../types/article.ts'
 
 interface Props {
   article: Article
