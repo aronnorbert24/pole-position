@@ -1,8 +1,8 @@
 <template>
-  <PoleHeader />
-  <button @click="toggleCreate">Create Article</button>
+  <PoleHeader @showHome="showHome" />
+  <button @click="showCreate">Create Article</button>
   <CreateArticle v-if="isCreateArticleShowing" :article="article" @saveArticle="saveArticle" />
-  <ArticleList :articles="articles" @likedArticle="likedArticle" />
+  <ArticleList v-if="isHomePageShowing" :articles="articles" @likedArticle="likedArticle" />
 </template>
 
 <script setup lang="ts">
@@ -13,6 +13,7 @@ import PoleHeader from '../components/header/PoleHeader.vue'
 import { Article } from '../types/article.ts'
 
 const isCreateArticleShowing = ref(false)
+const isHomePageShowing = ref(true)
 const articles = ref<Article[]>([])
 const article = ref<Article>({
   title: 'Article Title',
@@ -20,13 +21,19 @@ const article = ref<Article>({
   likes: 0,
 })
 
-function toggleCreate() {
-  isCreateArticleShowing.value = !isCreateArticleShowing.value
+function showHome() {
+  isCreateArticleShowing.value = false
+  isHomePageShowing.value = true
+}
+
+function showCreate() {
+  isHomePageShowing.value = false
+  isCreateArticleShowing.value = true
 }
 
 function saveArticle(article: Article) {
   articles.value.push(article)
-  toggleCreate()
+  showHome()
 }
 
 function likedArticle(likes: number, date: Date) {
