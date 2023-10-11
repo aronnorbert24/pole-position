@@ -1,4 +1,5 @@
 <template>
+  <PoleHeader />
   <button @click="toggleCreate">Create Article</button>
   <CreateArticle v-if="isCreateArticleShowing" :article="article" @saveArticle="saveArticle" />
   <ArticleList :articles="articles" @likedArticle="likedArticle" />
@@ -8,6 +9,7 @@
 import { ref } from 'vue'
 import CreateArticle from '../components/articles/CreateArticle.vue'
 import ArticleList from '../components/articles/ArticleList.vue'
+import PoleHeader from '../components/header/PoleHeader.vue'
 import { Article } from '../types/article.ts'
 
 const isCreateArticleShowing = ref(false)
