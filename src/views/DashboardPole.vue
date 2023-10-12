@@ -1,19 +1,27 @@
 <template>
-  <PoleHeader @showHome="showHome" />
-  <button @click="showCreate">Create Article</button>
-  <CreateArticle v-if="isCreateArticleShowing" :article="article" @saveArticle="saveArticle" />
-  <ArticleList v-if="isHomePageShowing" :articles="articles" @likedArticle="likedArticle" />
+  <div class="h-screen w-screen z-0">
+    <div v-if="isChampionshipPopupShowing" class="absolute z-10 h-full w-full bg-black opacity-50 phone:hidden"></div>
+    <PoleHeader @showHome="showHome" @showPopup="toggleChampionshipPopup"/>
+    <button @click="showCreate">Create Article</button>
+    <CreateArticle v-if="isCreateArticleShowing" :article="article" @saveArticle="saveArticle" />
+    <ArticleList v-if="isHomePageShowing" :articles="articles" @likedArticle="likedArticle" />
+    <ChampionshipPopup v-if="isChampionshipPopupShowing" textf1="Soon to show the F1 standings" textmotogp="Sooon to show the MotoGP standings" @closeStandings="toggleChampionshipPopup" ref="closeChampionshipPopupRef"/>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { onClickOutside } from '@vueuse/core'
 import CreateArticle from '../components/articles/CreateArticle.vue'
 import ArticleList from '../components/articles/ArticleList.vue'
+import ChampionshipPopup from '../components/articles/ChampionshipPopup.vue'
 import PoleHeader from '../components/header/PoleHeader.vue'
 import { Article } from '../types/article.ts'
 
 const isCreateArticleShowing = ref(false)
 const isHomePageShowing = ref(true)
+const isChampionshipPopupShowing = ref(false)
+const closeChampionshipPopupRef = ref(null)
 const articles = ref<Article[]>([])
 const article = ref<Article>({
   title: 'Article Title',
@@ -31,6 +39,10 @@ function showCreate() {
   isCreateArticleShowing.value = true
 }
 
+function toggleChampionshipPopup() {
+  isChampionshipPopupShowing.value = !isChampionshipPopupShowing.value
+}
+
 function saveArticle(article: Article) {
   articles.value.push(article)
   showHome()
@@ -42,4 +54,6 @@ function likedArticle(likes: number, date: Date) {
     updatedArticle.likes = likes
   }
 }
+
+onClickOutside(closeChampionshipPopupRef, toggleChampionshipPopup)
 </script>

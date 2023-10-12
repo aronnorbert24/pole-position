@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-between mb-16 w-full">
+  <div class="flex justify-between mb-16 w-full z-0">
     <div class="justify-between flex m-5">
       <PolePositionIcon
         class="rounded-full bg-white border-2 border-red-600 transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer phone:scale-100 scale-110"
