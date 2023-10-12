@@ -1,11 +1,11 @@
 <template>
   <div class="h-screen w-screen z-0">
-    <div v-if="isChampionshipPopupShowing" class="absolute z-10 h-full w-full bg-black opacity-50 phone:hidden"></div>
+    <div v-if="isChampionshipPopupShowing" class="absolute z-10 h-full w-full bg-black opacity-50"></div>
     <PoleHeader @showHome="showHome" @showPopup="toggleChampionshipPopup"/>
     <button @click="showCreate">Create Article</button>
     <CreateArticle v-if="isCreateArticleShowing" :article="article" @saveArticle="saveArticle" />
     <ArticleList v-if="isHomePageShowing" :articles="articles" @likedArticle="likedArticle" />
-    <ChampionshipPopup v-if="isChampionshipPopupShowing" textf1="Soon to show the F1 standings" textmotogp="Sooon to show the MotoGP standings" @closeStandings="toggleChampionshipPopup" ref="closeChampionshipPopupRef"/>
+    <ChampionshipPopup v-if="isChampionshipPopupShowing" textf1="Soon to show the F1 standings" textmotogp="Sooon to show the MotoGP standings" @closeChampionship="toggleChampionshipPopup" ref="closeChampionshipPopupRef"/>
   </div>
 </template>
 
@@ -32,14 +32,18 @@ const article = ref<Article>({
 function showHome() {
   isCreateArticleShowing.value = false
   isHomePageShowing.value = true
+  isChampionshipPopupShowing.value = false
 }
 
 function showCreate() {
   isHomePageShowing.value = false
   isCreateArticleShowing.value = true
+  isChampionshipPopupShowing.value = false
 }
 
 function toggleChampionshipPopup() {
+  isHomePageShowing.value = false
+  isCreateArticleShowing.value = false
   isChampionshipPopupShowing.value = !isChampionshipPopupShowing.value
 }
 
