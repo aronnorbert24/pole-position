@@ -2,8 +2,8 @@
   <div class="z-0 h-screen w-screen">
     <div v-if="isChampionshipPopupShowing" class="absolute z-10 h-full w-full bg-black opacity-50"></div>
     <PoleHeader @showHome="showHome" @showPopup="toggleChampionshipPopup" />
-    <PoleLink />
-    <CreateArticle v-if="isCreateArticleShowing" :article="article" @saveArticle="saveArticle" />
+    <PoleLink @showCreate="showCreate" />
+    <CreateArticle v-if="isCreateArticleShowing" :article="article" class="mt-10" @saveArticle="saveArticle" />
     <ArticleList v-if="isHomePageShowing" :articles="articles" @likedArticle="likedArticle" />
     <ChampionshipPopup
       v-if="isChampionshipPopupShowing"
