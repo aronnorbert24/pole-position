@@ -6,6 +6,7 @@
     height="32"
     viewBox="0 0 304.000000 166.000000"
     preserveAspectRatio="xMidYMid meet"
+    class="relative ml-40 mt-5 h-10 w-10 rounded-full border-2 border-red-600 bg-white transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer phone:ml-8"
   >
     <g transform="translate(0.000000,166.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
       <path

@@ -4,7 +4,7 @@
     <PoleHeader @showHome="showHome" @showPopup="toggleChampionshipPopup" />
     <PoleLink @showCreate="showCreate" />
     <CreateArticle v-if="isCreateArticleShowing" :article="article" class="mt-10" @saveArticle="saveArticle" />
-    <ArticleList v-if="isHomePageShowing" :articles="articles" @likedArticle="likedArticle" />
+    <ArticleList v-if="isHomePageShowing" :articles="articles" class="mt-10" @likedArticle="likedArticle" />
     <ChampionshipPopup
       v-if="isChampionshipPopupShowing"
       textf1="Soon to show the F1 standings"
@@ -49,8 +49,6 @@ function showCreate() {
 }
 
 function toggleChampionshipPopup() {
-  isHomePageShowing.value = false
-  isCreateArticleShowing.value = false
   isChampionshipPopupShowing.value = !isChampionshipPopupShowing.value
 }
 

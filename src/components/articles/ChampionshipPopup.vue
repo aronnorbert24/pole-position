@@ -1,16 +1,21 @@
 <template>
-  <div class="absolute computer:ml-96 phone:ml-12 computer:left-20 top-1/4 z-50 m-auto h-fit w-6/12 phone:w-9/12 rounded-2xl border-2 border-black bg-white p-2">
-    <div class="flex justify-between mb-10">
-      <div class="flex justify-content">
-      <div class="w-8 h-8" @click="toggleChampionship">
-        <p class="text-2xl phone:text-xl hover:cursor-pointer hover:text-slate-400">F1</p>
+  <div
+    class="absolute top-1/4 z-50 m-auto h-fit w-6/12 rounded-2xl border-2 border-black bg-white p-2 phone:ml-12 phone:w-9/12 computer:left-20 computer:ml-96"
+  >
+    <div class="mb-10 flex justify-between">
+      <div class="justify-content flex">
+        <div class="h-8 w-8" @click="toggleF1Championship">
+          <p class="text-2xl hover:cursor-pointer hover:text-slate-400 phone:text-xl">F1</p>
+        </div>
+        <div
+          class="ml-10 h-8 w-8 hover:cursor-pointer hover:text-slate-400 phone:ml-6"
+          @click="toggleMotogpChampionship"
+        >
+          <p class="text-2xl phone:text-xl">MotoGP</p>
+        </div>
       </div>
-      <div class="w-8 h-8 phone:ml-6 ml-10 hover:cursor-pointer hover:text-slate-400" @click="toggleChampionship">
-        <p class="text-2xl phone:text-xl">MotoGP</p>
-      </div>
-    </div>
-      <div class="w-8 h-8 hover:cursor-pointer hover:text-slate-400" @click="closeChampionship">
-        <p class="text-4xl ">&times;</p>
+      <div class="h-8 w-8 hover:cursor-pointer hover:text-slate-400" @click="closeChampionship">
+        <p class="text-4xl">&times;</p>
       </div>
     </div>
     <p v-if="isF1ChampionshipShowing" class="text-2xl phone:text-xl">{{ textf1 }}</p>
@@ -19,27 +24,31 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue'
+import { ref } from 'vue'
 
-  interface Props {
-    textf1: string,
-    textmotogp: string
-  }
+interface Props {
+  textf1: string
+  textmotogp: string
+}
 
-  defineProps<Props>()
+defineProps<Props>()
 
-  const emit = defineEmits(['closeChampionship'])
+const emit = defineEmits(['closeChampionship'])
 
-  const isMotoGPChampionshipShowing = ref(false)
-  const isF1ChampionshipShowing = ref(true)
+const isMotoGPChampionshipShowing = ref(false)
+const isF1ChampionshipShowing = ref(true)
 
-  function toggleChampionship() {
-    isMotoGPChampionshipShowing.value = !isMotoGPChampionshipShowing.value
-    isF1ChampionshipShowing.value = !isF1ChampionshipShowing.value
-  }
+function toggleF1Championship() {
+  isMotoGPChampionshipShowing.value = false
+  isF1ChampionshipShowing.value = true
+}
 
-  function closeChampionship() {
-    emit('closeChampionship')
-  }
+function toggleMotogpChampionship() {
+  isMotoGPChampionshipShowing.value = true
+  isF1ChampionshipShowing.value = false
+}
 
+function closeChampionship() {
+  emit('closeChampionship')
+}
 </script>
