@@ -1,11 +1,17 @@
 <template>
-  <div class="h-screen w-screen z-0">
+  <div class="z-0 h-screen w-screen">
     <div v-if="isChampionshipPopupShowing" class="absolute z-10 h-full w-full bg-black opacity-50"></div>
-    <PoleHeader @showHome="showHome" @showPopup="toggleChampionshipPopup"/>
-    <button @click="showCreate">Create Article</button>
+    <PoleHeader @showHome="showHome" @showPopup="toggleChampionshipPopup" />
+    <PoleLink />
     <CreateArticle v-if="isCreateArticleShowing" :article="article" @saveArticle="saveArticle" />
     <ArticleList v-if="isHomePageShowing" :articles="articles" @likedArticle="likedArticle" />
-    <ChampionshipPopup v-if="isChampionshipPopupShowing" textf1="Soon to show the F1 standings" textmotogp="Sooon to show the MotoGP standings" @closeChampionship="toggleChampionshipPopup" ref="closeChampionshipPopupRef"/>
+    <ChampionshipPopup
+      v-if="isChampionshipPopupShowing"
+      textf1="Soon to show the F1 standings"
+      textmotogp="Sooon to show the MotoGP standings"
+      @closeChampionship="toggleChampionshipPopup"
+      ref="closeChampionshipPopupRef"
+    />
   </div>
 </template>
 
@@ -16,6 +22,7 @@ import CreateArticle from '../components/articles/CreateArticle.vue'
 import ArticleList from '../components/articles/ArticleList.vue'
 import ChampionshipPopup from '../components/articles/ChampionshipPopup.vue'
 import PoleHeader from '../components/header/PoleHeader.vue'
+import PoleLink from '../components/header/PoleLink.vue'
 import { Article } from '../types/article.ts'
 
 const isCreateArticleShowing = ref(false)
