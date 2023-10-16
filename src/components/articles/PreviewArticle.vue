@@ -1,11 +1,12 @@
 <template>
-  <div>
-    <p>{{ article.title }}</p>
-    <p>{{ article.datePublished }}</p>
+  <div class="flex pb-3">
+    <img class="ml-5 mr-5" :src="article.image" width="100" />
+    <div class="ml-5 mt-5 flex-col text-left">
+      <p class="text-2xl font-semibold text-red-600">{{ previewTitle }}</p>
+      <p class="text-lg text-black">{{ previewText }}...</p>
+    </div>
   </div>
-  <div>
-    <button @click.prevent="likedArticle">{{ article.likes }} Like(s)</button>
-  </div>
+  <div></div>
 </template>
 
 <script setup lang="ts">
@@ -17,12 +18,6 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const emit = defineEmits<{
-  (e: 'likedArticle', likes: number, date: Date): void
-}>()
-
-function likedArticle() {
-  const updatedLikes = props.article.likes + 1
-  emit('likedArticle', updatedLikes, props.article.datePublished)
-}
+const previewTitle = props.article.title.slice(0, 100)
+const previewText = props.article.text.slice(0, 100)
 </script>
