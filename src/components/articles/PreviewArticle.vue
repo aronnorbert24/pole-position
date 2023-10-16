@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <p>{{ article.title }}</p>
-    <p>{{ article.datePublished }}</p>
-  </div>
+  <div class="flex"></div>
   <div>
     <button @click.prevent="likedArticle">{{ article.likes }} Like(s)</button>
   </div>

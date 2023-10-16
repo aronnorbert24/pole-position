@@ -13,7 +13,11 @@ import ArticlePreview from './PreviewArticle.vue'
 import { Article } from '../../types/article.ts'
 
 interface Props {
-  articles: Article[]
+  f1Articles: Article[]
+  f2Articles: Article[]
+  f3Articles: Article[]
+  wecArticles: Article[]
+  motogpArticles: Article[]
 }
 
 defineProps<Props>()

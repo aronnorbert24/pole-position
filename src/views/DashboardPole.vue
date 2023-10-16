@@ -4,7 +4,16 @@
     <PoleHeader @showHome="showHome" @showPopup="toggleChampionshipPopup" />
     <PoleLink @showCreate="showCreate" />
     <CreateArticle v-if="isCreateArticleShowing" :article="article" class="mt-10" @saveArticle="saveArticle" />
-    <ArticleList v-if="isHomePageShowing" :articles="articles" class="mt-10" @likedArticle="likedArticle" />
+    <ArticleList
+      v-if="isHomePageShowing"
+      :f1Articles="f1Articles"
+      :f2Articles="f2Articles"
+      :f3Articles="f3Articles"
+      :wecArticles="wecArticles"
+      :motogpArticles="motogpArticles"
+      class="mt-10"
+      @likedArticle="likedArticle"
+    />
     <ChampionshipPopup
       v-if="isChampionshipPopupShowing"
       textf1="Soon to show the F1 standings"
@@ -30,13 +39,24 @@ const isHomePageShowing = ref(true)
 const isChampionshipPopupShowing = ref(false)
 const closeChampionshipPopupRef = ref(null)
 const articles = ref<Article[]>([])
+const f1Articles = ref<Article[]>([])
+const f2Articles = ref<Article[]>([])
+const f3Articles = ref<Article[]>([])
+const wecArticles = ref<Article[]>([])
+const motogpArticles = ref<Article[]>([])
 const article = ref<Article>({
   title: 'Article Title',
+  image: '/home/vboxuser/Downloads/download.png',
+  category: 'F1',
   datePublished: new Date(),
   likes: 0,
+  views: 0,
 })
 
 function showHome() {
+  if (!articles.value) {
+    return
+  }
   isCreateArticleShowing.value = false
   isHomePageShowing.value = true
   isChampionshipPopupShowing.value = false
@@ -53,7 +73,17 @@ function toggleChampionshipPopup() {
 }
 
 function saveArticle(article: Article) {
+  const category = article.category
   articles.value.push(article)
+  category === 'F1'
+    ? f1Articles.value.push(article)
+    : category === 'F2'
+    ? f2Articles.value.push(article)
+    : category === 'F3'
+    ? f3Articles.value.push(article)
+    : category === 'WEC'
+    ? wecArticles.value.push(article)
+    : motogpArticles.value.push(article)
   showHome()
 }
 
