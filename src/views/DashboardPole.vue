@@ -1,16 +1,16 @@
 <template>
-  <div class="z-0 h-screen w-screen">
+  <div class="z-0 h-fit w-screen">
     <div v-if="isChampionshipPopupShowing" class="absolute z-10 h-full w-full bg-black opacity-50"></div>
     <PoleHeader @showHome="showHome" @showPopup="toggleChampionshipPopup" />
     <PoleLink @showCreate="showCreate" />
     <CreateArticle v-if="isCreateArticleShowing" :article="article" class="mt-10" @saveArticle="saveArticle" />
     <ArticleList
       v-if="isHomePageShowing"
-      :f1Articles="f1Articles"
-      :f2Articles="f2Articles"
-      :f3Articles="f3Articles"
-      :wecArticles="wecArticles"
-      :motogpArticles="motogpArticles"
+      :f1Articles="f1LatestArticles"
+      :f2Articles="f2LatestArticles"
+      :f3Articles="f3LatestArticles"
+      :wecArticles="wecLatestArticles"
+      :motogpArticles="motogpLatestArticles"
       class="mt-10"
       @likedArticle="likedArticle"
     />
@@ -44,9 +44,15 @@ const f2Articles = ref<Article[]>([])
 const f3Articles = ref<Article[]>([])
 const wecArticles = ref<Article[]>([])
 const motogpArticles = ref<Article[]>([])
+const f1LatestArticles = ref<Article[]>([])
+const f2LatestArticles = ref<Article[]>([])
+const f3LatestArticles = ref<Article[]>([])
+const wecLatestArticles = ref<Article[]>([])
+const motogpLatestArticles = ref<Article[]>([])
 const article = ref<Article>({
   title: 'Article Title',
-  image: '/home/vboxuser/Downloads/download.png',
+  text: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
+  image: 'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
   category: 'F1',
   datePublished: new Date(),
   likes: 0,
@@ -57,6 +63,7 @@ function showHome() {
   if (!articles.value) {
     return
   }
+  previewArticles()
   isCreateArticleShowing.value = false
   isHomePageShowing.value = true
   isChampionshipPopupShowing.value = false
@@ -74,17 +81,25 @@ function toggleChampionshipPopup() {
 
 function saveArticle(article: Article) {
   const category = article.category
-  articles.value.push(article)
+  articles.value.unshift(article)
   category === 'F1'
-    ? f1Articles.value.push(article)
+    ? f1Articles.value.unshift(article)
     : category === 'F2'
-    ? f2Articles.value.push(article)
+    ? f2Articles.value.unshift(article)
     : category === 'F3'
-    ? f3Articles.value.push(article)
+    ? f3Articles.value.unshift(article)
     : category === 'WEC'
-    ? wecArticles.value.push(article)
-    : motogpArticles.value.push(article)
+    ? wecArticles.value.unshift(article)
+    : motogpArticles.value.unshift(article)
   showHome()
+}
+
+function previewArticles() {
+  f1LatestArticles.value = f1Articles.value.slice(0, 3)
+  f2LatestArticles.value = f2Articles.value.slice(0, 3)
+  f3LatestArticles.value = f3Articles.value.slice(0, 3)
+  wecLatestArticles.value = wecArticles.value.slice(0, 3)
+  motogpLatestArticles.value = motogpArticles.value.slice(0, 3)
 }
 
 function likedArticle(likes: number, date: Date) {

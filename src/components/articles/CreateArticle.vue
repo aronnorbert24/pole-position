@@ -1,6 +1,7 @@
 <template>
   <div>
-    <input type="text" maxlength="100" placeholder="article" v-model="updatedArticle.title" />
+    <input type="text" maxlength="80" :placeholder="article.title" v-model="updatedArticle.title" />
+    <input type="text" :placeholder="article.text" v-model="updatedArticle.text" />
     <input type="radio" id="f1" name="category" value="F1" v-model="updatedArticle.category" />
     <label for="f1">F1</label>
     <input type="radio" id="f2" name="category" value="F2" v-model="updatedArticle.category" />
@@ -31,6 +32,7 @@ const emit = defineEmits<{
 
 const updatedArticle = ref<Article>({
   title: props.article.title,
+  text: props.article.text,
   category: props.article.category,
   image: props.article.image,
   datePublished: props.article.datePublished,
