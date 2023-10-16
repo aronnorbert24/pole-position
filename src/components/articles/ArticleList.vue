@@ -4,7 +4,7 @@
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
         <li v-for="article in f1Articles" :key="article.datePublished">
-          <ArticlePreview :article="article" @likedArticle="likedArticle" />
+          <ArticlePreview :article="article" />
         </li>
       </ul>
     </div>
@@ -12,7 +12,7 @@
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
         <li v-for="article in f2Articles" :key="article.datePublished">
-          <ArticlePreview :article="article" @likedArticle="likedArticle" />
+          <ArticlePreview :article="article" />
         </li>
       </ul>
     </div>
@@ -20,7 +20,7 @@
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
         <li v-for="article in f3Articles" :key="article.datePublished">
-          <ArticlePreview :article="article" @likedArticle="likedArticle" />
+          <ArticlePreview :article="article" />
         </li>
       </ul>
     </div>
@@ -28,7 +28,7 @@
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
         <li v-for="article in wecArticles" :key="article.datePublished">
-          <ArticlePreview :article="article" @likedArticle="likedArticle" />
+          <ArticlePreview :article="article" />
         </li>
       </ul>
     </div>
@@ -36,7 +36,7 @@
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
         <li v-for="article in motogpArticles" :key="article.datePublished">
-          <ArticlePreview :article="article" @likedArticle="likedArticle" />
+          <ArticlePreview :article="article" />
         </li>
       </ul>
     </div>
@@ -57,12 +57,4 @@ interface Props {
 }
 
 defineProps<Props>()
-
-const emit = defineEmits<{
-  (e: 'likedArticle', likes: number, date: Date): void
-}>()
-
-function likedArticle(likes: number, date: Date) {
-  emit('likedArticle', likes, date)
-}
 </script>
