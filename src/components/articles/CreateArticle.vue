@@ -1,5 +1,5 @@
 <template>
-  <div class="ml-auto mr-auto w-3/5 rounded-xl bg-white p-2 text-center">
+  <div class="ml-2 w-3/5 rounded-xl bg-white p-2 text-center phone:w-11/12 computer:ml-auto computer:mr-auto">
     <label class="text-md mt-5 font-normal text-red-600">Please enter the title of the article:</label>
     <input
       type="text"
@@ -15,7 +15,7 @@
     >
     <textarea
       type="text"
-      class="mt-5 w-full rounded-2xl bg-slate-200 p-2"
+      class="mt-5 h-96 w-full rounded-2xl bg-slate-200 p-2"
       :placeholder="article.text"
       v-model="updatedArticle.text"
     >
@@ -25,7 +25,7 @@
     >
     <ArticleCategory :category="updatedArticle.category" @updateNewCategory="updateCategory" />
     <label class="text-md font-normal text-red-600">Please select an image suitable to the article:</label>
-    <input type="file" accept="image/*" class="ml-44 mt-5 w-full" @change="uploadImage" />
+    <input type="file" accept="image/*" class="ml-16 mt-5 w-full computer:ml-44" @change="uploadImage" />
     <button class="mt-5 bg-slate-200" @click.prevent="saveArticle()">Save</button>
   </div>
 </template>
