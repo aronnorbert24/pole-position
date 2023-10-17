@@ -24,6 +24,8 @@
       >Please select the category of motorsport you are writing about in the article:</label
     >
     <ArticleCategory :category="updatedArticle.category" @updateNewCategory="updateCategory" />
+    <label class="text-md mt-5 font-normal text-red-600">Please select an image suitable to the article:</label>
+    <input type="file" accept="image/*" class="ml-44 mt-5 w-full" @change="uploadImage" />
     <button class="mt-5 bg-slate-200" @click.prevent="saveArticle()">Save</button>
   </div>
 </template>
@@ -55,6 +57,15 @@ const updatedArticle = ref<Article>({
 
 function updateCategory(category: string) {
   updatedArticle.value.category = category
+}
+
+function uploadImage(e: any) {
+  const image = e.target.files[0]
+  const reader = new FileReader()
+  reader.readAsDataURL(image)
+  reader.onload = (e) => {
+    updatedArticle.value.image = e.target.result
+  }
 }
 
 function saveArticle() {
