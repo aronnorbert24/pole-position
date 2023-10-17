@@ -11,7 +11,7 @@
 
     <label class="text-md mt-5 font-normal text-red-600">Please write the content of the article here.</label>
     <label class="text-md font-semibold text-red-600">
-      If you would like to emphasize a part of your article, include them in quotes (" "):</label
+      If you would like to emphasize a part of your article, include them in stars (* *):</label
     >
     <textarea
       type="text"
@@ -24,7 +24,7 @@
       >Please select the category of motorsport you are writing about in the article:</label
     >
     <ArticleCategory :category="updatedArticle.category" @updateNewCategory="updateCategory" />
-    <label class="text-md mt-5 font-normal text-red-600">Please select an image suitable to the article:</label>
+    <label class="text-md font-normal text-red-600">Please select an image suitable to the article:</label>
     <input type="file" accept="image/*" class="ml-44 mt-5 w-full" @change="uploadImage" />
     <button class="mt-5 bg-slate-200" @click.prevent="saveArticle()">Save</button>
   </div>
@@ -45,9 +45,11 @@ const emit = defineEmits<{
   (e: 'saveArticle', article: Article): void
 }>()
 
+const indices: number[] = ref([])
 const updatedArticle = ref<Article>({
   title: props.article.title,
   text: props.article.text,
+  separatedText: props.article.separatedText,
   category: props.article.category,
   image: props.article.image,
   datePublished: props.article.datePublished,
@@ -68,7 +70,29 @@ function uploadImage(e: any) {
   }
 }
 
+function findStars(text: string, char: string) {
+  return text
+    .split('')
+    .map((c, idx) => {
+      if (c === char) {
+        return idx
+      }
+
+      return -1
+    })
+    .filter((element) => element !== -1)
+}
+
+function emphasizeText(text: string) {
+  return text.split('*')
+}
+
 function saveArticle() {
+  indices.value = findStars(updatedArticle.value.text, '*')
+  if (indices.value) {
+    updatedArticle.value.separatedText = emphasizeText(updatedArticle.value.text)
+    console.log(updatedArticle.value.separatedText)
+  }
   if (!updatedArticle.value.title.length) {
     return
   }

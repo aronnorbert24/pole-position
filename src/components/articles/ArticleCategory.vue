@@ -1,5 +1,5 @@
 <template>
-  <div class="ml-5 mr-5 flex justify-between phone:ml-8">
+  <div class="mb-5 ml-5 mr-5 flex justify-between phone:ml-8">
     <F1Icon :class="getCategoryClass('F1')" @click="updateCategory('F1')" />
     <F2Icon :class="getCategoryClass('F2')" @click="updateCategory('F2')" />
     <F3Icon :class="getCategoryClass('F3')" @click="updateCategory('F3')" />
