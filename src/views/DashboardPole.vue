@@ -52,6 +52,7 @@ const motogpLatestArticles = ref<Article[]>([])
 const article = ref<Article>({
   title: 'Article Title',
   text: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
+  separatedText: [],
   image: 'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
   category: 'F1',
   datePublished: new Date(),

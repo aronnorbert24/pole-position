@@ -1,10 +1,10 @@
 <template>
   <div class="flex">
-    <F1Icon />
-    <F2Icon />
-    <F3Icon />
-    <WecIcon />
-    <MotogpIcon />
+    <F1Icon class="bg-white" />
+    <F2Icon class="ml-40 bg-white" />
+    <F3Icon class="ml-40 bg-white" />
+    <WecIcon class="ml-40 bg-white" />
+    <MotogpIcon class="ml-40 bg-white" />
   </div>
 </template>
 

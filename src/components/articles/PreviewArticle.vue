@@ -1,9 +1,11 @@
 <template>
   <div class="flex pb-3">
-    <img class="ml-5 mr-5" :src="article.image" width="100" />
-    <div class="ml-5 mt-5 flex-col text-left">
-      <p class="text-2xl font-semibold text-red-600">{{ previewTitle }}</p>
-      <p class="text-lg text-black">{{ previewText }}...</p>
+    <div class="mr-5 w-4/12">
+      <img class="ml-5 mr-5 phone:h-36 phone:w-32 computer:w-40" :src="article.image" />
+    </div>
+    <div class="ml-5 mt-5 w-8/12 flex-col text-left">
+      <p class="text-2xl font-semibold text-red-600 phone:text-lg">{{ previewTitle }}</p>
+      <p class="text-lg text-black phone:text-sm">{{ previewText }}...</p>
     </div>
   </div>
   <div></div>
