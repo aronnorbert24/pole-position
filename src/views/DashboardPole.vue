@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 import CreateArticle from '../components/articles/CreateArticle.vue'
 import ArticleList from '../components/articles/ArticleList.vue'
@@ -65,6 +65,15 @@ const article = ref<Article>({
   likes: 0,
   views: 0,
 })
+
+function saveToLocalStorage() {
+  localStorage.setItem('articles', JSON.stringify(articles.value))
+}
+
+function getFromLocalStorage() {
+  const savedArticles = localStorage.getItem('articles')
+  articles.value = savedArticles ? JSON.parse(savedArticles) : []
+}
 
 function showHome() {
   if (!articles.value) {
@@ -115,6 +124,15 @@ function saveArticle(article: Article) {
     ? wecArticles.value.unshift(article)
     : motogpArticles.value.unshift(article)
   showHome()
+  saveToLocalStorage()
+}
+
+function filterArticles() {
+  f1Articles.value = articles.value.filter((article) => article.category === 'F1')
+  f2Articles.value = articles.value.filter((article) => article.category === 'F2')
+  f3Articles.value = articles.value.filter((article) => article.category === 'F3')
+  wecArticles.value = articles.value.filter((article) => article.category === 'WEC')
+  motogpArticles.value = articles.value.filter((article) => article.category === 'MotoGP')
 }
 
 function previewArticles() {
@@ -131,6 +149,12 @@ function likedArticle(likes: number, date: Date) {
     updatedArticle.likes = likes
   }
 }
+
+onMounted(async () => {
+  await getFromLocalStorage()
+  await filterArticles()
+  previewArticles()
+})
 
 onClickOutside(closeChampionshipPopupRef, toggleChampionshipPopup)
 </script>
