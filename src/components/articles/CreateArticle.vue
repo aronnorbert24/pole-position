@@ -91,7 +91,6 @@ function saveArticle() {
   indices.value = findStars(updatedArticle.value.text, '*')
   if (indices.value) {
     updatedArticle.value.separatedText = emphasizeText(updatedArticle.value.text)
-    console.log(updatedArticle.value.separatedText)
   }
   if (!updatedArticle.value.title.length) {
     return
