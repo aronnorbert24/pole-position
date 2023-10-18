@@ -1,6 +1,6 @@
 <template>
   <div class="ml-2 mt-10 w-3/5 phone:w-11/12 computer:ml-auto computer:mr-auto">
-    <TitleSeparator title="Formula 1" />
+    <TitleSeparator title="Formula 1" @showArticlesByCategory="showArticlesByCategory" />
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
         <li v-for="(article, index) in f1Articles" :key="index">
@@ -8,7 +8,7 @@
         </li>
       </ul>
     </div>
-    <TitleSeparator title="Formula 2" />
+    <TitleSeparator title="Formula 2" @showArticlesByCategory="showArticlesByCategory" />
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
         <li v-for="(article, index) in f2Articles" :key="index">
@@ -16,7 +16,7 @@
         </li>
       </ul>
     </div>
-    <TitleSeparator title="Formula 3" />
+    <TitleSeparator title="Formula 3" @showArticlesByCategory="showArticlesByCategory" />
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
         <li v-for="(article, index) in f3Articles" :key="index">
@@ -24,7 +24,7 @@
         </li>
       </ul>
     </div>
-    <TitleSeparator title="WEC" />
+    <TitleSeparator title="WEC" @showArticlesByCategory="showArticlesByCategory" />
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
         <li v-for="(article, index) in wecArticles" :key="index">
@@ -32,7 +32,7 @@
         </li>
       </ul>
     </div>
-    <TitleSeparator title="MotoGP" />
+    <TitleSeparator title="MotoGP" @showArticlesByCategory="showArticlesByCategory" />
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
         <li v-for="(article, index) in motogpArticles" :key="index">
@@ -57,4 +57,12 @@ interface Props {
 }
 
 defineProps<Props>()
+
+const emit = defineEmits<{
+  (e: 'showArticlesByCategory', title: string): void
+}>()
+
+function showArticlesByCategory(title: string) {
+  emit('showArticlesByCategory', title)
+}
 </script>
