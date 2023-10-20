@@ -2,7 +2,7 @@
   <div class="z-0 h-fit w-screen">
     <div v-if="isChampionshipPopupShowing" class="absolute z-10 h-full w-full bg-black opacity-50"></div>
     <PoleHeader @showHome="showHome" @showPopup="toggleChampionshipPopup" />
-    <PoleLink @showCreate="showCreate" />
+    <PoleLink @showCreate="showCreate" @showArticlesByCategory="showArticlesByCategory" />
     <CreateArticle v-if="isCreateArticleShowing" :article="article" class="mt-10" @saveArticle="saveArticle" />
     <ArticleList
       v-if="isHomePageShowing"
@@ -13,7 +13,9 @@
       :motogpArticles="motogpLatestArticles"
       class="mt-10"
       @likedArticle="likedArticle"
+      @showArticlesByCategory="showArticlesByCategory"
     />
+    <ArticlesByCategory v-if="isArticlesByCategoryShowing" :title="categoryTitle" :articles="articlesByCategory" />
     <ChampionshipPopup
       v-if="isChampionshipPopupShowing"
       textf1="Soon to show the F1 standings"
@@ -25,10 +27,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 import CreateArticle from '../components/articles/CreateArticle.vue'
 import ArticleList from '../components/articles/ArticleList.vue'
+import ArticlesByCategory from '../components/articles/ArticlesByCategory.vue'
 import ChampionshipPopup from '../components/articles/ChampionshipPopup.vue'
 import PoleHeader from '../components/header/PoleHeader.vue'
 import PoleLink from '../components/header/PoleLink.vue'
@@ -37,6 +40,7 @@ import { Article } from '../types/article.ts'
 const isCreateArticleShowing = ref(false)
 const isHomePageShowing = ref(true)
 const isChampionshipPopupShowing = ref(false)
+const isArticlesByCategoryShowing = ref(false)
 const closeChampionshipPopupRef = ref(null)
 const articles = ref<Article[]>([])
 const f1Articles = ref<Article[]>([])
@@ -49,6 +53,8 @@ const f2LatestArticles = ref<Article[]>([])
 const f3LatestArticles = ref<Article[]>([])
 const wecLatestArticles = ref<Article[]>([])
 const motogpLatestArticles = ref<Article[]>([])
+const articlesByCategory = ref<Article[]>([])
+const categoryTitle = ref('')
 const article = ref<Article>({
   title: 'Article Title',
   text: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
@@ -60,20 +66,45 @@ const article = ref<Article>({
   views: 0,
 })
 
+function saveToLocalStorage() {
+  localStorage.setItem('articles', JSON.stringify(articles.value))
+}
+
+function getFromLocalStorage() {
+  const savedArticles = localStorage.getItem('articles')
+  articles.value = savedArticles ? JSON.parse(savedArticles) : []
+}
+
 function showHome() {
   if (!articles.value) {
     return
   }
   previewArticles()
   isCreateArticleShowing.value = false
+  isArticlesByCategoryShowing.value = false
   isHomePageShowing.value = true
-  isChampionshipPopupShowing.value = false
 }
 
 function showCreate() {
   isHomePageShowing.value = false
+  isArticlesByCategoryShowing.value = false
   isCreateArticleShowing.value = true
-  isChampionshipPopupShowing.value = false
+}
+
+function showArticlesByCategory(title: string) {
+  title === 'F1'
+    ? (articlesByCategory.value = f1Articles.value)
+    : title === 'F2'
+    ? (articlesByCategory.value = f2Articles.value)
+    : title === 'F3'
+    ? (articlesByCategory.value = f3Articles.value)
+    : title === 'WEC'
+    ? (articlesByCategory.value = wecArticles.value)
+    : (articlesByCategory.value = motogpArticles.value)
+  categoryTitle.value = title
+  isArticlesByCategoryShowing.value = true
+  isHomePageShowing.value = false
+  isCreateArticleShowing.value = false
 }
 
 function toggleChampionshipPopup() {
@@ -93,6 +124,15 @@ function saveArticle(article: Article) {
     ? wecArticles.value.unshift(article)
     : motogpArticles.value.unshift(article)
   showHome()
+  saveToLocalStorage()
+}
+
+function filterArticles() {
+  f1Articles.value = articles.value.filter((article) => article.category === 'F1')
+  f2Articles.value = articles.value.filter((article) => article.category === 'F2')
+  f3Articles.value = articles.value.filter((article) => article.category === 'F3')
+  wecArticles.value = articles.value.filter((article) => article.category === 'WEC')
+  motogpArticles.value = articles.value.filter((article) => article.category === 'MotoGP')
 }
 
 function previewArticles() {
@@ -109,6 +149,12 @@ function likedArticle(likes: number, date: Date) {
     updatedArticle.likes = likes
   }
 }
+
+onMounted(async () => {
+  await getFromLocalStorage()
+  await filterArticles()
+  previewArticles()
+})
 
 onClickOutside(closeChampionshipPopupRef, toggleChampionshipPopup)
 </script>

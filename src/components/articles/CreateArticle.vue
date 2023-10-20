@@ -25,7 +25,7 @@
     >
     <ArticleCategory :category="updatedArticle.category" @updateNewCategory="updateCategory" />
     <label class="text-md font-normal text-red-600">Please select an image suitable to the article:</label>
-    <input type="file" accept="image/*" class="ml-16 mt-5 w-full computer:ml-44" @change="uploadImage" />
+    <input type="file" accept="image/*" class="ml-16 mt-5 w-full computer:ml-96" @change="uploadImage" />
     <button class="mt-5 bg-slate-200" @click.prevent="saveArticle()">Save</button>
   </div>
 </template>
@@ -45,7 +45,7 @@ const emit = defineEmits<{
   (e: 'saveArticle', article: Article): void
 }>()
 
-const indices: number[] = ref([])
+const indices = ref<number[]>([])
 const updatedArticle = ref<Article>({
   title: props.article.title,
   text: props.article.text,
@@ -66,12 +66,17 @@ function uploadImage(e: any) {
   const reader = new FileReader()
   reader.readAsDataURL(image)
   reader.onload = (e) => {
-    updatedArticle.value.image = e.target.result
+    if (!e.target) {
+      return
+    }
+    if (e.target.result) {
+      updatedArticle.value.image = e.target.result as string
+    }
   }
 }
 
 function findStars(text: string, char: string) {
-  return text
+  const index = text
     .split('')
     .map((c, idx) => {
       if (c === char) {
@@ -81,6 +86,10 @@ function findStars(text: string, char: string) {
       return -1
     })
     .filter((element) => element !== -1)
+  if (!index) {
+    return []
+  }
+  return index
 }
 
 function emphasizeText(text: string) {
@@ -89,7 +98,7 @@ function emphasizeText(text: string) {
 
 function saveArticle() {
   indices.value = findStars(updatedArticle.value.text, '*')
-  if (indices.value) {
+  if (indices.value.length) {
     updatedArticle.value.separatedText = emphasizeText(updatedArticle.value.text)
   }
   if (!updatedArticle.value.title.length) {
