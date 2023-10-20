@@ -4,7 +4,7 @@
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
         <li v-for="(article, index) in articles" :key="index">
-          <ArticlePreview :article="article" />
+          <ArticlePreview :article="article" @showArticle="showArticle" />
         </li>
       </ul>
     </div>
@@ -22,4 +22,12 @@ interface Props {
 }
 
 defineProps<Props>()
+
+const emit = defineEmits<{
+  (e: 'showArticle', article: Article): void
+}>()
+
+function showArticle(article: Article) {
+  emit('showArticle', article)
+}
 </script>

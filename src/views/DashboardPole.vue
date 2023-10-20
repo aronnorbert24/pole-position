@@ -14,8 +14,15 @@
       class="mt-10"
       @likedArticle="likedArticle"
       @showArticlesByCategory="showArticlesByCategory"
+      @showArticle="showArticle"
     />
-    <ArticlesByCategory v-if="isArticlesByCategoryShowing" :title="categoryTitle" :articles="articlesByCategory" />
+    <ArticlesByCategory
+      v-if="isArticlesByCategoryShowing"
+      :title="categoryTitle"
+      :articles="articlesByCategory"
+      @showArticle="showArticle"
+    />
+    <SingleArticle v-if="isSingleArticleShowing" :article="singleArticle" />
     <ChampionshipPopup
       v-if="isChampionshipPopupShowing"
       textf1="Soon to show the F1 standings"
@@ -31,6 +38,7 @@ import { ref, onMounted } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 import CreateArticle from '../components/articles/CreateArticle.vue'
 import ArticleList from '../components/articles/ArticleList.vue'
+import SingleArticle from '../components/articles/SingleArticle.vue'
 import ArticlesByCategory from '../components/articles/ArticlesByCategory.vue'
 import ChampionshipPopup from '../components/articles/ChampionshipPopup.vue'
 import PoleHeader from '../components/header/PoleHeader.vue'
@@ -41,8 +49,10 @@ const isCreateArticleShowing = ref(false)
 const isHomePageShowing = ref(true)
 const isChampionshipPopupShowing = ref(false)
 const isArticlesByCategoryShowing = ref(false)
+const isSingleArticleShowing = ref(false)
 const closeChampionshipPopupRef = ref(null)
 const articles = ref<Article[]>([])
+const singleArticle = ref<Article>()
 const f1Articles = ref<Article[]>([])
 const f2Articles = ref<Article[]>([])
 const f3Articles = ref<Article[]>([])
@@ -83,12 +93,14 @@ function showHome() {
   isCreateArticleShowing.value = false
   isArticlesByCategoryShowing.value = false
   isHomePageShowing.value = true
+  isSingleArticleShowing.value = false
 }
 
 function showCreate() {
   isHomePageShowing.value = false
   isArticlesByCategoryShowing.value = false
   isCreateArticleShowing.value = true
+  isSingleArticleShowing.value = false
 }
 
 function showArticlesByCategory(title: string) {
@@ -105,6 +117,15 @@ function showArticlesByCategory(title: string) {
   isArticlesByCategoryShowing.value = true
   isHomePageShowing.value = false
   isCreateArticleShowing.value = false
+  isSingleArticleShowing.value = false
+}
+
+function showArticle(article: Article) {
+  singleArticle.value = article
+  isArticlesByCategoryShowing.value = false
+  isHomePageShowing.value = false
+  isCreateArticleShowing.value = false
+  isSingleArticleShowing.value = true
 }
 
 function toggleChampionshipPopup() {

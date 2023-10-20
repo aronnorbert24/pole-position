@@ -4,7 +4,7 @@
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
         <li v-for="(article, index) in f1Articles" :key="index">
-          <ArticlePreview :article="article" />
+          <ArticlePreview :article="article" @showArticle="showArticle" />
         </li>
       </ul>
     </div>
@@ -12,7 +12,7 @@
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
         <li v-for="(article, index) in f2Articles" :key="index">
-          <ArticlePreview :article="article" />
+          <ArticlePreview :article="article" @showArticle="showArticle" />
         </li>
       </ul>
     </div>
@@ -20,7 +20,7 @@
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
         <li v-for="(article, index) in f3Articles" :key="index">
-          <ArticlePreview :article="article" />
+          <ArticlePreview :article="article" @showArticle="showArticle" />
         </li>
       </ul>
     </div>
@@ -28,7 +28,7 @@
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
         <li v-for="(article, index) in wecArticles" :key="index">
-          <ArticlePreview :article="article" />
+          <ArticlePreview :article="article" @showArticle="showArticle" />
         </li>
       </ul>
     </div>
@@ -36,7 +36,7 @@
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
         <li v-for="(article, index) in motogpArticles" :key="index">
-          <ArticlePreview :article="article" />
+          <ArticlePreview :article="article" @showArticle="showArticle" />
         </li>
       </ul>
     </div>
@@ -60,9 +60,14 @@ defineProps<Props>()
 
 const emit = defineEmits<{
   (e: 'showArticlesByCategory', title: string): void
+  (e: 'showArticle', article: Article): void
 }>()
 
 function showArticlesByCategory(title: string) {
   emit('showArticlesByCategory', title)
+}
+
+function showArticle(article: Article) {
+  emit('showArticle', article)
 }
 </script>
