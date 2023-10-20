@@ -1,12 +1,15 @@
 <template>
   <div class="ml-auto mr-auto mt-10 w-3/5 phone:w-11/12">
     <TitleSeparator :title="article.category" />
-    <div class="mb-12 h-fit rounded-xl bg-white py-5 text-center">
-      <div class="mx-auto my-auto w-full px-5">
+    <div class="mb-12 h-fit w-full rounded-xl bg-white px-5 py-5 text-center">
+      <div class="mx-auto my-auto flex max-h-full w-full">
         <img class="mx-auto max-w-full" :src="article.image" />
+        <div class="mb-4 ml-[-100%] mt-auto h-fit w-full flex-none rounded-xl bg-red-600/75 p-3 text-center">
+          <p class="text-2xl font-semibold text-white phone:text-lg">{{ article.title }}</p>
+        </div>
       </div>
-      <div class="my-auto ml-5 w-9/12 text-left">
-        <p class="text-2xl font-semibold text-red-600 phone:text-lg">{{ article.title }}</p>
+      <div class="flex justify-between">
+        <p class="text-md font-medium text-black">By: Pole Position</p>
         <p class="text-lg text-black phone:text-sm">{{ previewText }}...</p>
       </div>
     </div>
