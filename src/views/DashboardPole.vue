@@ -22,7 +22,12 @@
       :articles="articlesByCategory"
       @showArticle="showArticle"
     />
-    <SingleArticle v-if="isSingleArticleShowing" :article="singleArticle" />
+    <SingleArticle
+      v-if="isSingleArticleShowing"
+      :article="singleArticle"
+      :userId="user.userId"
+      @likedArticle="likedArticle"
+    />
     <ChampionshipPopup
       v-if="isChampionshipPopupShowing"
       textf1="Soon to show the F1 standings"
@@ -44,6 +49,7 @@ import ChampionshipPopup from '../components/articles/ChampionshipPopup.vue'
 import PoleHeader from '../components/header/PoleHeader.vue'
 import PoleLink from '../components/header/PoleLink.vue'
 import { Article } from '../types/article.ts'
+import { User } from '../types/user.ts'
 
 const isCreateArticleShowing = ref(false)
 const isHomePageShowing = ref(true)
@@ -60,6 +66,7 @@ const singleArticle = ref<Article>({
   image: '',
   category: '',
   datePublished: new Date(),
+  likedBy: [],
   likes: 0,
   views: 0,
 })
@@ -75,6 +82,13 @@ const wecLatestArticles = ref<Article[]>([])
 const motogpLatestArticles = ref<Article[]>([])
 const articlesByCategory = ref<Article[]>([])
 const categoryTitle = ref('')
+const user = ref<User>({
+  userId: '12345',
+  username: 'Anonymous',
+  password: 'qwertyqwerty',
+  userPicture:
+    'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
+})
 const article = ref<Article>({
   title: 'Article Title',
   subheading: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
@@ -83,6 +97,7 @@ const article = ref<Article>({
   image: 'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
   category: 'F1',
   datePublished: new Date(),
+  likedBy: [],
   likes: 0,
   views: 0,
 })
@@ -182,11 +197,21 @@ function viewedArticle(views: number) {
   return views
 }
 
-function likedArticle(likes: number, date: Date) {
+function likedArticle(likes: number, isPostLiked: boolean, date: Date, userId: string) {
   const updatedArticle = articles.value.find((article) => article.datePublished === date)
   if (updatedArticle) {
     updatedArticle.likes = likes
+    if (isPostLiked) {
+      console.log(updatedArticle.likedBy)
+      updatedArticle.likedBy.push(userId)
+    } else {
+      const index = updatedArticle.likedBy.findIndex((user) => user === userId)
+      if (index) {
+        updatedArticle.likedBy.splice(index, 1)
+      }
+    }
   }
+  saveToLocalStorage()
 }
 
 onMounted(async () => {

@@ -62,6 +62,7 @@ const updatedArticle = ref<Article>({
   category: props.article.category,
   image: props.article.image,
   datePublished: props.article.datePublished,
+  likedBy: props.article.likedBy,
   likes: props.article.likes,
   views: props.article.views,
 })

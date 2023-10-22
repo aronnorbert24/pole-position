@@ -6,6 +6,7 @@ export interface Article {
   image: string
   category: string
   datePublished: Date
+  likedBy: string[]
   likes: number
   views: number
 }

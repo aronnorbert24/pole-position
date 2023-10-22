@@ -26,26 +26,37 @@
         </div>
       </div>
     </div>
-    <button @click.prevent="likedArticle">{{ article.likes }} Like(s)</button>
+    <div
+      id="likeButton"
+      class="flex h-12 w-24 transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer"
+      :class="getLikedClass"
+      @click.prevent="likedArticle"
+    >
+      <LikeIcon />
+      <p class="ml-1 mt-2">{{ props.article.likes }}</p>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import TitleSeparator from '../baseComponents/TitleSeparator.vue'
+import LikeIcon from '../icons/LikeIcon.vue'
 import { formatDate } from '../../helpers/helper.ts'
 import { Article } from '../../types/article.ts'
 
 interface Props {
   article: Article
+  userId: string
 }
 
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
-  (e: 'likedArticle', likes: number, date: Date): void
+  (e: 'likedArticle', likes: number, isPostLiked: boolean, date: Date, userId: string): void
 }>()
 
+const isPostLiked = ref(findUserId())
 const formattedDate = ref(formatDate(props.article.datePublished))
 
 function emphasizeClass(index: number, paragraph: string) {
@@ -56,8 +67,21 @@ function emphasizeClass(index: number, paragraph: string) {
   }
 }
 
+const getLikedClass = computed(() => {
+  return !isPostLiked.value ? 'bg-white text-black' : 'bg-red-600 text-white'
+})
+
+function findUserId() {
+  if (!props.article.likedBy) {
+    return false
+  }
+  return props.article.likedBy.includes(props.userId)
+}
+
 function likedArticle() {
-  const updatedLikes = props.article.likes + 1
-  emit('likedArticle', updatedLikes, props.article.datePublished)
+  isPostLiked.value = !isPostLiked.value
+  let updatedLikes = props.article.likes
+  isPostLiked.value ? updatedLikes++ : updatedLikes--
+  emit('likedArticle', updatedLikes, isPostLiked.value, props.article.datePublished, props.userId)
 }
 </script>

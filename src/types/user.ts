@@ -1,5 +1,5 @@
 export interface User {
-  userId: Date
+  userId: string
   username: string
   password: string
   userPicture: string
