@@ -10,7 +10,7 @@
       </div>
       <div class="flex justify-between">
         <p class="text-md font-medium text-black">By: Pole Position</p>
-        <p class="text-lg text-black phone:text-sm">{{ formattedDate }}</p>
+        <p class="text-md font-medium text-black phone:text-sm">{{ formattedDate }}</p>
       </div>
     </div>
     <button @click.prevent="likedArticle">{{ article.likes }} Like(s)</button>
