@@ -12,6 +12,9 @@
         <p class="text-md font-medium text-black">By: Pole Position</p>
         <p class="text-md font-medium text-black phone:text-sm">{{ formattedDate }}</p>
       </div>
+      <div class="mb-10 mt-5 text-left text-xl font-semibold text-black">
+        <p>{{ article.subheading }}</p>
+      </div>
       <div>
         <div
           v-for="(paragraph, index) in article.separatedText"
