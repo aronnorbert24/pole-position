@@ -4,7 +4,7 @@
       class="my-auto mr-5 w-3/12 transition-transform duration-300 ease-in-out hover:cursor-pointer"
       @click="showArticle"
     >
-      <img class="mx-auto phone:h-28 phone:w-24 computer:w-40" :src="article.image" />
+      <img class="mx-auto phone:h-28 phone:w-24 computer:max-h-32 computer:w-40" :src="article.image" />
     </div>
     <div class="my-auto ml-5 w-9/12 flex-col text-left">
       <p
@@ -31,7 +31,7 @@ const emit = defineEmits<{
   (e: 'showArticle', article: Article): void
 }>()
 
-const previewText = props.article.text.slice(0, 100)
+const previewText = props.article.subheading.slice(0, 100)
 
 function showArticle() {
   emit('showArticle', props.article)

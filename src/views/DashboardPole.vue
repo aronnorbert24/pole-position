@@ -52,7 +52,17 @@ const isArticlesByCategoryShowing = ref(false)
 const isSingleArticleShowing = ref(false)
 const closeChampionshipPopupRef = ref(null)
 const articles = ref<Article[]>([])
-const singleArticle = ref<Article>()
+const singleArticle = ref<Article>({
+  title: '',
+  subheading: '',
+  text: '',
+  separatedText: [],
+  image: '',
+  category: '',
+  datePublished: new Date(),
+  likes: 0,
+  views: 0,
+})
 const f1Articles = ref<Article[]>([])
 const f2Articles = ref<Article[]>([])
 const f3Articles = ref<Article[]>([])
@@ -67,6 +77,7 @@ const articlesByCategory = ref<Article[]>([])
 const categoryTitle = ref('')
 const article = ref<Article>({
   title: 'Article Title',
+  subheading: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
   text: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
   separatedText: [],
   image: 'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',

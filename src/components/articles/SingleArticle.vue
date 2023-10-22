@@ -12,6 +12,16 @@
         <p class="text-md font-medium text-black">By: Pole Position</p>
         <p class="text-md font-medium text-black phone:text-sm">{{ formattedDate }}</p>
       </div>
+      <div>
+        <div
+          v-for="(paragraph, index) in article.separatedText"
+          :key="index"
+          class="text-md mt-5 text-left text-black"
+          :class="[emphasizeClass(index, paragraph)]"
+        >
+          <p>{{ paragraph }}</p>
+        </div>
+      </div>
     </div>
     <button @click.prevent="likedArticle">{{ article.likes }} Like(s)</button>
   </div>
@@ -34,6 +44,14 @@ const emit = defineEmits<{
 }>()
 
 const formattedDate = ref(formatDate(props.article.datePublished))
+
+function emphasizeClass(index: number, paragraph: string) {
+  if (index === 1) {
+    return paragraph[0] === '"'
+      ? 'border-l-4 border-red-600 bg-gradient-to-r text-lg from-pink-300 to-white font-semibold p-3 leading-2 italic'
+      : 'border-l-4 border-red-600 bg-gradient-to-r text-lg from-pink-300 to-white font-semibold p-3 leading-2'
+  }
+}
 
 function likedArticle() {
   const updatedLikes = props.article.likes + 1

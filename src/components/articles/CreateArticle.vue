@@ -8,6 +8,14 @@
       :placeholder="article.title"
       v-model="updatedArticle.title"
     />
+    <label class="text-md mt-5 text-red-600"> Please enter the subheading of your article:</label>
+    <textarea
+      type="text"
+      class="mt-5 h-32 w-full rounded-2xl bg-slate-200 p-2"
+      :placeholder="article.subheading"
+      v-model="updatedArticle.subheading"
+    >
+    </textarea>
 
     <label class="text-md mt-5 font-normal text-red-600">Please write the content of the article here.</label>
     <label class="text-md font-semibold text-red-600">
@@ -45,9 +53,10 @@ const emit = defineEmits<{
   (e: 'saveArticle', article: Article): void
 }>()
 
-const indices = ref<number[]>([])
+const numberOfOccurences = ref<number>()
 const updatedArticle = ref<Article>({
   title: props.article.title,
+  subheading: props.article.subheading,
   text: props.article.text,
   separatedText: props.article.separatedText,
   category: props.article.category,
@@ -75,31 +84,23 @@ function uploadImage(e: any) {
   }
 }
 
-function findStars(text: string, char: string) {
-  const index = text
-    .split('')
-    .map((c, idx) => {
-      if (c === char) {
-        return idx
-      }
-
-      return -1
-    })
-    .filter((element) => element !== -1)
-  if (!index) {
-    return []
-  }
-  return index
+function findChars(text: string, char: string) {
+  const numberOfOccurences = text.split('').filter((element) => element === char).length
+  return !numberOfOccurences ? 0 : numberOfOccurences
 }
 
 function emphasizeText(text: string) {
+  const regex = /"([^"]+)"/g
+  text = text.replace(regex, `<em>'$1'</em>`)
   return text.split('*')
 }
 
 function saveArticle() {
-  indices.value = findStars(updatedArticle.value.text, '*')
-  if (indices.value.length) {
+  numberOfOccurences.value = findChars(updatedArticle.value.text, '*')
+  if (numberOfOccurences.value === 2) {
     updatedArticle.value.separatedText = emphasizeText(updatedArticle.value.text)
+  } else {
+    updatedArticle.value.separatedText.push(updatedArticle.value.text)
   }
   if (!updatedArticle.value.title.length) {
     return
