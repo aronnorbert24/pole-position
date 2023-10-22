@@ -90,8 +90,6 @@ function findChars(text: string, char: string) {
 }
 
 function emphasizeText(text: string) {
-  const regex = /"([^"]+)"/g
-  text = text.replace(regex, `<em>'$1'</em>`)
   return text.split('*')
 }
 
