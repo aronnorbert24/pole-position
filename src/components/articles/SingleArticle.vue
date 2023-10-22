@@ -10,7 +10,7 @@
       </div>
       <div class="flex justify-between">
         <p class="text-md font-medium text-black">By: Pole Position</p>
-        <p class="text-lg text-black phone:text-sm">{{ previewText }}...</p>
+        <p class="text-lg text-black phone:text-sm">{{ formattedDate }}</p>
       </div>
     </div>
     <button @click.prevent="likedArticle">{{ article.likes }} Like(s)</button>
@@ -18,7 +18,9 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import TitleSeparator from '../baseComponents/TitleSeparator.vue'
+import { formatDate } from '../../helpers/helper.ts'
 import { Article } from '../../types/article.ts'
 
 interface Props {
@@ -30,6 +32,8 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   (e: 'likedArticle', likes: number, date: Date): void
 }>()
+
+const formattedDate = ref(formatDate(props.article.datePublished))
 
 function likedArticle() {
   const updatedLikes = props.article.likes + 1
