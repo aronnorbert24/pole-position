@@ -133,6 +133,7 @@ function showArticlesByCategory(title: string) {
 
 function showArticle(article: Article) {
   singleArticle.value = article
+  article.views = viewedArticle(article.views)
   isArticlesByCategoryShowing.value = false
   isHomePageShowing.value = false
   isCreateArticleShowing.value = false
@@ -173,6 +174,12 @@ function previewArticles() {
   f3LatestArticles.value = f3Articles.value.slice(0, 3)
   wecLatestArticles.value = wecArticles.value.slice(0, 3)
   motogpLatestArticles.value = motogpArticles.value.slice(0, 3)
+}
+
+function viewedArticle(views: number) {
+  views++
+  saveToLocalStorage()
+  return views
 }
 
 function likedArticle(likes: number, date: Date) {
