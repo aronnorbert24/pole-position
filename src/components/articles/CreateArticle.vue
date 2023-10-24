@@ -8,17 +8,20 @@
       :placeholder="article.title"
       v-model="updatedArticle.title"
     />
+    <label class="text-md mt-5 text-red-600"> Please enter the subheading of your article:</label>
+    <textarea
+      type="text"
+      class="mt-5 h-32 w-full rounded-2xl bg-slate-200 p-2"
+      :placeholder="article.subheading"
+      v-model="updatedArticle.subheading"
+    >
+    </textarea>
 
     <label class="text-md mt-5 font-normal text-red-600">Please write the content of the article here.</label>
     <label class="text-md font-semibold text-red-600">
       If you would like to emphasize a part of your article, include them in stars (* *):</label
     >
-    <textarea
-      type="text"
-      class="mt-5 h-96 w-full rounded-2xl bg-slate-200 p-2"
-      :placeholder="article.text"
-      v-model="updatedArticle.text"
-    >
+    <textarea type="text" class="mt-5 h-96 w-full rounded-2xl bg-slate-200 p-2" :placeholder="text" v-model="text">
     </textarea>
     <label class="text-md mt-5 font-normal text-red-600"
       >Please select the category of motorsport you are writing about in the article:</label
@@ -45,14 +48,16 @@ const emit = defineEmits<{
   (e: 'saveArticle', article: Article): void
 }>()
 
-const indices = ref<number[]>([])
+const numberOfOccurences = ref<number>()
+const text = ref('Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye')
 const updatedArticle = ref<Article>({
   title: props.article.title,
-  text: props.article.text,
+  subheading: props.article.subheading,
   separatedText: props.article.separatedText,
   category: props.article.category,
   image: props.article.image,
   datePublished: props.article.datePublished,
+  likedBy: props.article.likedBy,
   likes: props.article.likes,
   views: props.article.views,
 })
@@ -75,35 +80,24 @@ function uploadImage(e: any) {
   }
 }
 
-function findStars(text: string, char: string) {
-  const index = text
-    .split('')
-    .map((c, idx) => {
-      if (c === char) {
-        return idx
-      }
-
-      return -1
-    })
-    .filter((element) => element !== -1)
-  if (!index) {
-    return []
-  }
-  return index
+function findChars(body: string, char: string) {
+  const numberOfOccurences = body.split('').filter((element) => element === char).length
+  return !numberOfOccurences ? 0 : numberOfOccurences
 }
 
-function emphasizeText(text: string) {
-  return text.split('*')
+function emphasizeText(body: string) {
+  return body.split('*')
 }
 
 function saveArticle() {
-  indices.value = findStars(updatedArticle.value.text, '*')
-  if (indices.value.length) {
-    updatedArticle.value.separatedText = emphasizeText(updatedArticle.value.text)
-  }
   if (!updatedArticle.value.title.length) {
     return
   }
+
+  numberOfOccurences.value = findChars(text.value, '*')(numberOfOccurences.value === 2)
+    ? (updatedArticle.value.separatedText = emphasizeText(text.value))
+    : updatedArticle.value.separatedText.push(text.value)
+
   updatedArticle.value.datePublished = new Date(Date.now())
 
   emit('saveArticle', updatedArticle.value)

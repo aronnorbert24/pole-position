@@ -14,8 +14,21 @@
       class="mt-10"
       @likedArticle="likedArticle"
       @showArticlesByCategory="showArticlesByCategory"
+      @showArticle="showArticle"
     />
-    <ArticlesByCategory v-if="isArticlesByCategoryShowing" :title="categoryTitle" :articles="articlesByCategory" />
+    <ArticlesByCategory
+      v-if="isArticlesByCategoryShowing"
+      :title="categoryTitle"
+      :articles="articlesByCategory"
+      @showArticle="showArticle"
+    />
+    <SingleArticle
+      v-if="isSingleArticleShowing"
+      :article="singleArticle"
+      :userId="user.userId"
+      @likedArticle="likedArticle"
+      @showArticlesByCategory="showArticlesByCategory"
+    />
     <ChampionshipPopup
       v-if="isChampionshipPopupShowing"
       textf1="Soon to show the F1 standings"
@@ -31,18 +44,32 @@ import { ref, onMounted } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 import CreateArticle from '../components/articles/CreateArticle.vue'
 import ArticleList from '../components/articles/ArticleList.vue'
+import SingleArticle from '../components/articles/SingleArticle.vue'
 import ArticlesByCategory from '../components/articles/ArticlesByCategory.vue'
 import ChampionshipPopup from '../components/articles/ChampionshipPopup.vue'
 import PoleHeader from '../components/header/PoleHeader.vue'
 import PoleLink from '../components/header/PoleLink.vue'
 import { Article } from '../types/article.ts'
+import { User } from '../types/user.ts'
 
 const isCreateArticleShowing = ref(false)
 const isHomePageShowing = ref(true)
 const isChampionshipPopupShowing = ref(false)
 const isArticlesByCategoryShowing = ref(false)
+const isSingleArticleShowing = ref(false)
 const closeChampionshipPopupRef = ref(null)
 const articles = ref<Article[]>([])
+const singleArticle = ref<Article>({
+  title: '',
+  subheading: '',
+  separatedText: [],
+  image: '',
+  category: '',
+  datePublished: new Date(),
+  likedBy: [],
+  likes: 0,
+  views: 0,
+})
 const f1Articles = ref<Article[]>([])
 const f2Articles = ref<Article[]>([])
 const f3Articles = ref<Article[]>([])
@@ -55,13 +82,21 @@ const wecLatestArticles = ref<Article[]>([])
 const motogpLatestArticles = ref<Article[]>([])
 const articlesByCategory = ref<Article[]>([])
 const categoryTitle = ref('')
+const user = ref<User>({
+  userId: '12345',
+  username: 'Anonymous',
+  password: 'qwertyqwerty',
+  userPicture:
+    'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
+})
 const article = ref<Article>({
   title: 'Article Title',
-  text: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
+  subheading: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
   separatedText: [],
   image: 'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
   category: 'F1',
   datePublished: new Date(),
+  likedBy: [],
   likes: 0,
   views: 0,
 })
@@ -83,12 +118,14 @@ function showHome() {
   isCreateArticleShowing.value = false
   isArticlesByCategoryShowing.value = false
   isHomePageShowing.value = true
+  isSingleArticleShowing.value = false
 }
 
 function showCreate() {
   isHomePageShowing.value = false
   isArticlesByCategoryShowing.value = false
   isCreateArticleShowing.value = true
+  isSingleArticleShowing.value = false
 }
 
 function showArticlesByCategory(title: string) {
@@ -105,6 +142,16 @@ function showArticlesByCategory(title: string) {
   isArticlesByCategoryShowing.value = true
   isHomePageShowing.value = false
   isCreateArticleShowing.value = false
+  isSingleArticleShowing.value = false
+}
+
+function showArticle(article: Article) {
+  singleArticle.value = article
+  article.views = viewedArticle(article.views)
+  isArticlesByCategoryShowing.value = false
+  isHomePageShowing.value = false
+  isCreateArticleShowing.value = false
+  isSingleArticleShowing.value = true
 }
 
 function toggleChampionshipPopup() {
@@ -143,11 +190,41 @@ function previewArticles() {
   motogpLatestArticles.value = motogpArticles.value.slice(0, 3)
 }
 
-function likedArticle(likes: number, date: Date) {
-  const updatedArticle = articles.value.find((article) => article.datePublished === date)
-  if (updatedArticle) {
-    updatedArticle.likes = likes
+function viewedArticle(views: number) {
+  views++
+  saveToLocalStorage()
+  return views
+}
+
+function likedArticle(article: Article, likes: number, isPostLiked: boolean, date: Date, userId: string) {
+  const updatedArticle = {
+    title: article.title,
+    subheading: article.subheading,
+    separatedText: article.separatedText,
+    image: article.image,
+    category: article.category,
+    datePublished: article.datePublished,
+    likedBy: article.likedBy,
+    likes: article.likes,
+    views: article.views,
   }
+  if (updatedArticle) {
+    const index = updatedArticle.likedBy.findIndex((user) => user === userId)
+    updatedArticle.likes = likes
+    if (isPostLiked && index < 0) {
+      updatedArticle.likedBy.push(userId)
+    } else {
+      if (index >= 0) {
+        updatedArticle.likedBy.splice(index, 1)
+      }
+    }
+  }
+  const i = articles.value.findIndex((article) => article.datePublished === date)
+  articles.value[i] = updatedArticle
+  singleArticle.value = updatedArticle
+  filterArticles()
+  previewArticles()
+  saveToLocalStorage()
 }
 
 onMounted(async () => {
