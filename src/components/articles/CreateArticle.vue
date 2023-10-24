@@ -90,15 +90,14 @@ function emphasizeText(body: string) {
 }
 
 function saveArticle() {
-  numberOfOccurences.value = findChars(text.value, '*')
-  if (numberOfOccurences.value === 2) {
-    updatedArticle.value.separatedText = emphasizeText(text.value)
-  } else {
-    updatedArticle.value.separatedText.push(text.value)
-  }
   if (!updatedArticle.value.title.length) {
     return
   }
+
+  numberOfOccurences.value = findChars(text.value, '*')(numberOfOccurences.value === 2)
+    ? (updatedArticle.value.separatedText = emphasizeText(text.value))
+    : updatedArticle.value.separatedText.push(text.value)
+
   updatedArticle.value.datePublished = new Date(Date.now())
 
   emit('saveArticle', updatedArticle.value)
