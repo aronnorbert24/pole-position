@@ -27,6 +27,7 @@
       :article="singleArticle"
       :userId="user.userId"
       @likedArticle="likedArticle"
+      @showArticlesByCategory="showArticlesByCategory"
     />
     <ChampionshipPopup
       v-if="isChampionshipPopupShowing"
@@ -61,7 +62,6 @@ const articles = ref<Article[]>([])
 const singleArticle = ref<Article>({
   title: '',
   subheading: '',
-  text: '',
   separatedText: [],
   image: '',
   category: '',
@@ -92,7 +92,6 @@ const user = ref<User>({
 const article = ref<Article>({
   title: 'Article Title',
   subheading: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
-  text: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
   separatedText: [],
   image: 'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
   category: 'F1',
@@ -197,20 +196,34 @@ function viewedArticle(views: number) {
   return views
 }
 
-function likedArticle(likes: number, isPostLiked: boolean, date: Date, userId: string) {
-  const updatedArticle = articles.value.find((article) => article.datePublished === date)
+function likedArticle(article: Article, likes: number, isPostLiked: boolean, date: Date, userId: string) {
+  const updatedArticle = {
+    title: article.title,
+    subheading: article.subheading,
+    separatedText: article.separatedText,
+    image: article.image,
+    category: article.category,
+    datePublished: article.datePublished,
+    likedBy: article.likedBy,
+    likes: article.likes,
+    views: article.views,
+  }
   if (updatedArticle) {
+    const index = updatedArticle.likedBy.findIndex((user) => user === userId)
     updatedArticle.likes = likes
-    if (isPostLiked) {
-      console.log(updatedArticle.likedBy)
+    if (isPostLiked && index < 0) {
       updatedArticle.likedBy.push(userId)
     } else {
-      const index = updatedArticle.likedBy.findIndex((user) => user === userId)
-      if (index) {
+      if (index >= 0) {
         updatedArticle.likedBy.splice(index, 1)
       }
     }
   }
+  const i = articles.value.findIndex((article) => article.datePublished === date)
+  articles.value[i] = updatedArticle
+  singleArticle.value = updatedArticle
+  filterArticles()
+  previewArticles()
   saveToLocalStorage()
 }
 

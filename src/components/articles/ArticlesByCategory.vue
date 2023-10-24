@@ -1,7 +1,7 @@
 <template>
-  <div class="ml-2 mt-10 w-3/5 phone:w-11/12 computer:ml-auto computer:mr-auto">
+  <div class="ml-auto mr-auto mt-10 w-3/5 phone:w-11/12">
     <TitleSeparator :title="title" />
-    <div class="mb-12 rounded-xl bg-white text-center">
+    <div class="mb-5 rounded-xl bg-white text-center">
       <ul>
         <li v-for="(article, index) in articles" :key="index">
           <ArticlePreview :article="article" @showArticle="showArticle" />

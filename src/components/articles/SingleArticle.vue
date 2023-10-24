@@ -1,14 +1,14 @@
 <template>
   <div class="ml-auto mr-auto mt-10 w-3/5 phone:w-11/12">
-    <TitleSeparator :title="article.category" />
-    <div class="mb-12 h-fit w-full rounded-xl bg-white px-5 py-5 text-center">
+    <TitleSeparator :title="article.category" @showArticlesByCategory="showArticlesByCategory" />
+    <div class="mb-12 h-fit w-full rounded-xl bg-white px-5 py-5 text-center phone:mb-5">
       <div class="mx-auto my-auto flex max-h-full w-full">
         <img class="mx-auto max-w-full" :src="article.image" />
         <div class="mb-4 ml-[-100%] mt-auto h-fit w-full flex-none rounded-xl bg-red-600/75 p-3 text-center">
           <p class="text-2xl font-semibold text-white phone:text-lg">{{ article.title }}</p>
         </div>
       </div>
-      <div class="flex justify-between">
+      <div class="mt-2 flex justify-between">
         <p class="text-md font-medium text-black">By: Pole Position</p>
         <p class="text-md font-medium text-black phone:text-sm">{{ formattedDate }}</p>
       </div>
@@ -28,7 +28,7 @@
     </div>
     <div
       id="likeButton"
-      class="flex h-12 w-24 transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer"
+      class="flex h-12 w-24 rounded-xl transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer"
       :class="getLikedClass"
       @click.prevent="likedArticle"
     >
@@ -53,7 +53,8 @@ interface Props {
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
-  (e: 'likedArticle', likes: number, isPostLiked: boolean, date: Date, userId: string): void
+  (e: 'likedArticle', article: Article, likes: number, isPostLiked: boolean, date: Date, userId: string): void
+  (e: 'showArticlesByCategory', title: string): void
 }>()
 
 const isPostLiked = ref(findUserId())
@@ -72,7 +73,7 @@ const getLikedClass = computed(() => {
 })
 
 function findUserId() {
-  if (!props.article.likedBy) {
+  if (props.article.likedBy.length === 0) {
     return false
   }
   return props.article.likedBy.includes(props.userId)
@@ -81,7 +82,17 @@ function findUserId() {
 function likedArticle() {
   isPostLiked.value = !isPostLiked.value
   let updatedLikes = props.article.likes
-  isPostLiked.value ? updatedLikes++ : updatedLikes--
-  emit('likedArticle', updatedLikes, isPostLiked.value, props.article.datePublished, props.userId)
+  if (isPostLiked.value) {
+    updatedLikes++
+  } else if (updatedLikes >= 1) {
+    updatedLikes--
+  } else {
+    return
+  }
+  emit('likedArticle', props.article, updatedLikes, isPostLiked.value, props.article.datePublished, props.userId)
+}
+
+function showArticlesByCategory(title: string) {
+  emit('showArticlesByCategory', title)
 }
 </script>

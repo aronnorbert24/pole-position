@@ -21,12 +21,7 @@
     <label class="text-md font-semibold text-red-600">
       If you would like to emphasize a part of your article, include them in stars (* *):</label
     >
-    <textarea
-      type="text"
-      class="mt-5 h-96 w-full rounded-2xl bg-slate-200 p-2"
-      :placeholder="article.text"
-      v-model="updatedArticle.text"
-    >
+    <textarea type="text" class="mt-5 h-96 w-full rounded-2xl bg-slate-200 p-2" :placeholder="text" v-model="text">
     </textarea>
     <label class="text-md mt-5 font-normal text-red-600"
       >Please select the category of motorsport you are writing about in the article:</label
@@ -54,10 +49,10 @@ const emit = defineEmits<{
 }>()
 
 const numberOfOccurences = ref<number>()
+const text = ref('Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye')
 const updatedArticle = ref<Article>({
   title: props.article.title,
   subheading: props.article.subheading,
-  text: props.article.text,
   separatedText: props.article.separatedText,
   category: props.article.category,
   image: props.article.image,
@@ -85,21 +80,21 @@ function uploadImage(e: any) {
   }
 }
 
-function findChars(text: string, char: string) {
-  const numberOfOccurences = text.split('').filter((element) => element === char).length
+function findChars(body: string, char: string) {
+  const numberOfOccurences = body.split('').filter((element) => element === char).length
   return !numberOfOccurences ? 0 : numberOfOccurences
 }
 
-function emphasizeText(text: string) {
-  return text.split('*')
+function emphasizeText(body: string) {
+  return body.split('*')
 }
 
 function saveArticle() {
-  numberOfOccurences.value = findChars(updatedArticle.value.text, '*')
+  numberOfOccurences.value = findChars(text.value, '*')
   if (numberOfOccurences.value === 2) {
-    updatedArticle.value.separatedText = emphasizeText(updatedArticle.value.text)
+    updatedArticle.value.separatedText = emphasizeText(text.value)
   } else {
-    updatedArticle.value.separatedText.push(updatedArticle.value.text)
+    updatedArticle.value.separatedText.push(text.value)
   }
   if (!updatedArticle.value.title.length) {
     return
