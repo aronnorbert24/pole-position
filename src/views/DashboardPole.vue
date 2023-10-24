@@ -92,6 +92,7 @@ import PoleLink from '../components/header/PoleLink.vue'
 import PoleFooter from '../components/footer/PoleFooter.vue'
 import { Article } from '../types/article.ts'
 import { User } from '../types/user.ts'
+import { Comment } from '../types/comment.ts'
 
 const isCreateArticleShowing = ref(false)
 const isHomePageShowing = ref(true)
@@ -154,6 +155,18 @@ const user = ref<User>({
   password: 'qwertyqwerty',
   userPicture:
     'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
+})
+const comment = ref<Comment>({
+  articleId: '',
+  commentId: '',
+  userId: '',
+  childrenId: '',
+  date: new Date().getTime().toString(),
+  body: '',
+  likes: 0,
+  likedBy: [],
+  dislikes: 0,
+  dislikedBy: [],
 })
 const article = ref<Article>({
   title: 'Article Title',

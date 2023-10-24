@@ -35,19 +35,24 @@
       <LikeIcon />
       <p class="ml-1 mt-2">{{ props.article.likes }}</p>
     </div>
+    <div>
+      <ArticleComment :user="user" :comment="comment" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import ArticleComment from './ArticleComment.vue'
 import TitleSeparator from '../baseComponents/TitleSeparator.vue'
 import LikeIcon from '../icons/LikeIcon.vue'
 import { formatDate } from '../../helpers/helper.ts'
 import { Article } from '../../types/article.ts'
+import { User } from '../../types/user.ts'
 
 interface Props {
   article: Article
-  userId: string
+  user: User
 }
 
 const props = defineProps<Props>()
@@ -76,7 +81,7 @@ function findUserId() {
   if (props.article.likedBy.length === 0) {
     return false
   }
-  return props.article.likedBy.includes(props.userId)
+  return props.article.likedBy.includes(props.user.userId)
 }
 
 function likedArticle() {
@@ -89,7 +94,7 @@ function likedArticle() {
   } else {
     return
   }
-  emit('likedArticle', props.article, updatedLikes, isPostLiked.value, props.article.datePublished, props.userId)
+  emit('likedArticle', props.article, updatedLikes, isPostLiked.value, props.article.datePublished, props.user.userId)
 }
 
 function showArticlesByCategory(title: string) {
