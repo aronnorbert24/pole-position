@@ -1,7 +1,7 @@
 <template>
   <div class="mt-10 computer:ml-auto computer:mr-10 computer:w-3/5">
     <TitleSeparator :title="article.category" @showArticlesByCategory="showArticlesByCategory" />
-    <div class="mb-12 h-fit w-full rounded-xl bg-white px-5 py-5 text-center phone:mb-5">
+    <div class="mb-5 h-fit w-full rounded-xl bg-white px-5 py-5 text-center phone:mb-5">
       <div class="mx-auto my-auto flex max-h-full w-full">
         <img class="mx-auto max-w-full" :src="article.image" />
         <div class="mb-4 ml-[-100%] mt-auto h-fit w-full flex-none rounded-xl bg-red-600/75 p-3 text-center">
@@ -35,7 +35,7 @@
       <LikeIcon />
       <p class="ml-1 mt-2">{{ props.article.likes }}</p>
     </div>
-    <div>
+    <div class="mt-12 flex h-fit w-full bg-white p-2">
       <ArticleComment :user="user" :comment="comment" />
     </div>
   </div>

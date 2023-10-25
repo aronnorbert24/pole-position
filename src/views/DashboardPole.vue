@@ -161,7 +161,7 @@ const comment = ref<Comment>({
   userId: '',
   childrenId: [],
   commentId: '',
-  body: '',
+  body: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
   date: new Date(),
   likes: 0,
   dislikes: 0,
