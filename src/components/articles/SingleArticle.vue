@@ -49,10 +49,12 @@ import LikeIcon from '../icons/LikeIcon.vue'
 import { formatDate } from '../../helpers/helper.ts'
 import { Article } from '../../types/article.ts'
 import { User } from '../../types/user.ts'
+import { Comment } from '../../types/comment.ts'
 
 interface Props {
   article: Article
   user: User
+  comment: Comment
 }
 
 const props = defineProps<Props>()

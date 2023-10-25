@@ -158,14 +158,14 @@ const user = ref<User>({
 })
 const comment = ref<Comment>({
   articleId: '',
-  commentId: '',
   userId: '',
-  childrenId: '',
-  date: new Date().getTime().toString(),
+  childrenId: [],
+  commentId: '',
   body: '',
+  date: new Date(),
   likes: 0,
-  likedBy: [],
   dislikes: 0,
+  likedBy: [],
   dislikedBy: [],
 })
 const article = ref<Article>({
