@@ -29,6 +29,7 @@
       @likedArticle="likedArticle"
       @showArticlesByCategory="showArticlesByCategory"
     />
+    <PoleFooter @showArticlesByCategory="showArticlesByCategory" />
     <ChampionshipPopup
       v-if="isChampionshipPopupShowing"
       textf1="Soon to show the F1 standings"
@@ -49,6 +50,7 @@ import ArticlesByCategory from '../components/articles/ArticlesByCategory.vue'
 import ChampionshipPopup from '../components/articles/ChampionshipPopup.vue'
 import PoleHeader from '../components/header/PoleHeader.vue'
 import PoleLink from '../components/header/PoleLink.vue'
+import PoleFooter from '../components/footer/PoleFooter.vue'
 import { Article } from '../types/article.ts'
 import { User } from '../types/user.ts'
 
