@@ -1,6 +1,6 @@
 <template>
   <div
-    class="absolute top-1/4 z-50 m-auto h-fit w-6/12 rounded-2xl border-2 border-black bg-white p-2 phone:ml-12 phone:w-9/12 computer:left-20 computer:ml-96"
+    class="absolute left-20 top-1/4 z-50 m-auto ml-96 h-fit w-6/12 rounded-2xl border-2 border-black bg-white p-2 phone:left-0 phone:ml-10 phone:w-9/12"
   >
     <div class="mb-10 flex justify-between">
       <div class="justify-content flex">
