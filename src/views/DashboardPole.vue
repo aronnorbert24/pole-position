@@ -5,7 +5,7 @@
     <PoleLink @showCreate="showCreate" @showArticlesByCategory="showArticlesByCategory" />
     <div class="computer:flex">
       <div class="w-7/12 phone:mx-auto phone:w-11/12">
-        <PoleSearch class="computer:hidden" />
+        <PoleSearch class="computer:hidden" @searchArticles="searchArticles" />
         <CreateArticle v-if="isCreateArticleShowing" :article="article" class="mt-10" @saveArticle="saveArticle" />
         <ArticleList
           v-if="isHomePageShowing"
@@ -34,7 +34,7 @@
         />
       </div>
       <div class="w-3/12 phone:mx-auto phone:w-11/12 computer:ml-10">
-        <PoleSearch class="phone:hidden" />
+        <PoleSearch class="phone:hidden" @searchArticles="searchArticles" />
         <PoleTrending :trending="trendingArticles" @showArticle="showArticle" />
       </div>
     </div>
@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 import CreateArticle from '../components/articles/CreateArticle.vue'
 import ArticleList from '../components/articles/ArticleList.vue'
@@ -71,6 +71,19 @@ const isChampionshipPopupShowing = ref(false)
 const isArticlesByCategoryShowing = ref(false)
 const isSingleArticleShowing = ref(false)
 const closeChampionshipPopupRef = ref(null)
+const searchQuery = ref('')
+
+const searchedArticles = computed(() => {
+  if (!searchQuery.value) {
+    return []
+  }
+  return articles.value.filter((article: Article) => {
+    const filterSmall = searchQuery.value.toLowerCase()
+    const titleSmall = article.title.toLowerCase()
+    const subheadingSmall = article.subheading.toLowerCase()
+    return titleSmall.includes(filterSmall) || subheadingSmall.includes(filterSmall)
+  })
+})
 const articles = ref<Article[]>([])
 const singleArticle = ref<Article>({
   title: '',
@@ -202,6 +215,10 @@ function previewArticles() {
   f3LatestArticles.value = f3Articles.value.slice(0, 3)
   wecLatestArticles.value = wecArticles.value.slice(0, 3)
   motogpLatestArticles.value = motogpArticles.value.slice(0, 3)
+}
+
+function searchArticles(search: string) {
+  searchQuery.value = search
 }
 
 function sortArticles() {
