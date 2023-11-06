@@ -1,5 +1,5 @@
 <template>
-  <div class="ml-2 w-3/5 rounded-xl bg-white p-2 text-center phone:w-11/12 computer:ml-auto computer:mr-auto">
+  <div class="mx-auto w-3/5 rounded-xl bg-white p-2 text-center phone:w-11/12">
     <label class="text-md mt-5 font-normal text-red-600">Please enter the title of the article:</label>
     <input
       type="text"
@@ -28,7 +28,7 @@
     >
     <ArticleCategory :category="updatedArticle.category" @updateNewCategory="updateCategory" />
     <label class="text-md font-normal text-red-600">Please select an image suitable to the article:</label>
-    <input type="file" accept="image/*" class="ml-16 mt-5 w-full computer:ml-96" @change="uploadImage" />
+    <input type="file" accept="image/*" class="ml-96 mt-5 w-full phone:ml-16" @change="uploadImage" />
     <button class="mt-5 bg-slate-200" @click.prevent="saveArticle()">Save</button>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-40">
+  <div class="flex h-40 computer:px-4">
     <div
       class="mx-auto my-auto w-3/12 transition-transform duration-300 ease-in-out hover:cursor-pointer phone:w-5/12"
       @click="showArticle"
