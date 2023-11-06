@@ -33,6 +33,7 @@
         />
       </div>
       <div class="w-3/12 phone:mx-auto phone:w-11/12 computer:ml-10">
+        <PoleSearch class="phone:hidden" />
         <PoleTrending :trending="trendingArticles" @showArticle="showArticle" />
       </div>
     </div>
@@ -56,6 +57,7 @@ import SingleArticle from '../components/articles/SingleArticle.vue'
 import ArticlesByCategory from '../components/articles/ArticlesByCategory.vue'
 import PoleTrending from '../components/articles/PoleTrending.vue'
 import ChampionshipPopup from '../components/articles/ChampionshipPopup.vue'
+import PoleSearch from '../components/articles/PoleSearch.vue'
 import PoleHeader from '../components/header/PoleHeader.vue'
 import PoleLink from '../components/header/PoleLink.vue'
 import PoleFooter from '../components/footer/PoleFooter.vue'
