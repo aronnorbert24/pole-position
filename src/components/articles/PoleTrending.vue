@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import TitleSeparator from '../baseComponents/TitleSeparator.vue'
-import Article from '../../types/article.ts'
+import { Article } from '../../types/article.ts'
 
 interface Props {
   trending: Article[]

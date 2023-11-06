@@ -208,7 +208,7 @@ function sortArticles() {
 }
 
 function trending() {
-  const sortedArticles: Article[] = sortArticles()
+  const sortedArticles = sortArticles()
   trendingArticles.value = sortedArticles.slice(0, 5)
 }
 
