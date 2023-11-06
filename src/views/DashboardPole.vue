@@ -33,7 +33,7 @@
         />
       </div>
       <div class="ml-10 w-3/12">
-        <PoleTrending :trending="trendingArticles" />
+        <PoleTrending :trending="trendingArticles" @showArticle="showArticle" />
       </div>
     </div>
     <PoleFooter @showArticlesByCategory="showArticlesByCategory" />

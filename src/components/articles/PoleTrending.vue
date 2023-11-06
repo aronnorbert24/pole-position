@@ -6,6 +6,7 @@
         v-for="(article, index) in trending"
         :key="index"
         class="py-1 transition-transform duration-300 ease-in-out hover:cursor-pointer hover:bg-slate-400 hover:underline"
+        @click="showArticle(article)"
       >
         <p class="text-md px-2 font-medium text-red-600">{{ article.title }}</p>
       </div>
@@ -21,5 +22,13 @@ interface Props {
   trending: Article[]
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
+
+const emit = defineEmits<{
+  (e: 'showArticle', article: Article): void
+}>()
+
+function showArticle(article: Article) {
+  emit('showArticle', article)
+}
 </script>
