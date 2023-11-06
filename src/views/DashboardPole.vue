@@ -3,32 +3,39 @@
     <div v-if="isChampionshipPopupShowing" class="absolute z-10 h-full w-full bg-black opacity-50"></div>
     <PoleHeader @showHome="showHome" @showPopup="toggleChampionshipPopup" />
     <PoleLink @showCreate="showCreate" @showArticlesByCategory="showArticlesByCategory" />
-    <CreateArticle v-if="isCreateArticleShowing" :article="article" class="mt-10" @saveArticle="saveArticle" />
-    <ArticleList
-      v-if="isHomePageShowing"
-      :f1Articles="f1LatestArticles"
-      :f2Articles="f2LatestArticles"
-      :f3Articles="f3LatestArticles"
-      :wecArticles="wecLatestArticles"
-      :motogpArticles="motogpLatestArticles"
-      class="mt-10"
-      @likedArticle="likedArticle"
-      @showArticlesByCategory="showArticlesByCategory"
-      @showArticle="showArticle"
-    />
-    <ArticlesByCategory
-      v-if="isArticlesByCategoryShowing"
-      :title="categoryTitle"
-      :articles="articlesByCategory"
-      @showArticle="showArticle"
-    />
-    <SingleArticle
-      v-if="isSingleArticleShowing"
-      :article="singleArticle"
-      :userId="user.userId"
-      @likedArticle="likedArticle"
-      @showArticlesByCategory="showArticlesByCategory"
-    />
+    <div class="computer:flex">
+      <div class="w-7/12 phone:mx-auto phone:w-11/12">
+        <CreateArticle v-if="isCreateArticleShowing" :article="article" class="mt-10" @saveArticle="saveArticle" />
+        <ArticleList
+          v-if="isHomePageShowing"
+          :f1Articles="f1LatestArticles"
+          :f2Articles="f2LatestArticles"
+          :f3Articles="f3LatestArticles"
+          :wecArticles="wecLatestArticles"
+          :motogpArticles="motogpLatestArticles"
+          class="mt-10"
+          @likedArticle="likedArticle"
+          @showArticlesByCategory="showArticlesByCategory"
+          @showArticle="showArticle"
+        />
+        <ArticlesByCategory
+          v-if="isArticlesByCategoryShowing"
+          :title="categoryTitle"
+          :articles="articlesByCategory"
+          @showArticle="showArticle"
+        />
+        <SingleArticle
+          v-if="isSingleArticleShowing"
+          :article="singleArticle"
+          :userId="user.userId"
+          @likedArticle="likedArticle"
+          @showArticlesByCategory="showArticlesByCategory"
+        />
+      </div>
+      <div class="w-3/12 phone:mx-auto phone:w-11/12 computer:ml-10">
+        <PoleTrending :trending="trendingArticles" @showArticle="showArticle" />
+      </div>
+    </div>
     <PoleFooter @showArticlesByCategory="showArticlesByCategory" />
     <ChampionshipPopup
       v-if="isChampionshipPopupShowing"
@@ -47,6 +54,7 @@ import CreateArticle from '../components/articles/CreateArticle.vue'
 import ArticleList from '../components/articles/ArticleList.vue'
 import SingleArticle from '../components/articles/SingleArticle.vue'
 import ArticlesByCategory from '../components/articles/ArticlesByCategory.vue'
+import PoleTrending from '../components/articles/PoleTrending.vue'
 import ChampionshipPopup from '../components/articles/ChampionshipPopup.vue'
 import PoleHeader from '../components/header/PoleHeader.vue'
 import PoleLink from '../components/header/PoleLink.vue'
@@ -82,6 +90,7 @@ const f2LatestArticles = ref<Article[]>([])
 const f3LatestArticles = ref<Article[]>([])
 const wecLatestArticles = ref<Article[]>([])
 const motogpLatestArticles = ref<Article[]>([])
+const trendingArticles = ref<Article[]>([])
 const articlesByCategory = ref<Article[]>([])
 const categoryTitle = ref('')
 const user = ref<User>({
@@ -192,6 +201,17 @@ function previewArticles() {
   motogpLatestArticles.value = motogpArticles.value.slice(0, 3)
 }
 
+function sortArticles() {
+  return articles.value.sort((a: Article, b: Article) => {
+    return a.views < b.views ? 1 : a.views > b.views ? -1 : 0
+  })
+}
+
+function trending() {
+  const sortedArticles = sortArticles()
+  trendingArticles.value = sortedArticles.slice(0, 5)
+}
+
 function viewedArticle(views: number) {
   views++
   saveToLocalStorage()
@@ -232,7 +252,8 @@ function likedArticle(article: Article, likes: number, isPostLiked: boolean, dat
 onMounted(async () => {
   await getFromLocalStorage()
   await filterArticles()
-  previewArticles()
+  await previewArticles()
+  trending()
 })
 
 onClickOutside(closeChampionshipPopupRef, toggleChampionshipPopup)

@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto mt-10 w-3/5 phone:w-11/12">
+  <div class="mt-10 computer:ml-auto computer:mr-10 computer:w-3/5">
     <TitleSeparator title="F1" @showArticlesByCategory="showArticlesByCategory" />
     <div class="mb-12 rounded-xl bg-white text-center">
       <ul>
