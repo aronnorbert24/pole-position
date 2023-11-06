@@ -5,6 +5,7 @@
     <PoleLink @showCreate="showCreate" @showArticlesByCategory="showArticlesByCategory" />
     <div class="computer:flex">
       <div class="w-7/12 phone:mx-auto phone:w-11/12">
+        <PoleSearch class="computer:hidden" />
         <CreateArticle v-if="isCreateArticleShowing" :article="article" class="mt-10" @saveArticle="saveArticle" />
         <ArticleList
           v-if="isHomePageShowing"
