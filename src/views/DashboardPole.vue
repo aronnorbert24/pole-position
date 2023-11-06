@@ -32,8 +32,8 @@
           @showArticlesByCategory="showArticlesByCategory"
         />
       </div>
-      <div class="ml-10 w-fit">
-        <PoleTrending />
+      <div class="ml-10 w-3/12">
+        <PoleTrending :trending="trendingArticles" />
       </div>
     </div>
     <PoleFooter @showArticlesByCategory="showArticlesByCategory" />
@@ -90,6 +90,7 @@ const f2LatestArticles = ref<Article[]>([])
 const f3LatestArticles = ref<Article[]>([])
 const wecLatestArticles = ref<Article[]>([])
 const motogpLatestArticles = ref<Article[]>([])
+const trendingArticles = ref<Article[]>([])
 const articlesByCategory = ref<Article[]>([])
 const categoryTitle = ref('')
 const user = ref<User>({
@@ -200,6 +201,17 @@ function previewArticles() {
   motogpLatestArticles.value = motogpArticles.value.slice(0, 3)
 }
 
+function sortArticles() {
+  return articles.value.sort((a: Article, b: Article) => {
+    return a.views < b.views ? 1 : a.views > b.views ? -1 : 0
+  })
+}
+
+function trending() {
+  const sortedArticles: Article[] = sortArticles()
+  trendingArticles.value = sortedArticles.slice(0, 5)
+}
+
 function viewedArticle(views: number) {
   views++
   saveToLocalStorage()
@@ -240,7 +252,8 @@ function likedArticle(article: Article, likes: number, isPostLiked: boolean, dat
 onMounted(async () => {
   await getFromLocalStorage()
   await filterArticles()
-  previewArticles()
+  await previewArticles()
+  trending()
 })
 
 onClickOutside(closeChampionshipPopupRef, toggleChampionshipPopup)
