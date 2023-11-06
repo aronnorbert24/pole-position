@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto w-3/5 rounded-xl bg-white p-2 text-center phone:w-11/12">
+  <div class="ml-auto mr-10 w-3/5 rounded-xl bg-white p-2 text-center phone:w-11/12">
     <label class="text-md mt-5 font-normal text-red-600">Please enter the title of the article:</label>
     <input
       type="text"
