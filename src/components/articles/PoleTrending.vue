@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-10">
+  <div class="mt-10 phone:mt-24">
     <TitleSeparator title="Trending" />
     <div class="h-fit bg-white text-left">
       <div

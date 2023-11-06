@@ -1,5 +1,5 @@
 <template>
-  <div class="ml-auto mr-10 mt-10 w-3/5 phone:w-11/12">
+  <div class="mt-10 computer:ml-auto computer:mr-10 computer:w-3/5">
     <TitleSeparator :title="title" />
     <div class="mb-5 rounded-xl bg-white text-center">
       <ul>

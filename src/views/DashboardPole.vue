@@ -4,7 +4,7 @@
     <PoleHeader @showHome="showHome" @showPopup="toggleChampionshipPopup" />
     <PoleLink @showCreate="showCreate" @showArticlesByCategory="showArticlesByCategory" />
     <div class="computer:flex">
-      <div class="w-7/12">
+      <div class="w-7/12 phone:mx-auto phone:w-11/12">
         <CreateArticle v-if="isCreateArticleShowing" :article="article" class="mt-10" @saveArticle="saveArticle" />
         <ArticleList
           v-if="isHomePageShowing"
@@ -32,7 +32,7 @@
           @showArticlesByCategory="showArticlesByCategory"
         />
       </div>
-      <div class="ml-10 w-3/12">
+      <div class="w-3/12 phone:mx-auto phone:w-11/12 computer:ml-10">
         <PoleTrending :trending="trendingArticles" @showArticle="showArticle" />
       </div>
     </div>
