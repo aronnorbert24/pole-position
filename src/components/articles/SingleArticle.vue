@@ -81,11 +81,11 @@ function findUserId() {
 
 function likedArticle() {
   isPostLiked.value = !isPostLiked.value
-  const updatedLikes = ref(props.article.likes)
+  let updatedLikes = props.article.likes
   if (isPostLiked.value) {
-    updatedLikes.value++
-  } else if (updatedLikes.value >= 1) {
-    updatedLikes.value--
+    updatedLikes++
+  } else if (updatedLikes >= 1) {
+    updatedLikes--
   } else {
     return
   }
