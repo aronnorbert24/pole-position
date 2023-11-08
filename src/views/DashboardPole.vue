@@ -54,7 +54,7 @@
     />
     <div
       v-if="isSearchBarShowing"
-      class="absolute left-20 top-12 z-50 m-auto ml-96 h-fit w-6/12 rounded-2xl border-2 border-black bg-white p-2 phone:left-0 phone:ml-10 phone:w-9/12"
+      class="absolute left-20 top-12 z-50 m-auto ml-96 h-fit w-6/12 rounded-2xl border-2 border-black bg-white p-2 phone:left-0 phone:top-6 phone:ml-4 phone:w-11/12"
       ref="closeSearchBarRef"
     >
       <p
@@ -239,13 +239,10 @@ function toggleChampionshipPopup() {
 
 function toggleSearchBar() {
   isSearchBarShowing.value = !isSearchBarShowing.value
-  if (!isSearchResultShowing.value) {
-    emptySearchQuery()
+  if (isSearchBarShowing.value) {
+    showHome()
+    searchQuery.value = ''
   }
-}
-
-function emptySearchQuery() {
-  searchQuery.value = ''
 }
 
 function saveArticle(article: Article) {
