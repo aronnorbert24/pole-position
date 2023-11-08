@@ -1,11 +1,17 @@
 <template>
   <div class="z-0 h-fit w-screen">
-    <div v-if="isChampionshipPopupShowing" class="absolute z-10 h-full w-full bg-black opacity-50"></div>
+    <div
+      v-if="isChampionshipPopupShowing || isSearchBarShowing"
+      class="absolute z-10 h-full w-full bg-black opacity-50"
+    ></div>
     <PoleHeader @showHome="showHome" @showPopup="toggleChampionshipPopup" />
-    <PoleLink @showCreate="showCreate" @showArticlesByCategory="showArticlesByCategory" />
+    <PoleLink
+      @showCreate="showCreate"
+      @showArticlesByCategory="showArticlesByCategory"
+      @showSearchBar="toggleSearchBar"
+    />
     <div class="computer:flex">
       <div class="w-7/12 phone:mx-auto phone:w-11/12">
-        <PoleSearch class="computer:hidden" @searchArticles="searchArticles" />
         <CreateArticle v-if="isCreateArticleShowing" :article="article" class="mt-10" @saveArticle="saveArticle" />
         <ArticleList
           v-if="isHomePageShowing"
@@ -34,7 +40,6 @@
         />
       </div>
       <div class="w-3/12 phone:mx-auto phone:w-11/12 computer:ml-10">
-        <PoleSearch class="phone:hidden" @searchArticles="searchArticles" />
         <PoleTrending :trending="trendingArticles" @showArticle="showArticle" />
       </div>
     </div>
@@ -46,6 +51,20 @@
       @closeChampionship="toggleChampionshipPopup"
       ref="closeChampionshipPopupRef"
     />
+    <div
+      v-if="isSearchBarShowing"
+      class="absolute left-20 top-1/4 z-50 m-auto ml-96 h-fit w-6/12 rounded-2xl border-2 border-black bg-white p-2 phone:left-0 phone:ml-10 phone:w-9/12"
+      ref="closeSearchBarRef"
+    >
+      <p
+        class="text-right text-2xl font-semibold text-black transition-transform duration-300 ease-in-out hover:cursor-pointer hover:text-gray-400"
+        @click="toggleSearchBar"
+      >
+        X
+      </p>
+      <PoleSearch @searchArticles="searchArticles" />
+      <SearchResults title="Search Results" :articles="searchedArticles" />
+    </div>
   </div>
 </template>
 
@@ -59,6 +78,7 @@ import ArticlesByCategory from '../components/articles/ArticlesByCategory.vue'
 import PoleTrending from '../components/articles/PoleTrending.vue'
 import ChampionshipPopup from '../components/articles/ChampionshipPopup.vue'
 import PoleSearch from '../components/articles/PoleSearch.vue'
+import SearchResults from '../components/articles/SearchResults.vue'
 import PoleHeader from '../components/header/PoleHeader.vue'
 import PoleLink from '../components/header/PoleLink.vue'
 import PoleFooter from '../components/footer/PoleFooter.vue'
@@ -70,7 +90,9 @@ const isHomePageShowing = ref(true)
 const isChampionshipPopupShowing = ref(false)
 const isArticlesByCategoryShowing = ref(false)
 const isSingleArticleShowing = ref(false)
+const isSearchBarShowing = ref(false)
 const closeChampionshipPopupRef = ref(null)
+const closeSearchBarRef = ref(null)
 const searchQuery = ref('')
 
 const searchedArticles = computed(() => {
@@ -146,6 +168,7 @@ function showHome() {
   isArticlesByCategoryShowing.value = false
   isHomePageShowing.value = true
   isSingleArticleShowing.value = false
+  searchQuery.value = ''
 }
 
 function showCreate() {
@@ -153,6 +176,7 @@ function showCreate() {
   isArticlesByCategoryShowing.value = false
   isCreateArticleShowing.value = true
   isSingleArticleShowing.value = false
+  searchQuery.value = ''
 }
 
 function showArticlesByCategory(title: string) {
@@ -170,6 +194,7 @@ function showArticlesByCategory(title: string) {
   isHomePageShowing.value = false
   isCreateArticleShowing.value = false
   isSingleArticleShowing.value = false
+  searchQuery.value = ''
 }
 
 function showArticle(article: Article) {
@@ -179,10 +204,16 @@ function showArticle(article: Article) {
   isHomePageShowing.value = false
   isCreateArticleShowing.value = false
   isSingleArticleShowing.value = true
+  searchQuery.value = ''
 }
 
 function toggleChampionshipPopup() {
   isChampionshipPopupShowing.value = !isChampionshipPopupShowing.value
+}
+
+function toggleSearchBar() {
+  isSearchBarShowing.value = !isSearchBarShowing.value
+  searchQuery.value = ''
 }
 
 function saveArticle(article: Article) {
@@ -277,4 +308,5 @@ onMounted(async () => {
 })
 
 onClickOutside(closeChampionshipPopupRef, toggleChampionshipPopup)
+onClickOutside(closeSearchBarRef, toggleSearchBar)
 </script>
