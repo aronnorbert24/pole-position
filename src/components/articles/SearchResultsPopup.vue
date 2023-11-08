@@ -44,7 +44,7 @@ const emit = defineEmits<{
 function showArticle(article: Article) {
   emit('showArticle', article)
 }
-function showSearchedArticles(article: Article) {
-  emit('showSearchedArticles', article)
+function showSearchedArticles() {
+  emit('showSearchedArticles')
 }
 </script>
