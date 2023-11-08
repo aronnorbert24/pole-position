@@ -5,6 +5,7 @@
     <F3Icon class="ml-40 bg-white" @click="showArticlesByCategory('F3')" />
     <WecIcon class="ml-40 bg-white" @click="showArticlesByCategory('WEC')" />
     <MotogpIcon class="ml-40 bg-white" @click="showArticlesByCategory('MotoGP')" />
+    <SearchIcon class="ml-40" @click="showSearchBar" />
   </div>
 </template>
 
@@ -14,12 +15,18 @@ import F2Icon from '../icons/F2Icon.vue'
 import F3Icon from '../icons/F3Icon.vue'
 import WecIcon from '../icons/WecIcon.vue'
 import MotogpIcon from '../icons/MotogpIcon.vue'
+import SearchIcon from '../icons/SearchIcon.vue'
 
 const emit = defineEmits<{
   (e: 'showArticlesByCategory', title: string): void
+  (e: 'showSearchBar'): void
 }>()
 
 function showArticlesByCategory(title: string) {
   emit('showArticlesByCategory', title)
+}
+
+function showSearchBar() {
+  emit('showSearchBar')
 }
 </script>
