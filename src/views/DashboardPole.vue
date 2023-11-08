@@ -1,9 +1,9 @@
 <template>
+  <div
+    v-if="isChampionshipPopupShowing || isSearchBarShowing"
+    class="absolute z-10 h-full w-full bg-black opacity-50"
+  ></div>
   <div class="z-0 h-fit w-screen">
-    <div
-      v-if="isChampionshipPopupShowing || isSearchBarShowing"
-      class="absolute z-10 h-full w-full bg-black opacity-50"
-    ></div>
     <PoleHeader @showHome="showHome" @showPopup="toggleChampionshipPopup" />
     <PoleLink
       @showCreate="showCreate"
@@ -12,6 +12,7 @@
     />
     <div class="computer:flex">
       <div class="w-7/12 phone:mx-auto phone:w-11/12">
+        <SearchResults v-if="isSearchResultShowing" title="Search Results" :articles="searchedArticles" />
         <CreateArticle v-if="isCreateArticleShowing" :article="article" class="mt-10" @saveArticle="saveArticle" />
         <ArticleList
           v-if="isHomePageShowing"
@@ -53,7 +54,7 @@
     />
     <div
       v-if="isSearchBarShowing"
-      class="absolute left-20 top-1/4 z-50 m-auto ml-96 h-fit w-6/12 rounded-2xl border-2 border-black bg-white p-2 phone:left-0 phone:ml-10 phone:w-9/12"
+      class="absolute left-20 top-12 z-50 m-auto ml-96 h-fit w-6/12 rounded-2xl border-2 border-black bg-white p-2 phone:left-0 phone:ml-10 phone:w-9/12"
       ref="closeSearchBarRef"
     >
       <p
@@ -63,7 +64,13 @@
         X
       </p>
       <PoleSearch @searchArticles="searchArticles" />
-      <SearchResults title="Search Results" :articles="searchedArticles" />
+      <SearchResultsPopup
+        title="Search Results"
+        :length="searchedArticles.length"
+        :articles="searchedArticlesPopup"
+        @showArticle="showArticle"
+        @showSearchedArticles="showSearchedArticles"
+      />
     </div>
   </div>
 </template>
@@ -79,6 +86,7 @@ import PoleTrending from '../components/articles/PoleTrending.vue'
 import ChampionshipPopup from '../components/articles/ChampionshipPopup.vue'
 import PoleSearch from '../components/articles/PoleSearch.vue'
 import SearchResults from '../components/articles/SearchResults.vue'
+import SearchResultsPopup from '../components/articles/SearchResultsPopup.vue'
 import PoleHeader from '../components/header/PoleHeader.vue'
 import PoleLink from '../components/header/PoleLink.vue'
 import PoleFooter from '../components/footer/PoleFooter.vue'
@@ -91,6 +99,7 @@ const isChampionshipPopupShowing = ref(false)
 const isArticlesByCategoryShowing = ref(false)
 const isSingleArticleShowing = ref(false)
 const isSearchBarShowing = ref(false)
+const isSearchResultShowing = ref(false)
 const closeChampionshipPopupRef = ref(null)
 const closeSearchBarRef = ref(null)
 const searchQuery = ref('')
@@ -106,6 +115,14 @@ const searchedArticles = computed(() => {
     return titleSmall.includes(filterSmall) || subheadingSmall.includes(filterSmall)
   })
 })
+
+const searchedArticlesPopup = computed(() => {
+  if (searchedArticles.value.length === 0) {
+    return []
+  }
+  return searchedArticles.value.slice(0, 3)
+})
+
 const articles = ref<Article[]>([])
 const singleArticle = ref<Article>({
   title: '',
@@ -168,7 +185,7 @@ function showHome() {
   isArticlesByCategoryShowing.value = false
   isHomePageShowing.value = true
   isSingleArticleShowing.value = false
-  searchQuery.value = ''
+  isSearchResultShowing.value = false
 }
 
 function showCreate() {
@@ -176,7 +193,7 @@ function showCreate() {
   isArticlesByCategoryShowing.value = false
   isCreateArticleShowing.value = true
   isSingleArticleShowing.value = false
-  searchQuery.value = ''
+  isSearchResultShowing.value = false
 }
 
 function showArticlesByCategory(title: string) {
@@ -194,7 +211,7 @@ function showArticlesByCategory(title: string) {
   isHomePageShowing.value = false
   isCreateArticleShowing.value = false
   isSingleArticleShowing.value = false
-  searchQuery.value = ''
+  isSearchResultShowing.value = false
 }
 
 function showArticle(article: Article) {
@@ -204,7 +221,16 @@ function showArticle(article: Article) {
   isHomePageShowing.value = false
   isCreateArticleShowing.value = false
   isSingleArticleShowing.value = true
-  searchQuery.value = ''
+  isSearchResultShowing.value = false
+}
+
+function showSearchedArticles() {
+  isArticlesByCategoryShowing.value = false
+  isHomePageShowing.value = false
+  isCreateArticleShowing.value = false
+  isSingleArticleShowing.value = false
+  isSearchResultShowing.value = true
+  toggleSearchBar()
 }
 
 function toggleChampionshipPopup() {
@@ -213,6 +239,12 @@ function toggleChampionshipPopup() {
 
 function toggleSearchBar() {
   isSearchBarShowing.value = !isSearchBarShowing.value
+  if (!isSearchResultShowing.value) {
+    emptySearchQuery()
+  }
+}
+
+function emptySearchQuery() {
   searchQuery.value = ''
 }
 
