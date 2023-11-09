@@ -35,7 +35,8 @@
       <LikeIcon />
       <p class="ml-1 mt-2">{{ props.article.likes }}</p>
     </div>
-    <div class="mt-12 flex h-fit w-full bg-white p-2">
+    <div class="mt-12 h-fit w-full bg-white p-2">
+      <CreateComment :user="user" :comment="comment" />
       <ArticleComment :user="user" :comment="comment" />
     </div>
   </div>
@@ -44,6 +45,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import ArticleComment from './ArticleComment.vue'
+import CreateComment from './CreateComment.vue'
 import TitleSeparator from '../baseComponents/TitleSeparator.vue'
 import LikeIcon from '../icons/LikeIcon.vue'
 import { formatDate } from '../../helpers/helper.ts'
@@ -68,7 +70,7 @@ const isPostLiked = ref(findUserId())
 const formattedDate = ref(formatDate(props.article.datePublished))
 
 function emphasizeClass(index: number, paragraph: string) {
-  if (index === 1) {
+  if (index % 2 === 1) {
     return paragraph[0] === '"'
       ? 'border-l-4 border-red-600 bg-gradient-to-r text-lg from-pink-300 to-white font-semibold p-3 leading-2 italic'
       : 'border-l-4 border-red-600 bg-gradient-to-r text-lg from-pink-300 to-white font-semibold p-3 leading-2'

@@ -95,7 +95,7 @@ function saveArticle() {
   }
 
   numberOfOccurences.value = findChars(text.value, '*')
-  numberOfOccurences.value === 2
+  numberOfOccurences.value % 2 === 0
     ? (updatedArticle.value.separatedText = emphasizeText(text.value))
     : updatedArticle.value.separatedText.push(text.value)
 
