@@ -37,7 +37,9 @@
     </div>
     <div class="mt-12 h-fit w-full bg-white p-2">
       <CreateComment :user="user" :comment="comment" />
-      <ArticleComment :user="user" :comment="comment" />
+      <div v-for="(comment, index) in comments" :key="index">
+        <ArticleComment :user="user" :comment="comment" />
+      </div>
     </div>
   </div>
 </template>
@@ -57,6 +59,7 @@ interface Props {
   article: Article
   user: User
   comment: Comment
+  comments: Comment[]
 }
 
 const props = defineProps<Props>()
@@ -66,7 +69,7 @@ const emit = defineEmits<{
   (e: 'showArticlesByCategory', title: string): void
 }>()
 
-const isPostLiked = ref(findUserId())
+const isPostLiked = ref(props.article.likedBy.includes(props.user.userId))
 const formattedDate = ref(formatDate(props.article.datePublished))
 
 function emphasizeClass(index: number, paragraph: string) {
@@ -80,13 +83,6 @@ function emphasizeClass(index: number, paragraph: string) {
 const getLikedClass = computed(() => {
   return !isPostLiked.value ? 'bg-white text-black' : 'bg-red-600 text-white'
 })
-
-function findUserId() {
-  if (props.article.likedBy.length === 0) {
-    return false
-  }
-  return props.article.likedBy.includes(props.user.userId)
-}
 
 function likedArticle() {
   isPostLiked.value = !isPostLiked.value

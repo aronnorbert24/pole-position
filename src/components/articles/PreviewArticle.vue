@@ -31,7 +31,8 @@ const emit = defineEmits<{
   (e: 'showArticle', article: Article): void
 }>()
 
-const previewText = props.article.subheading.slice(0, 100)
+const subheading = props.article.subheading
+const previewText = subheading.slice(0, 100)
 
 function showArticle() {
   emit('showArticle', props.article)

@@ -1,51 +1,16 @@
 <template>
-  <div class="mt-10 computer:ml-auto computer:mr-10 computer:w-3/5">
-    <TitleSeparator title="F1" @showArticlesByCategory="showArticlesByCategory" />
-    <div class="mb-12 rounded-xl bg-white text-center">
-      <ul>
-        <li v-for="(article, index) in f1Articles" :key="index">
-          <ArticlePreview :article="article" @showArticle="showArticle" />
-        </li>
-      </ul>
-    </div>
-    <TitleSeparator title="F2" @showArticlesByCategory="showArticlesByCategory" />
-    <div class="mb-12 rounded-xl bg-white text-center">
-      <ul>
-        <li v-for="(article, index) in f2Articles" :key="index">
-          <ArticlePreview :article="article" @showArticle="showArticle" />
-        </li>
-      </ul>
-    </div>
-    <TitleSeparator title="F3" @showArticlesByCategory="showArticlesByCategory" />
-    <div class="mb-12 rounded-xl bg-white text-center">
-      <ul>
-        <li v-for="(article, index) in f3Articles" :key="index">
-          <ArticlePreview :article="article" @showArticle="showArticle" />
-        </li>
-      </ul>
-    </div>
-    <TitleSeparator title="WEC" @showArticlesByCategory="showArticlesByCategory" />
-    <div class="mb-12 rounded-xl bg-white text-center">
-      <ul>
-        <li v-for="(article, index) in wecArticles" :key="index">
-          <ArticlePreview :article="article" @showArticle="showArticle" />
-        </li>
-      </ul>
-    </div>
-    <TitleSeparator title="MotoGP" @showArticlesByCategory="showArticlesByCategory" />
-    <div class="mb-12 rounded-xl bg-white text-center">
-      <ul>
-        <li v-for="(article, index) in motogpArticles" :key="index">
-          <ArticlePreview :article="article" @showArticle="showArticle" />
-        </li>
-      </ul>
-    </div>
+  <div v-for="category in categories" :key="category.title">
+    <ArticlesByCategory
+      :title="category.title"
+      :articles="category.category"
+      @showArticle="showArticle"
+      @showArticlesByCategory="showArticlesByCategory"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import ArticlePreview from './PreviewArticle.vue'
-import TitleSeparator from '../baseComponents/TitleSeparator.vue'
+import ArticlesByCategory from './ArticlesByCategory.vue'
 import { Article } from '../../types/article.ts'
 
 interface Props {
@@ -56,12 +21,37 @@ interface Props {
   motogpArticles: Article[]
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const emit = defineEmits<{
   (e: 'showArticlesByCategory', title: string): void
   (e: 'showArticle', article: Article): void
 }>()
+
+const f1 = props.f1Articles
+
+const categories = [
+  {
+    category: f1,
+    title: 'F1',
+  },
+  {
+    category: props.f2Articles,
+    title: 'F2',
+  },
+  {
+    category: props.f3Articles,
+    title: 'F3',
+  },
+  {
+    category: props.wecArticles,
+    title: 'WEC',
+  },
+  {
+    category: props.motogpArticles,
+    title: 'MotoGP',
+  },
+]
 
 function showArticlesByCategory(title: string) {
   emit('showArticlesByCategory', title)
