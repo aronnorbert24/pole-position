@@ -9,7 +9,7 @@
       v-model="updatedComment.body"
     ></textarea>
   </div>
-  <div class="ml-auto mr-14 mt-4 h-10 w-24 rounded-2xl bg-red-600 text-white">
+  <div class="ml-auto mr-2 mt-4 h-10 w-24 rounded-2xl bg-red-600 text-white computer:mr-14">
     <p class="pt-1 font-header text-lg font-semibold">Comment</p>
   </div>
 </template>

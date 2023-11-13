@@ -1,5 +1,5 @@
 <template>
-  <div class="flex gap-x-40">
+  <div class="tablet:gap-x-20 flex gap-x-40 phone:gap-x-1">
     <div v-for="category in categories" :key="category.title">
       <component :is="category.icon" class="bg-white" @click="showArticlesByCategory(category.title)"></component>
     </div>

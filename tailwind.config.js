@@ -14,7 +14,9 @@ export default {
     },
     screens: {
       phone: { max: '800px' },
-      computer: '801px',
+      tablet: { min: '801px', max: '1000px' },
+      tabletLandscape: { min: '1001px', max: '1200px' },
+      computer: '1201px',
     },
   },
   plugins: [],

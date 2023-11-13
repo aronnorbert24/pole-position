@@ -28,14 +28,14 @@
     </div>
     <div
       id="likeButton"
-      class="flex h-12 w-24 rounded-xl transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer"
+      class="flex h-12 w-24 rounded-xl transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer phone:ml-2 phone:h-10 phone:w-16"
       :class="getLikedClass"
       @click.prevent="likedArticle"
     >
       <LikeIcon />
       <p class="ml-1 mt-2">{{ props.article.likes }}</p>
     </div>
-    <div class="mt-12 h-fit w-full bg-white p-2">
+    <div class="mt-12 h-fit w-full rounded-xl bg-white p-2">
       <CreateComment :user="user" :comment="comment" />
       <div v-for="(comment, index) in comments" :key="index">
         <ArticleComment :user="user" :comment="comment" />

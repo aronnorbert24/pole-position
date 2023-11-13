@@ -10,8 +10,8 @@
       @showArticlesByCategory="showArticlesByCategory"
       @showSearchBar="toggleSearchBar"
     />
-    <div class="computer:flex">
-      <div class="w-7/12 phone:mx-auto phone:w-11/12">
+    <div class="tabletLandscape:flex computer:flex">
+      <div class="tablet:w-9/12 tabletLandscape:ml-16 mx-auto w-7/12 phone:w-11/12 computer:mx-0">
         <SearchResults
           v-if="isSearchResultShowing"
           title="Search Results"
@@ -47,7 +47,7 @@
           @showArticlesByCategory="showArticlesByCategory"
         />
       </div>
-      <div class="w-3/12 phone:mx-auto phone:w-11/12 computer:ml-10">
+      <div class="tablet:w-9/12 tabletLandscape:mr-20 mx-auto w-3/12 phone:w-11/12 computer:mx-0 computer:ml-10">
         <PoleTrending :trending="trendingArticles" @showArticle="showArticle" />
       </div>
     </div>
