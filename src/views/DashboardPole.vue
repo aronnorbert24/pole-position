@@ -11,7 +11,7 @@
       @showSearchBar="toggleSearchBar"
     />
     <div class="tabletLandscape:flex computer:flex">
-      <div class="tablet:w-9/12 tabletLandscape:ml-16 mx-auto w-7/12 phone:w-11/12 computer:mx-0">
+      <div class="mx-auto w-7/12 phone:w-11/12 tablet:w-9/12 tabletLandscape:ml-16 computer:mx-0">
         <SearchResults
           v-if="isSearchResultShowing"
           title="Search Results"
@@ -42,12 +42,13 @@
           :article="singleArticle"
           :user="user"
           :comment="comment"
-          :comments="comments"
+          :comments="commentsByArticle"
           @likedArticle="likedArticle"
           @showArticlesByCategory="showArticlesByCategory"
+          @saveComment="saveComment"
         />
       </div>
-      <div class="tablet:w-9/12 tabletLandscape:mr-20 mx-auto w-3/12 phone:w-11/12 computer:mx-0 computer:ml-10">
+      <div class="mx-auto w-3/12 phone:w-11/12 tablet:w-9/12 tabletLandscape:mr-20 computer:mx-0 computer:ml-10">
         <PoleTrending :trending="trendingArticles" @showArticle="showArticle" />
       </div>
     </div>
@@ -123,6 +124,7 @@ const searchedArticlesPopup = computed(() => {
 
 const articles = ref<Article[]>([])
 const singleArticle = ref<Article>({
+  articleId: 0,
   title: '',
   subheading: '',
   separatedText: [],
@@ -154,11 +156,13 @@ const user = ref<User>({
     'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
 })
 const comments = ref<Comment[]>([])
+const commentsByArticle = ref<Comment[]>([])
 const comment = ref<Comment>({
-  articleId: '',
+  articleId: 0,
   userId: '',
-  childrenId: [],
-  commentId: '',
+  parentId: 0,
+  replies: [],
+  commentId: 0,
   body: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
   date: new Date(),
   likes: 0,
@@ -167,6 +171,7 @@ const comment = ref<Comment>({
   dislikedBy: [],
 })
 const article = ref<Article>({
+  articleId: 0,
   title: 'Article Title',
   subheading: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
   separatedText: [],
@@ -180,11 +185,14 @@ const article = ref<Article>({
 
 function saveToLocalStorage() {
   localStorage.setItem('articles', JSON.stringify(articles.value))
+  localStorage.setItem('comments', JSON.stringify(comments.value))
 }
 
 function getFromLocalStorage() {
   const savedArticles = localStorage.getItem('articles')
   articles.value = savedArticles ? JSON.parse(savedArticles) : []
+  const savedComments = localStorage.getItem('comments')
+  comments.value = savedComments ? JSON.parse(savedComments) : []
 }
 
 function showHome() {
@@ -227,6 +235,7 @@ function showArticlesByCategory(title: string) {
 
 function showArticle(article: Article) {
   singleArticle.value = article
+  commentsByArticle.value = filterComments(article.articleId)
   article.views = viewedArticle(article.views)
   isArticlesByCategoryShowing.value = false
   isHomePageShowing.value = false
@@ -272,6 +281,11 @@ function saveArticle(article: Article) {
   saveToLocalStorage()
 }
 
+function saveComment(comment: Comment) {
+  comments.value.push(comment)
+  saveToLocalStorage()
+}
+
 function filterArticles() {
   f1Articles.value = articles.value.filter((article) => article.category === 'F1')
   f2Articles.value = articles.value.filter((article) => article.category === 'F2')
@@ -287,6 +301,10 @@ function previewArticles() {
   wecLatestArticles.value = wecArticles.value.slice(0, 3)
   motogpLatestArticles.value = motogpArticles.value.slice(0, 3)
   isHomePageShowing.value = true
+}
+
+function filterComments(articleId: number) {
+  return comments.value.filter((comment) => comment.articleId === articleId)
 }
 
 function searchArticles(search: string) {
@@ -312,6 +330,7 @@ function viewedArticle(views: number) {
 
 function likedArticle(article: Article, likes: number, isPostLiked: boolean, date: Date, userId: string) {
   const updatedArticle = {
+    articleId: article.articleId,
     title: article.title,
     subheading: article.subheading,
     separatedText: article.separatedText,
@@ -339,6 +358,7 @@ function likedArticle(article: Article, likes: number, isPostLiked: boolean, dat
   filterArticles()
   previewArticles()
   saveToLocalStorage()
+  showArticle(singleArticle.value)
 }
 
 onMounted(async () => {
