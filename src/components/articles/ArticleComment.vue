@@ -3,7 +3,7 @@
     <div class="flex h-20 w-3/12">
       <img class="h-16 w-16 rounded-full border-2 border-red-600" :src="user.userPicture" />
     </div>
-    <div class="text-left">
+    <div class="pb-4 pr-2 text-left">
       <p class="text-lg font-semibold text-black">{{ user.username }}</p>
       <p class="text-sm text-slate-500">{{ formattedDate }}</p>
       <p class="mt-4 text-lg text-black">{{ comment.body }}</p>

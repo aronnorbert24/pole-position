@@ -36,8 +36,8 @@
       <p class="ml-1 mt-2">{{ props.article.likes }}</p>
     </div>
     <div class="mt-12 h-fit w-full rounded-xl bg-white p-2">
-      <CreateComment :user="user" :comment="comment" />
-      <div v-for="(comment, index) in comments" :key="index">
+      <CreateComment :user="user" :comment="comment" :articleId="article.articleId" @saveComment="saveComment" />
+      <div v-for="(comment, index) in updatedComments" :key="index">
         <ArticleComment :user="user" :comment="comment" />
       </div>
     </div>
@@ -67,8 +67,10 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   (e: 'likedArticle', article: Article, likes: number, isPostLiked: boolean, date: Date, userId: string): void
   (e: 'showArticlesByCategory', title: string): void
+  (e: 'saveComment', comment: Comment): void
 }>()
 
+const updatedComments = ref(props.comments)
 const isPostLiked = ref(props.article.likedBy.includes(props.user.userId))
 const formattedDate = ref(formatDate(props.article.datePublished))
 
@@ -95,6 +97,11 @@ function likedArticle() {
     return
   }
   emit('likedArticle', props.article, updatedLikes, isPostLiked.value, props.article.datePublished, props.user.userId)
+}
+
+function saveComment(comment: Comment) {
+  updatedComments.value.push(comment)
+  emit('saveComment', comment)
 }
 
 function showArticlesByCategory(title: string) {

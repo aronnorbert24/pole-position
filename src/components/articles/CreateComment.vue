@@ -4,12 +4,15 @@
     <textarea
       type="text"
       maxlength="500"
-      class="ml-2 h-24 w-9/12 rounded-2xl border-black bg-slate-300 pl-2 text-left text-lg font-medium text-black"
+      class="ml-8 h-24 w-10/12 rounded-2xl border-black bg-slate-300 pl-2 text-left text-lg font-medium text-black"
       :placeholder="comment.body"
       v-model="updatedComment.body"
     ></textarea>
   </div>
-  <div class="ml-auto mr-2 mt-4 h-10 w-24 rounded-2xl bg-red-600 text-white computer:mr-14">
+  <div
+    class="ml-auto mr-2 mt-4 h-10 w-24 rounded-2xl bg-red-600 text-white transition-transform ease-in-out hover:scale-110 hover:cursor-pointer"
+    @click="saveComment"
+  >
     <p class="pt-1 font-header text-lg font-semibold">Comment</p>
   </div>
 </template>
@@ -22,14 +25,20 @@ import { Comment } from '../../types/comment.ts'
 interface Props {
   user: User
   comment: Comment
+  articleId: number
 }
 
 const props = defineProps<Props>()
 
+const emit = defineEmits<{
+  (e: 'saveComment', comment: Comment): void
+}>()
+
 const updatedComment = ref<Comment>({
-  articleId: props.comment.articleId,
-  userId: props.comment.userId,
-  childrenId: props.comment.childrenId,
+  articleId: props.articleId,
+  userId: props.user.userId,
+  parentId: props.comment.parentId,
+  replies: props.comment.replies,
   commentId: props.comment.commentId,
   body: props.comment.body,
   date: props.comment.date,
@@ -38,4 +47,15 @@ const updatedComment = ref<Comment>({
   likedBy: props.comment.likedBy,
   dislikedBy: props.comment.dislikedBy,
 })
+
+function saveComment() {
+  if (!updatedComment.value.body.length) {
+    return
+  }
+
+  updatedComment.value.date = new Date()
+  updatedComment.value.commentId = new Date().getTime()
+
+  emit('saveComment', updatedComment.value)
+}
 </script>
