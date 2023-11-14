@@ -51,6 +51,7 @@ const emit = defineEmits<{
 const numberOfOccurences = ref<number>()
 const text = ref('Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye')
 const updatedArticle = ref<Article>({
+  articleId: props.article.articleId,
   title: props.article.title,
   subheading: props.article.subheading,
   separatedText: props.article.separatedText,
@@ -100,6 +101,7 @@ function saveArticle() {
     : updatedArticle.value.separatedText.push(text.value)
 
   updatedArticle.value.datePublished = new Date()
+  updatedArticle.value.articleId = new Date().getTime()
 
   emit('saveArticle', updatedArticle.value)
 }
