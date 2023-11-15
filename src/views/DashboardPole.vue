@@ -46,6 +46,7 @@
           @likedArticle="likedArticle"
           @showArticlesByCategory="showArticlesByCategory"
           @saveComment="saveComment"
+          @likedComment="likedComment"
         />
       </div>
       <div class="mx-auto w-3/12 phone:w-11/12 tablet:w-9/12 tabletLandscape:mr-20 computer:mx-0 computer:ml-10">
@@ -156,7 +157,10 @@ const user = ref<User>({
     'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
 })
 const comments = ref<Comment[]>([])
-const commentsByArticle = ref<Comment[]>([])
+const commentsByArticle = computed(() => {
+  const singleComments = comments.value.filter((comment) => comment.articleId === singleArticle.value.articleId)
+  return singleComments ? singleComments : []
+})
 const comment = ref<Comment>({
   articleId: 0,
   userId: '',
@@ -235,13 +239,12 @@ function showArticlesByCategory(title: string) {
 
 function showArticle(article: Article) {
   singleArticle.value = article
-  commentsByArticle.value = filterComments(article.articleId)
   article.views = viewedArticle(article.views)
   isArticlesByCategoryShowing.value = false
   isHomePageShowing.value = false
   isCreateArticleShowing.value = false
-  isSingleArticleShowing.value = true
   isSearchResultShowing.value = false
+  isSingleArticleShowing.value = true
 }
 
 function showSearchedArticles() {
@@ -303,10 +306,6 @@ function previewArticles() {
   isHomePageShowing.value = true
 }
 
-function filterComments(articleId: number) {
-  return comments.value.filter((comment) => comment.articleId === articleId)
-}
-
 function searchArticles(search: string) {
   searchQuery.value = search
 }
@@ -341,9 +340,17 @@ function likedArticle(article: Article, likes: number, isPostLiked: boolean, dat
     likes: article.likes,
     views: article.views,
   }
+  let updatedLikes = likes
+  if (isPostLiked) {
+    updatedLikes++
+  } else if (updatedLikes >= 1) {
+    updatedLikes--
+  } else {
+    return
+  }
   if (updatedArticle) {
     const index = updatedArticle.likedBy.findIndex((user) => user === userId)
-    updatedArticle.likes = likes
+    updatedArticle.likes = updatedLikes
     if (isPostLiked && index < 0) {
       updatedArticle.likedBy.push(userId)
     } else {
@@ -355,6 +362,39 @@ function likedArticle(article: Article, likes: number, isPostLiked: boolean, dat
   const i = articles.value.findIndex((article) => article.datePublished === date)
   articles.value[i] = updatedArticle
   singleArticle.value = updatedArticle
+  filterArticles()
+  previewArticles()
+  saveToLocalStorage()
+  showArticle(singleArticle.value)
+}
+
+function likedComment(comment: Comment, likes: number, isCommentLiked: boolean, commentId: number, userId: string) {
+  const updatedComment: Comment = {
+    articleId: comment.articleId,
+    userId: comment.userId,
+    parentId: comment.parentId,
+    commentId: comment.commentId,
+    replies: comment.replies,
+    body: comment.body,
+    date: comment.date,
+    likedBy: comment.likedBy,
+    likes: comment.likes,
+    dislikedBy: comment.dislikedBy,
+    dislikes: comment.dislikes,
+  }
+  if (updatedComment) {
+    const index = updatedComment.likedBy.findIndex((user) => user === userId)
+    updatedComment.likes = likes
+    if (isCommentLiked && index < 0) {
+      updatedComment.likedBy.push(userId)
+    } else {
+      if (index >= 0) {
+        updatedComment.likedBy.splice(index, 1)
+      }
+    }
+  }
+  const i = comments.value.findIndex((comment) => comment.commentId === commentId)
+  comments.value[i] = updatedComment
   filterArticles()
   previewArticles()
   saveToLocalStorage()

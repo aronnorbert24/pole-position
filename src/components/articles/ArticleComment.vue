@@ -9,10 +9,21 @@
       <p class="mt-4 text-lg text-black">{{ comment.body }}</p>
     </div>
   </div>
+  <div class="flex">
+    <div
+      class="flex h-12 w-16 rounded-xl transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer phone:ml-2 phone:h-10 phone:w-16"
+      :class="getLikedClass"
+      @click.prevent="likedComment"
+    >
+      <LikeIcon />
+      <p class="ml-1 mt-2">{{ updatedLikes }}</p>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
+import LikeIcon from '../icons/LikeIcon.vue'
 import { formatDate } from '../../helpers/helper.ts'
 import { User } from '../../types/user.ts'
 import { Comment } from '../../types/comment.ts'
@@ -24,5 +35,32 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const formattedDate = ref(formatDate(props.comment.date))
+const emit = defineEmits<{
+  (e: 'likedComment', comment: Comment, likes: number, isCommentLiked: boolean, commentId: number, userId: string): void
+}>()
+
+const formattedDate = computed(() => {
+  return formatDate(props.comment.date)
+})
+const isCommentLiked = computed(() => {
+  return props.comment.likedBy.includes(props.user.userId)
+})
+const updatedLikes = computed(() => {
+  return props.comment.likes
+})
+
+const getLikedClass = computed(() => {
+  return !isCommentLiked.value ? 'bg-white text-black' : 'bg-red-600 text-white'
+})
+
+function likedComment() {
+  emit(
+    'likedComment',
+    props.comment,
+    updatedLikes.value,
+    !isCommentLiked.value,
+    props.comment.commentId,
+    props.user.userId
+  )
+}
 </script>

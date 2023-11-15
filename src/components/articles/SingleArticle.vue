@@ -33,12 +33,18 @@
       @click.prevent="likedArticle"
     >
       <LikeIcon />
-      <p class="ml-1 mt-2">{{ props.article.likes }}</p>
+      <p class="ml-1 mt-2">{{ likes }}</p>
     </div>
     <div class="mt-12 h-fit w-full rounded-xl bg-white p-2">
-      <CreateComment :user="user" :comment="comment" :articleId="article.articleId" @saveComment="saveComment" />
-      <div v-for="(comment, index) in updatedComments" :key="index">
-        <ArticleComment :user="user" :comment="comment" />
+      <button
+        class="mb-6 mt-2 h-12 w-32 bg-gray-300 text-center text-lg text-black hover:cursor-pointer"
+        @click="toggleCreateComment"
+      >
+        Comment
+      </button>
+      <CreateComment v-if="isCreateCommentVisible" :user="user" :comment="comment" @saveComment="saveComment" />
+      <div v-for="(articleComment, index) in updatedComments" :key="index">
+        <ArticleComment :user="user" :comment="articleComment" @likedComment="likedComment" />
       </div>
     </div>
   </div>
@@ -68,11 +74,25 @@ const emit = defineEmits<{
   (e: 'likedArticle', article: Article, likes: number, isPostLiked: boolean, date: Date, userId: string): void
   (e: 'showArticlesByCategory', title: string): void
   (e: 'saveComment', comment: Comment): void
+  (e: 'likedComment', comment: Comment, likes: number, isCommentLiked: boolean, commentId: number, userId: string): void
 }>()
 
-const updatedComments = ref(props.comments)
-const isPostLiked = ref(props.article.likedBy.includes(props.user.userId))
-const formattedDate = ref(formatDate(props.article.datePublished))
+const updatedComments = computed(() => {
+  return props.comments
+})
+const updatedArticleId = computed(() => {
+  return props.article.articleId
+})
+const likes = computed(() => {
+  return props.article.likes
+})
+const isPostLiked = computed(() => {
+  return props.article.likedBy.includes(props.user.userId)
+})
+const formattedDate = computed(() => {
+  return formatDate(props.article.datePublished)
+})
+const isCreateCommentVisible = ref(false)
 
 function emphasizeClass(index: number, paragraph: string) {
   if (index % 2 === 1) {
@@ -87,24 +107,31 @@ const getLikedClass = computed(() => {
 })
 
 function likedArticle() {
-  isPostLiked.value = !isPostLiked.value
-  let updatedLikes = props.article.likes
-  if (isPostLiked.value) {
-    updatedLikes++
-  } else if (updatedLikes >= 1) {
-    updatedLikes--
-  } else {
-    return
-  }
-  emit('likedArticle', props.article, updatedLikes, isPostLiked.value, props.article.datePublished, props.user.userId)
+  emit('likedArticle', props.article, likes.value, !isPostLiked.value, props.article.datePublished, props.user.userId)
 }
 
 function saveComment(comment: Comment) {
-  updatedComments.value.push(comment)
+  comment.articleId = updatedArticleId.value
   emit('saveComment', comment)
+  toggleCreateComment()
+}
+
+function likedComment(comment: Comment, likes: number, isCommentLiked: boolean, commentId: number, userId: string) {
+  if (isCommentLiked) {
+    likes++
+  } else if (likes >= 1) {
+    likes--
+  } else {
+    return
+  }
+  emit('likedComment', comment, likes, isCommentLiked, commentId, userId)
 }
 
 function showArticlesByCategory(title: string) {
   emit('showArticlesByCategory', title)
+}
+
+function toggleCreateComment() {
+  isCreateCommentVisible.value = !isCreateCommentVisible.value
 }
 </script>
