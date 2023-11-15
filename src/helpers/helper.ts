@@ -1,3 +1,5 @@
+import { Comment } from '../types/comment'
+
 export function formatDate(formattingDate: Date) {
   const date = new Date(formattingDate)
   const year = date.getFullYear()
@@ -17,4 +19,37 @@ export function debounce<Params extends unknown[]>(
       func(...args)
     }, timeout)
   }
+}
+
+export function sortComment(activeSort: string, comments: Comment[]) {
+  return comments.sort((a: Comment, b: Comment) => {
+    switch (activeSort) {
+      case 'Oldest':
+        return sortByOldest(a, b)
+      case 'Newest':
+        return sortByNewest(a, b)
+      case 'Best':
+        return sortByBest(a, b)
+      default:
+        return 0
+    }
+  })
+}
+
+function sortByOldest(a: Comment, b: Comment) {
+  const previous: any = new Date(a.date)
+  const next: any = new Date(b.date)
+  return previous - next
+}
+
+function sortByNewest(a: Comment, b: Comment) {
+  const previous: any = new Date(a.date)
+  const next: any = new Date(b.date)
+  return next - previous
+}
+
+function sortByBest(a: Comment, b: Comment) {
+  const previous: any = a.likes
+  const next: any = b.likes
+  return next - previous
 }

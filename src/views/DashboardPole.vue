@@ -37,7 +37,7 @@
           :articles="articlesByCategory"
           @showArticle="showArticle"
         />
-        <SingleArticle
+        <ArticleLayout
           v-if="isSingleArticleShowing"
           :article="singleArticle"
           :user="user"
@@ -45,6 +45,7 @@
           @likedArticle="likedArticle"
           @showArticlesByCategory="showArticlesByCategory"
           @saveComment="saveComment"
+          @sortComments="sortComments"
           @saveReply="saveReply"
           @likedComment="likedComment"
         />
@@ -81,7 +82,7 @@ import { onClickOutside } from '@vueuse/core'
 import { parse, stringify } from 'flatted'
 import CreateArticle from '../components/articles/CreateArticle.vue'
 import ArticleList from '../components/articles/ArticleList.vue'
-import SingleArticle from '../components/articles/SingleArticle.vue'
+import ArticleLayout from '../components/articles/ArticleLayout.vue'
 import ArticlesByCategory from '../components/articles/ArticlesByCategory.vue'
 import PoleTrending from '../components/articles/PoleTrending.vue'
 import ChampionshipPopup from '../components/articles/ChampionshipPopup.vue'
@@ -90,6 +91,7 @@ import SearchResultsPopup from '../components/articles/SearchResultsPopup.vue'
 import PoleHeader from '../components/header/PoleHeader.vue'
 import PoleLink from '../components/header/PoleLink.vue'
 import PoleFooter from '../components/footer/PoleFooter.vue'
+import { sortComment } from '../helpers/helper.ts'
 import { Article } from '../types/article.ts'
 import { User } from '../types/user.ts'
 import { Comment } from '../types/comment.ts'
@@ -289,8 +291,6 @@ function saveReply(parentComment: Comment) {
     date: parentComment.date,
     likedBy: parentComment.likedBy,
     likes: parentComment.likes,
-    dislikedBy: parentComment.dislikedBy,
-    dislikes: parentComment.dislikes,
   }
   if (updatedParentComment) {
     const index = comments.value.findIndex((comment) => comment.commentId === updatedParentComment.commentId)
@@ -328,6 +328,10 @@ function sortArticles() {
   return articles.value.sort((a: Article, b: Article) => {
     return a.views < b.views ? 1 : a.views > b.views ? -1 : 0
   })
+}
+
+function sortComments(activeSort: string) {
+  comments.value = sortComment(activeSort, comments.value)
 }
 
 function trending() {
@@ -394,8 +398,6 @@ function likedComment(comment: Comment, likes: number, isCommentLiked: boolean, 
     date: comment.date,
     likedBy: comment.likedBy,
     likes: comment.likes,
-    dislikedBy: comment.dislikedBy,
-    dislikes: comment.dislikes,
   }
   if (updatedComment) {
     const index = updatedComment.likedBy.findIndex((user) => user === userId)
