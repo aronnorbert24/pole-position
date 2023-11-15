@@ -42,9 +42,20 @@
       >
         Comment
       </button>
-      <CreateComment v-if="isCreateCommentVisible" :user="user" :comment="comment" @saveComment="saveComment" />
-      <div v-for="(articleComment, index) in updatedComments" :key="index">
-        <ArticleComment :user="user" :comment="articleComment" @likedComment="likedComment" />
+      <CreateComment v-if="isCreateCommentVisible" :user="user" @saveComment="saveComment" />
+      <div v-for="(articleComment, index) in rootComments" :key="index">
+        <ArticleComment :user="user" :comment="articleComment" @likedComment="likedComment" @saveReply="saveReply" />
+        <div v-for="(reply, index) in articleComment.replies" :key="index">
+          <div class="ml-40 w-9/12">
+            <ArticleComment
+              v-if="articleComment.replies.length"
+              :user="user"
+              :comment="reply"
+              @likedComment="likedComment"
+              @saveReply="saveReply"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -64,7 +75,6 @@ import { Comment } from '../../types/comment.ts'
 interface Props {
   article: Article
   user: User
-  comment: Comment
   comments: Comment[]
 }
 
@@ -74,11 +84,12 @@ const emit = defineEmits<{
   (e: 'likedArticle', article: Article, likes: number, isPostLiked: boolean, date: Date, userId: string): void
   (e: 'showArticlesByCategory', title: string): void
   (e: 'saveComment', comment: Comment): void
+  (e: 'saveReply', parentComment: Comment): void
   (e: 'likedComment', comment: Comment, likes: number, isCommentLiked: boolean, commentId: number, userId: string): void
 }>()
 
-const updatedComments = computed(() => {
-  return props.comments
+const rootComments = computed(() => {
+  return props.comments.filter((comment) => !comment.parentId)
 })
 const updatedArticleId = computed(() => {
   return props.article.articleId
@@ -129,6 +140,27 @@ function likedComment(comment: Comment, likes: number, isCommentLiked: boolean, 
 
 function showArticlesByCategory(title: string) {
   emit('showArticlesByCategory', title)
+}
+
+function saveReply(parentComment: Comment, reply: Comment) {
+  const updatedParentComment: Comment = {
+    articleId: parentComment.articleId,
+    userId: parentComment.userId,
+    parentId: parentComment.parentId,
+    commentId: parentComment.commentId,
+    replies: parentComment.replies,
+    body: parentComment.body,
+    date: parentComment.date,
+    likedBy: parentComment.likedBy,
+    likes: parentComment.likes,
+    dislikedBy: parentComment.dislikedBy,
+    dislikes: parentComment.dislikes,
+  }
+  reply.articleId = updatedArticleId.value
+  if (updatedParentComment) {
+    parentComment.replies.push(reply)
+  }
+  emit('saveReply', parentComment)
 }
 
 function toggleCreateComment() {

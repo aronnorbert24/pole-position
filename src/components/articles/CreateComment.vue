@@ -5,7 +5,7 @@
       type="text"
       maxlength="500"
       class="ml-8 h-24 w-10/12 rounded-2xl border-black bg-slate-300 pl-2 text-left text-lg font-medium text-black"
-      :placeholder="comment.body"
+      :placeholder="updatedComment.body"
       v-model="updatedComment.body"
     ></textarea>
   </div>
@@ -24,27 +24,26 @@ import { Comment } from '../../types/comment.ts'
 
 interface Props {
   user: User
-  comment: Comment
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 
 const emit = defineEmits<{
   (e: 'saveComment', comment: Comment): void
 }>()
 
 const updatedComment = ref<Comment>({
-  articleId: props.comment.articleId,
-  userId: props.user.userId,
-  parentId: props.comment.parentId,
-  replies: props.comment.replies,
-  commentId: props.comment.commentId,
-  body: props.comment.body,
-  date: props.comment.date,
-  likes: props.comment.likes,
-  dislikes: props.comment.dislikes,
-  likedBy: props.comment.likedBy,
-  dislikedBy: props.comment.dislikedBy,
+  articleId: 0,
+  userId: '',
+  parentId: 0,
+  replies: [],
+  commentId: 0,
+  body: '',
+  date: new Date(),
+  likes: 0,
+  dislikes: 0,
+  likedBy: [],
+  dislikedBy: [],
 })
 
 function saveComment() {
