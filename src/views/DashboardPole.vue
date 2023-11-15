@@ -41,11 +41,11 @@
           v-if="isSingleArticleShowing"
           :article="singleArticle"
           :user="user"
-          :comment="comment"
           :comments="commentsByArticle"
           @likedArticle="likedArticle"
           @showArticlesByCategory="showArticlesByCategory"
           @saveComment="saveComment"
+          @saveReply="saveReply"
           @likedComment="likedComment"
         />
       </div>
@@ -78,6 +78,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { onClickOutside } from '@vueuse/core'
+import { parse, stringify } from 'flatted'
 import CreateArticle from '../components/articles/CreateArticle.vue'
 import ArticleList from '../components/articles/ArticleList.vue'
 import SingleArticle from '../components/articles/SingleArticle.vue'
@@ -161,19 +162,6 @@ const commentsByArticle = computed(() => {
   const singleComments = comments.value.filter((comment) => comment.articleId === singleArticle.value.articleId)
   return singleComments ? singleComments : []
 })
-const comment = ref<Comment>({
-  articleId: 0,
-  userId: '',
-  parentId: 0,
-  replies: [],
-  commentId: 0,
-  body: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
-  date: new Date(),
-  likes: 0,
-  dislikes: 0,
-  likedBy: [],
-  dislikedBy: [],
-})
 const article = ref<Article>({
   articleId: 0,
   title: 'Article Title',
@@ -189,14 +177,14 @@ const article = ref<Article>({
 
 function saveToLocalStorage() {
   localStorage.setItem('articles', JSON.stringify(articles.value))
-  localStorage.setItem('comments', JSON.stringify(comments.value))
+  localStorage.setItem('comments', stringify(comments.value))
 }
 
 function getFromLocalStorage() {
   const savedArticles = localStorage.getItem('articles')
   articles.value = savedArticles ? JSON.parse(savedArticles) : []
   const savedComments = localStorage.getItem('comments')
-  comments.value = savedComments ? JSON.parse(savedComments) : []
+  comments.value = savedComments ? parse(savedComments) : []
 }
 
 function showHome() {
@@ -286,7 +274,33 @@ function saveArticle(article: Article) {
 
 function saveComment(comment: Comment) {
   comments.value.push(comment)
+  trending()
   saveToLocalStorage()
+}
+
+function saveReply(parentComment: Comment) {
+  const updatedParentComment: Comment = {
+    articleId: parentComment.articleId,
+    userId: parentComment.userId,
+    parentId: parentComment.parentId,
+    commentId: parentComment.commentId,
+    replies: parentComment.replies,
+    body: parentComment.body,
+    date: parentComment.date,
+    likedBy: parentComment.likedBy,
+    likes: parentComment.likes,
+    dislikedBy: parentComment.dislikedBy,
+    dislikes: parentComment.dislikes,
+  }
+  if (updatedParentComment) {
+    const index = comments.value.findIndex((comment) => comment.commentId === updatedParentComment.commentId)
+    comments.value[index] = updatedParentComment
+  }
+  filterArticles()
+  previewArticles()
+  saveToLocalStorage()
+  trending()
+  showArticle(singleArticle.value)
 }
 
 function filterArticles() {
@@ -365,6 +379,7 @@ function likedArticle(article: Article, likes: number, isPostLiked: boolean, dat
   filterArticles()
   previewArticles()
   saveToLocalStorage()
+  trending()
   showArticle(singleArticle.value)
 }
 
@@ -393,11 +408,22 @@ function likedComment(comment: Comment, likes: number, isCommentLiked: boolean, 
       }
     }
   }
-  const i = comments.value.findIndex((comment) => comment.commentId === commentId)
-  comments.value[i] = updatedComment
+  if (updatedComment.parentId) {
+    const parentComment = comments.value.find((comment) => comment.commentId === updatedComment.parentId)
+    if (parentComment) {
+      const index = parentComment.replies.findIndex(
+        (comment: Comment) => comment.commentId === updatedComment.commentId
+      )
+      parentComment.replies[index] = updatedComment
+    }
+  } else {
+    const i = comments.value.findIndex((comment) => comment.commentId === commentId)
+    comments.value[i] = updatedComment
+  }
   filterArticles()
   previewArticles()
   saveToLocalStorage()
+  trending()
   showArticle(singleArticle.value)
 }
 
