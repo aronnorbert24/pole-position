@@ -25,7 +25,6 @@ import { Comment } from '../../types/comment.ts'
 interface Props {
   user: User
   comment: Comment
-  articleId: number
 }
 
 const props = defineProps<Props>()
@@ -35,7 +34,7 @@ const emit = defineEmits<{
 }>()
 
 const updatedComment = ref<Comment>({
-  articleId: props.articleId,
+  articleId: props.comment.articleId,
   userId: props.user.userId,
   parentId: props.comment.parentId,
   replies: props.comment.replies,
