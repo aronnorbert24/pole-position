@@ -7,7 +7,5 @@ export interface Comment {
   body: string
   date: Date
   likes: number
-  dislikes: number
   likedBy: string[]
-  dislikedBy: string[]
 }

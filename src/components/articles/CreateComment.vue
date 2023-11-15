@@ -41,9 +41,7 @@ const updatedComment = ref<Comment>({
   body: '',
   date: new Date(),
   likes: 0,
-  dislikes: 0,
   likedBy: [],
-  dislikedBy: [],
 })
 
 function saveComment() {
