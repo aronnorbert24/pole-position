@@ -9,8 +9,16 @@
       <p class="mt-4 text-lg text-black">{{ comment.body }}</p>
     </div>
     <div
+      v-if="isUserTheAuthor"
       class="ml-4 transition-transform duration-300 ease-in-out hover:scale-110 hover:cursor-pointer"
       @click.prevent="toggleComment('Edit')"
+    >
+      <EditIcon />
+    </div>
+    <div
+      v-if="isUserTheAuthor"
+      class="ml-4 transition-transform duration-300 ease-in-out hover:scale-110 hover:cursor-pointer"
+      @click.prevent="deleteComment"
     >
       <EditIcon />
     </div>
@@ -65,6 +73,7 @@ const emit = defineEmits<{
   (e: 'likedComment', comment: Comment, likes: number, isCommentLiked: boolean, commentId: number, userId: string): void
   (e: 'saveReply', parentComment: Comment, reply: Comment): void
   (e: 'editComment', editedComment: Comment): void
+  (e: 'deleteComment', comment: Comment): void
 }>()
 
 const updatedComment = ref<Comment>(props.comment)
@@ -72,6 +81,10 @@ const createComment = computed(() => {
   return props.createComment
 })
 const category = ref('Reply')
+
+const isUserTheAuthor = computed(() => {
+  return props.user.userId === props.comment.userId
+})
 
 const formattedDate = computed(() => {
   return formatDate(props.comment.date)
@@ -110,6 +123,10 @@ function saveReply(comment: Comment) {
 function editComment(comment: Comment) {
   toggleComments()
   emit('editComment', comment)
+}
+
+function deleteComment() {
+  emit('deleteComment', props.comment)
 }
 
 function toggleComment(type: string) {

@@ -61,6 +61,7 @@ function saveComment() {
   }
 
   if (!updatedComment.value.commentId) {
+    updatedComment.value.userId = props.user.userId
     updatedComment.value.date = new Date()
     updatedComment.value.commentId = new Date().getTime()
     emit('saveComment', updatedComment.value)

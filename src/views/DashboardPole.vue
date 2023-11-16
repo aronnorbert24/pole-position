@@ -47,6 +47,7 @@
           @showArticlesByCategory="showArticlesByCategory"
           @saveComment="saveComment"
           @editComment="editComment"
+          @deleteComment="deleteComment"
           @sortComments="sortComments"
           @saveReply="saveReply"
           @likedComment="likedComment"
@@ -339,6 +340,26 @@ function editComment(comment: Comment) {
   } else {
     const i = comments.value.findIndex((comment) => comment.commentId === updatedComment.commentId)
     comments.value[i] = updatedComment
+  }
+  filterArticles()
+  previewArticles()
+  saveToLocalStorage()
+  trending()
+  showArticle(singleArticle.value)
+}
+
+function deleteComment(commentToDelete: Comment) {
+  if (commentToDelete.parentId) {
+    const parentComment = comments.value.find((comment) => comment.commentId === commentToDelete.parentId)
+    if (parentComment) {
+      const index = parentComment.replies.findIndex(
+        (comment: Comment) => comment.commentId === commentToDelete.commentId
+      )
+      parentComment.replies.splice(index, 1)
+    }
+  } else {
+    const i = comments.value.findIndex((comment) => comment.commentId === commentToDelete.commentId)
+    comments.value.splice(i, 1)
   }
   filterArticles()
   previewArticles()
