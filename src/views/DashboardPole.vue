@@ -42,9 +42,11 @@
           :article="singleArticle"
           :user="user"
           :comments="commentsByArticle"
+          :createComment="createComment"
           @likedArticle="likedArticle"
           @showArticlesByCategory="showArticlesByCategory"
           @saveComment="saveComment"
+          @editComment="editComment"
           @sortComments="sortComments"
           @saveReply="saveReply"
           @likedComment="likedComment"
@@ -163,6 +165,17 @@ const comments = ref<Comment[]>([])
 const commentsByArticle = computed(() => {
   const singleComments = comments.value.filter((comment) => comment.articleId === singleArticle.value.articleId)
   return singleComments ? singleComments : []
+})
+const createComment = ref<Comment>({
+  articleId: 0,
+  userId: '',
+  parentId: 0,
+  replies: [],
+  commentId: 0,
+  body: '',
+  date: new Date(),
+  likes: 0,
+  likedBy: [],
 })
 const article = ref<Article>({
   articleId: 0,
@@ -303,6 +316,37 @@ function saveReply(parentComment: Comment) {
   showArticle(singleArticle.value)
 }
 
+function editComment(comment: Comment) {
+  const updatedComment: Comment = {
+    articleId: comment.articleId,
+    userId: comment.userId,
+    parentId: comment.parentId,
+    commentId: comment.commentId,
+    replies: comment.replies,
+    body: comment.body,
+    date: comment.date,
+    likedBy: comment.likedBy,
+    likes: comment.likes,
+  }
+  if (updatedComment.parentId) {
+    const parentComment = comments.value.find((comment) => comment.commentId === updatedComment.parentId)
+    if (parentComment) {
+      const index = parentComment.replies.findIndex(
+        (comment: Comment) => comment.commentId === updatedComment.commentId
+      )
+      parentComment.replies[index] = updatedComment
+    }
+  } else {
+    const i = comments.value.findIndex((comment) => comment.commentId === updatedComment.commentId)
+    comments.value[i] = updatedComment
+  }
+  filterArticles()
+  previewArticles()
+  saveToLocalStorage()
+  trending()
+  showArticle(singleArticle.value)
+}
+
 function filterArticles() {
   f1Articles.value = articles.value.filter((article) => article.category === 'F1')
   f2Articles.value = articles.value.filter((article) => article.category === 'F2')
@@ -388,7 +432,7 @@ function likedArticle(article: Article, likes: number, isPostLiked: boolean, dat
 }
 
 function likedComment(comment: Comment, likes: number, isCommentLiked: boolean, commentId: number, userId: string) {
-  const updatedComment: Comment = {
+  const updatedComment = ref<Comment>({
     articleId: comment.articleId,
     userId: comment.userId,
     parentId: comment.parentId,
@@ -398,29 +442,29 @@ function likedComment(comment: Comment, likes: number, isCommentLiked: boolean, 
     date: comment.date,
     likedBy: comment.likedBy,
     likes: comment.likes,
-  }
-  if (updatedComment) {
-    const index = updatedComment.likedBy.findIndex((user) => user === userId)
-    updatedComment.likes = likes
+  })
+  if (updatedComment.value) {
+    const index = updatedComment.value.likedBy.findIndex((user) => user === userId)
+    updatedComment.value.likes = likes
     if (isCommentLiked && index < 0) {
-      updatedComment.likedBy.push(userId)
+      updatedComment.value.likedBy.push(userId)
     } else {
       if (index >= 0) {
-        updatedComment.likedBy.splice(index, 1)
+        updatedComment.value.likedBy.splice(index, 1)
       }
     }
   }
-  if (updatedComment.parentId) {
-    const parentComment = comments.value.find((comment) => comment.commentId === updatedComment.parentId)
+  if (updatedComment.value.parentId) {
+    const parentComment = comments.value.find((comment) => comment.commentId === updatedComment.value.parentId)
     if (parentComment) {
       const index = parentComment.replies.findIndex(
-        (comment: Comment) => comment.commentId === updatedComment.commentId
+        (comment: Comment) => comment.commentId === updatedComment.value.commentId
       )
-      parentComment.replies[index] = updatedComment
+      parentComment.replies[index] = updatedComment.value
     }
   } else {
     const i = comments.value.findIndex((comment) => comment.commentId === commentId)
-    comments.value[i] = updatedComment
+    comments.value[i] = updatedComment.value
   }
   filterArticles()
   previewArticles()
