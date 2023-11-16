@@ -35,6 +35,7 @@
           @likedComment="likedComment"
           @saveReply="saveReply"
           @editComment="editComment"
+          @deleteComment="deleteComment"
         />
         <div v-for="(reply, index) in articleComment.replies" :key="index">
           <div class="ml-40 w-9/12">
@@ -46,6 +47,7 @@
               @likedComment="likedComment"
               @saveReply="saveReply"
               @editComment="editComment"
+              @deleteComment="deleteComment"
             />
           </div>
         </div>
@@ -81,6 +83,7 @@ const emit = defineEmits<{
   (e: 'showArticlesByCategory', title: string): void
   (e: 'saveComment', comment: Comment): void
   (e: 'editComment', comment: Comment): void
+  (e: 'deleteComment', comment: Comment): void
   (e: 'sortComments', activeSort: string): void
   (e: 'saveReply', parentComment: Comment): void
   (e: 'likedComment', comment: Comment, likes: number, isCommentLiked: boolean, commentId: number, userId: string): void
@@ -158,6 +161,10 @@ function saveReply(parentComment: Comment, reply: Comment) {
 
 function editComment(comment: Comment) {
   emit('editComment', comment)
+}
+
+function deleteComment(comment: Comment) {
+  emit('deleteComment', comment)
 }
 
 function toggleCreateComment() {
