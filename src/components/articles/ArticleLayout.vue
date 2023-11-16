@@ -1,7 +1,7 @@
 <template>
   <div class="mt-10 computer:ml-auto computer:mr-10 computer:w-3/5">
     <TitleSeparator :title="article.category" @showArticlesByCategory="showArticlesByCategory" />
-
+    <SingleArticle :article="article" />
     <div
       id="likeButton"
       class="flex h-12 w-24 rounded-xl transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer phone:ml-2 phone:h-10 phone:w-16"
@@ -14,22 +14,38 @@
     <div class="mt-12 h-fit w-full rounded-xl bg-white p-2">
       <SortComment @sortComments="sortComments" />
       <button
+        v-if="!isCreateCommentVisible"
         class="mb-6 mt-2 h-12 w-32 bg-gray-300 text-center text-lg text-black hover:cursor-pointer"
         @click="toggleCreateComment"
       >
         Comment
       </button>
-      <CreateComment v-if="isCreateCommentVisible" :user="user" @saveComment="saveComment" />
+      <CreateComment
+        v-if="isCreateCommentVisible"
+        :comment="createComment"
+        :user="user"
+        @saveComment="saveComment"
+        @cancelComment="toggleCreateComment"
+      />
       <div v-for="(articleComment, index) in rootComments" :key="index">
-        <ArticleComment :user="user" :comment="articleComment" @likedComment="likedComment" @saveReply="saveReply" />
+        <ArticleComment
+          :user="user"
+          :comment="articleComment"
+          :createComment="createComment"
+          @likedComment="likedComment"
+          @saveReply="saveReply"
+          @editComment="editComment"
+        />
         <div v-for="(reply, index) in articleComment.replies" :key="index">
           <div class="ml-40 w-9/12">
             <ArticleComment
               v-if="articleComment.replies.length"
               :user="user"
               :comment="reply"
+              :createComment="createComment"
               @likedComment="likedComment"
               @saveReply="saveReply"
+              @editComment="editComment"
             />
           </div>
         </div>
@@ -40,6 +56,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import SingleArticle from './SingleArticle.vue'
 import ArticleComment from './ArticleComment.vue'
 import CreateComment from './CreateComment.vue'
 import SortComment from './SortComment.vue'
@@ -54,6 +71,7 @@ interface Props {
   article: Article
   user: User
   comments: Comment[]
+  createComment: Comment
 }
 
 const props = defineProps<Props>()
@@ -62,10 +80,15 @@ const emit = defineEmits<{
   (e: 'likedArticle', article: Article, likes: number, isPostLiked: boolean, date: Date, userId: string): void
   (e: 'showArticlesByCategory', title: string): void
   (e: 'saveComment', comment: Comment): void
+  (e: 'editComment', comment: Comment): void
   (e: 'sortComments', activeSort: string): void
   (e: 'saveReply', parentComment: Comment): void
   (e: 'likedComment', comment: Comment, likes: number, isCommentLiked: boolean, commentId: number, userId: string): void
 }>()
+
+const createComment = computed(() => {
+  return props.createComment
+})
 
 const rootComments = computed(() => {
   return props.comments.filter((comment) => !comment.parentId)
@@ -131,6 +154,10 @@ function saveReply(parentComment: Comment, reply: Comment) {
     parentComment.replies.push(reply)
   }
   emit('saveReply', parentComment)
+}
+
+function editComment(comment: Comment) {
+  emit('editComment', comment)
 }
 
 function toggleCreateComment() {

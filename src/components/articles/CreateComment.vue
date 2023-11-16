@@ -9,11 +9,19 @@
       v-model="updatedComment.body"
     ></textarea>
   </div>
-  <div
-    class="ml-auto mr-2 mt-4 h-10 w-24 rounded-2xl bg-red-600 text-white transition-transform ease-in-out hover:scale-110 hover:cursor-pointer"
-    @click="saveComment"
-  >
-    <p class="pt-1 font-header text-lg font-semibold">Comment</p>
+  <div class="flex">
+    <div
+      class="ml-auto mr-2 mt-4 h-10 w-24 rounded-2xl bg-red-600 text-white transition-transform ease-in-out hover:scale-110 hover:cursor-pointer"
+      @click="saveComment"
+    >
+      <p class="pt-1 font-header text-lg font-semibold">Comment</p>
+    </div>
+    <div
+      class="mr-4 mt-4 h-10 w-24 rounded-2xl bg-gray-300 text-red-600 transition-transform ease-in-out hover:scale-110 hover:cursor-pointer"
+      @click="cancelComment"
+    >
+      <p class="pt-1 font-header text-lg font-semibold">Cancel</p>
+    </div>
   </div>
 </template>
 
@@ -23,25 +31,28 @@ import { User } from '../../types/user.ts'
 import { Comment } from '../../types/comment.ts'
 
 interface Props {
+  comment: Comment
   user: User
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const emit = defineEmits<{
   (e: 'saveComment', comment: Comment): void
+  (e: 'editComment', comment: Comment): void
+  (e: 'cancelComment'): void
 }>()
 
 const updatedComment = ref<Comment>({
-  articleId: 0,
-  userId: '',
-  parentId: 0,
-  replies: [],
-  commentId: 0,
-  body: '',
-  date: new Date(),
-  likes: 0,
-  likedBy: [],
+  articleId: props.comment.articleId,
+  userId: props.comment.userId,
+  parentId: props.comment.parentId,
+  replies: props.comment.replies,
+  commentId: props.comment.commentId,
+  body: props.comment.body,
+  date: props.comment.date,
+  likes: props.comment.likes,
+  likedBy: props.comment.likedBy,
 })
 
 function saveComment() {
@@ -49,9 +60,16 @@ function saveComment() {
     return
   }
 
-  updatedComment.value.date = new Date()
-  updatedComment.value.commentId = new Date().getTime()
+  if (!updatedComment.value.commentId) {
+    updatedComment.value.date = new Date()
+    updatedComment.value.commentId = new Date().getTime()
+    emit('saveComment', updatedComment.value)
+    return
+  }
+  emit('editComment', updatedComment.value)
+}
 
-  emit('saveComment', updatedComment.value)
+function cancelComment() {
+  emit('cancelComment')
 }
 </script>
