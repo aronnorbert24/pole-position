@@ -20,7 +20,7 @@
       class="ml-4 transition-transform duration-300 ease-in-out hover:scale-110 hover:cursor-pointer"
       @click.prevent="deleteComment"
     >
-      <EditIcon />
+      <DeleteIcon />
     </div>
   </div>
   <div class="flex justify-between">
@@ -55,6 +55,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import CreateComment from './CreateComment.vue'
+import DeleteIcon from '../icons/DeleteIcon.vue'
 import EditIcon from '../icons/EditIcon.vue'
 import LikeIcon from '../icons/LikeIcon.vue'
 import { formatDate } from '../../helpers/helper.ts'
