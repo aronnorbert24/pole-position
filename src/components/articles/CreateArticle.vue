@@ -82,7 +82,7 @@ function uploadImage(e: any) {
 
 function findChars(body: string, char: string) {
   const numberOfOccurences = body.split('').filter((element) => element === char).length
-  return !numberOfOccurences ? 0 : numberOfOccurences
+  return numberOfOccurences ?? 0
 }
 
 function emphasizeText(body: string) {
@@ -95,11 +95,11 @@ function saveArticle() {
   }
 
   numberOfOccurences.value = findChars(text.value, '*')
-  numberOfOccurences.value === 2
+  numberOfOccurences.value % 2 === 0
     ? (updatedArticle.value.separatedText = emphasizeText(text.value))
     : updatedArticle.value.separatedText.push(text.value)
 
-  updatedArticle.value.datePublished = new Date(Date.now())
+  updatedArticle.value.datePublished = new Date()
 
   emit('saveArticle', updatedArticle.value)
 }

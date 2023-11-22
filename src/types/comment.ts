@@ -1,10 +1,12 @@
 export interface Comment {
   articleId: string
   userId: string
-  parentId: string
+  childrenId: string[]
   commentId: string
   body: string
-  date: string
+  date: Date
   likes: number
   dislikes: number
+  likedBy: string[]
+  dislikedBy: string[]
 }

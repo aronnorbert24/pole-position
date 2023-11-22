@@ -1,11 +1,9 @@
 <template>
-  <div class="flex">
-    <F1Icon class="bg-white" @click="showArticlesByCategory('F1')" />
-    <F2Icon class="ml-40 bg-white" @click="showArticlesByCategory('F2')" />
-    <F3Icon class="ml-40 bg-white" @click="showArticlesByCategory('F3')" />
-    <WecIcon class="ml-40 bg-white" @click="showArticlesByCategory('WEC')" />
-    <MotogpIcon class="ml-40 bg-white" @click="showArticlesByCategory('MotoGP')" />
-    <SearchIcon class="ml-40" @click="showSearchBar" />
+  <div class="tablet:gap-x-20 flex gap-x-40 phone:gap-x-1">
+    <div v-for="category in categories" :key="category.title">
+      <component :is="category.icon" class="bg-white" @click="showArticlesByCategory(category.title)"></component>
+    </div>
+    <SearchIcon @click="showSearchBar" />
   </div>
 </template>
 
@@ -21,6 +19,29 @@ const emit = defineEmits<{
   (e: 'showArticlesByCategory', title: string): void
   (e: 'showSearchBar'): void
 }>()
+
+const categories = [
+  {
+    icon: F1Icon,
+    title: 'F1',
+  },
+  {
+    icon: F2Icon,
+    title: 'F2',
+  },
+  {
+    icon: F3Icon,
+    title: 'F3',
+  },
+  {
+    icon: WecIcon,
+    title: 'WEC',
+  },
+  {
+    icon: MotogpIcon,
+    title: 'MotoGP',
+  },
+]
 
 function showArticlesByCategory(title: string) {
   emit('showArticlesByCategory', title)

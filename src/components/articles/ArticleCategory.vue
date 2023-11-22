@@ -1,10 +1,12 @@
 <template>
   <div class="mb-5 ml-5 mr-5 flex justify-between phone:ml-8">
-    <F1Icon :class="getCategoryClass('F1')" @click="updateCategory('F1')" />
-    <F2Icon :class="getCategoryClass('F2')" @click="updateCategory('F2')" />
-    <F3Icon :class="getCategoryClass('F3')" @click="updateCategory('F3')" />
-    <WecIcon :class="getCategoryClass('WEC')" @click="updateCategory('WEC')" />
-    <MotogpIcon :class="getCategoryClass('MotoGP')" @click="updateCategory('MotoGP')" />
+    <div v-for="category in categories" :key="category.title">
+      <component
+        :is="category.icon"
+        :class="getCategoryClass(category.title)"
+        @click="updateCategory(category.title)"
+      ></component>
+    </div>
   </div>
 </template>
 
@@ -26,6 +28,28 @@ const emit = defineEmits<{
   (e: 'updateNewCategory', category: string): void
 }>()
 
+const categories = [
+  {
+    icon: F1Icon,
+    title: 'F1',
+  },
+  {
+    icon: F2Icon,
+    title: 'F2',
+  },
+  {
+    icon: F3Icon,
+    title: 'F3',
+  },
+  {
+    icon: WecIcon,
+    title: 'WEC',
+  },
+  {
+    icon: MotogpIcon,
+    title: 'MotoGP',
+  },
+]
 const updatedCategory = ref(props.category)
 
 function getCategoryClass(category: string) {

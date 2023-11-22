@@ -1,8 +1,8 @@
 <template>
   <RedRectangle />
-  <div class="ml-40 mr-5 flex justify-between phone:ml-8">
+  <div class="tablet:ml-20 tabletLandscape:ml-16 ml-40 mr-5 flex justify-between phone:ml-4">
     <IconLinks @showArticlesByCategory="showArticlesByCategory" @showSearchBar="showSearchBar" />
-    <ButtonLinks class="phone:hidden" @showCreate="showCreate" />
+    <ButtonLinks class="hidden computer:block" @showCreate="showCreate" />
   </div>
   <RedRectangle class="computer:hidden" />
   <ButtonLinks class="computer:hidden" @showCreate="showCreate" />

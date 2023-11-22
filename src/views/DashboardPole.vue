@@ -10,9 +10,14 @@
       @showArticlesByCategory="showArticlesByCategory"
       @showSearchBar="toggleSearchBar"
     />
-    <div class="computer:flex">
-      <div class="w-7/12 phone:mx-auto phone:w-11/12">
-        <SearchResults v-if="isSearchResultShowing" title="Search Results" :articles="searchedArticles" />
+    <div class="tabletLandscape:flex computer:flex">
+      <div class="tablet:w-9/12 tabletLandscape:ml-16 mx-auto w-7/12 phone:w-11/12 computer:mx-0">
+        <SearchResults
+          v-if="isSearchResultShowing"
+          title="Search Results"
+          :articles="searchedArticles"
+          @showArticle="showArticle"
+        />
         <CreateArticle v-if="isCreateArticleShowing" :article="article" class="mt-10" @saveArticle="saveArticle" />
         <ArticleList
           v-if="isHomePageShowing"
@@ -35,12 +40,14 @@
         <SingleArticle
           v-if="isSingleArticleShowing"
           :article="singleArticle"
-          :userId="user.userId"
+          :user="user"
+          :comment="comment"
+          :comments="comments"
           @likedArticle="likedArticle"
           @showArticlesByCategory="showArticlesByCategory"
         />
       </div>
-      <div class="w-3/12 phone:mx-auto phone:w-11/12 computer:ml-10">
+      <div class="tablet:w-9/12 tabletLandscape:mr-20 mx-auto w-3/12 phone:w-11/12 computer:mx-0 computer:ml-10">
         <PoleTrending :trending="trendingArticles" @showArticle="showArticle" />
       </div>
     </div>
@@ -52,26 +59,17 @@
       @closeChampionship="toggleChampionshipPopup"
       ref="closeChampionshipPopupRef"
     />
-    <div
+    <SearchResultsPopup
       v-if="isSearchBarShowing"
-      class="absolute left-20 top-12 z-50 m-auto ml-96 h-fit w-6/12 rounded-2xl border-2 border-black bg-white p-2 phone:left-0 phone:top-6 phone:ml-4 phone:w-11/12"
+      title="Search Results"
+      :length="searchedArticles.length"
+      :articles="searchedArticlesPopup"
+      @showArticle="showArticle"
+      @showSearchedArticles="showSearchedArticles"
+      @toggleSearchBar="toggleSearchBar"
+      @searchArticles="searchArticles"
       ref="closeSearchBarRef"
-    >
-      <p
-        class="text-right text-2xl font-semibold text-black transition-transform duration-300 ease-in-out hover:cursor-pointer hover:text-gray-400"
-        @click="toggleSearchBar"
-      >
-        X
-      </p>
-      <PoleSearch @searchArticles="searchArticles" />
-      <SearchResultsPopup
-        title="Search Results"
-        :length="searchedArticles.length"
-        :articles="searchedArticlesPopup"
-        @showArticle="showArticle"
-        @showSearchedArticles="showSearchedArticles"
-      />
-    </div>
+    />
   </div>
 </template>
 
@@ -84,7 +82,6 @@ import SingleArticle from '../components/articles/SingleArticle.vue'
 import ArticlesByCategory from '../components/articles/ArticlesByCategory.vue'
 import PoleTrending from '../components/articles/PoleTrending.vue'
 import ChampionshipPopup from '../components/articles/ChampionshipPopup.vue'
-import PoleSearch from '../components/articles/PoleSearch.vue'
 import SearchResults from '../components/articles/SearchResults.vue'
 import SearchResultsPopup from '../components/articles/SearchResultsPopup.vue'
 import PoleHeader from '../components/header/PoleHeader.vue'
@@ -92,9 +89,10 @@ import PoleLink from '../components/header/PoleLink.vue'
 import PoleFooter from '../components/footer/PoleFooter.vue'
 import { Article } from '../types/article.ts'
 import { User } from '../types/user.ts'
+import { Comment } from '../types/comment.ts'
 
 const isCreateArticleShowing = ref(false)
-const isHomePageShowing = ref(true)
+const isHomePageShowing = ref(false)
 const isChampionshipPopupShowing = ref(false)
 const isArticlesByCategoryShowing = ref(false)
 const isSingleArticleShowing = ref(false)
@@ -154,6 +152,19 @@ const user = ref<User>({
   password: 'qwertyqwerty',
   userPicture:
     'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
+})
+const comments = ref<Comment[]>([])
+const comment = ref<Comment>({
+  articleId: '',
+  userId: '',
+  childrenId: [],
+  commentId: '',
+  body: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
+  date: new Date(),
+  likes: 0,
+  dislikes: 0,
+  likedBy: [],
+  dislikedBy: [],
 })
 const article = ref<Article>({
   title: 'Article Title',
@@ -275,6 +286,7 @@ function previewArticles() {
   f3LatestArticles.value = f3Articles.value.slice(0, 3)
   wecLatestArticles.value = wecArticles.value.slice(0, 3)
   motogpLatestArticles.value = motogpArticles.value.slice(0, 3)
+  isHomePageShowing.value = true
 }
 
 function searchArticles(search: string) {

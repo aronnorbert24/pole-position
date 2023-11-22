@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-40 computer:px-4">
+  <div class="flex h-40 px-4 phone:px-0">
     <div
       class="mx-auto my-auto w-3/12 transition-transform duration-300 ease-in-out hover:cursor-pointer phone:w-5/12"
       @click="showArticle"
@@ -31,7 +31,8 @@ const emit = defineEmits<{
   (e: 'showArticle', article: Article): void
 }>()
 
-const previewText = props.article.subheading.slice(0, 100)
+const subheading = props.article.subheading
+const previewText = subheading.slice(0, 100)
 
 function showArticle() {
   emit('showArticle', props.article)
