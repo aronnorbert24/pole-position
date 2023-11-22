@@ -4,14 +4,14 @@
     <input
       type="text"
       maxlength="80"
-      class="mt-2 w-full rounded-2xl bg-slate-200 p-2"
+      class="mt-2 w-full rounded-2xl bg-slate-200 p-2 text-black"
       :placeholder="article.title"
       v-model="updatedArticle.title"
     />
     <label class="text-md mt-5 text-red-600"> Please enter the subheading of your article:</label>
     <textarea
       type="text"
-      class="mt-5 h-32 w-full rounded-2xl bg-slate-200 p-2"
+      class="mt-5 h-32 w-full rounded-2xl bg-slate-200 p-2 text-black"
       :placeholder="article.subheading"
       v-model="updatedArticle.subheading"
     >
@@ -21,7 +21,12 @@
     <label class="text-md font-semibold text-red-600">
       If you would like to emphasize a part of your article, include them in stars (* *):</label
     >
-    <textarea type="text" class="mt-5 h-96 w-full rounded-2xl bg-slate-200 p-2" :placeholder="text" v-model="text">
+    <textarea
+      type="text"
+      class="mt-5 h-96 w-full rounded-2xl bg-slate-200 p-2 text-black"
+      :placeholder="text"
+      v-model="text"
+    >
     </textarea>
     <label class="text-md mt-5 font-normal text-red-600"
       >Please select the category of motorsport you are writing about in the article:</label

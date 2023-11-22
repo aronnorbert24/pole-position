@@ -10,18 +10,18 @@
     ></textarea>
   </div>
   <div class="flex">
-    <div
-      class="ml-auto mr-2 mt-4 h-10 w-24 rounded-2xl bg-red-600 text-white transition-transform ease-in-out hover:scale-110 hover:cursor-pointer"
+    <button
+      class="ml-auto mr-6 mt-4 h-12 w-14 rounded-2xl bg-red-600 pr-24 text-white transition-transform ease-in-out hover:scale-110 hover:cursor-pointer"
       @click="saveComment"
     >
-      <p class="pt-1 font-header text-lg font-semibold">Comment</p>
-    </div>
-    <div
-      class="mr-4 mt-4 h-10 w-24 rounded-2xl bg-gray-300 text-red-600 transition-transform ease-in-out hover:scale-110 hover:cursor-pointer"
+      Comment
+    </button>
+    <button
+      class="mr-4 mt-4 h-12 w-14 rounded-2xl bg-gray-300 pr-20 text-red-600 transition-transform ease-in-out hover:scale-110 hover:cursor-pointer"
       @click="cancelComment"
     >
-      <p class="pt-1 font-header text-lg font-semibold">Cancel</p>
-    </div>
+      <p class="pb-1 font-header text-lg font-semibold">Cancel</p>
+    </button>
   </div>
 </template>
 

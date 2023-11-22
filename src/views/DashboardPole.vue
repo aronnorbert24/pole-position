@@ -3,7 +3,7 @@
     v-if="isChampionshipPopupShowing || isSearchBarShowing"
     class="absolute z-10 h-full w-full bg-black opacity-50"
   ></div>
-  <div class="z-0 h-fit w-screen">
+  <div class="z-0 flex h-fit w-screen flex-col">
     <PoleHeader @showHome="showHome" @showPopup="toggleChampionshipPopup" />
     <PoleLink
       @showCreate="showCreate"
@@ -57,7 +57,7 @@
         <PoleTrending :trending="trendingArticles" @showArticle="showArticle" />
       </div>
     </div>
-    <PoleFooter @showArticlesByCategory="showArticlesByCategory" />
+    <PoleFooter class="mt-auto" @showArticlesByCategory="showArticlesByCategory" />
     <ChampionshipPopup
       v-if="isChampionshipPopupShowing"
       textf1="Soon to show the F1 standings"
@@ -156,7 +156,7 @@ const trendingArticles = ref<Article[]>([])
 const articlesByCategory = ref<Article[]>([])
 const categoryTitle = ref('')
 const user = ref<User>({
-  userId: '12345',
+  userId: '67890',
   username: 'Anonymous',
   password: 'qwertyqwerty',
   userPicture:
@@ -452,23 +452,22 @@ function likedArticle(article: Article, likes: number, isPostLiked: boolean, dat
   showArticle(singleArticle.value)
 }
 
-function likedComment(comment: Comment, likes: number, isCommentLiked: boolean, commentId: number, userId: string) {
-  const updatedComment = ref<Comment>({
-    articleId: comment.articleId,
-    userId: comment.userId,
-    parentId: comment.parentId,
-    commentId: comment.commentId,
-    replies: comment.replies,
-    body: comment.body,
-    date: comment.date,
-    likedBy: comment.likedBy,
-    likes: comment.likes,
-  })
+function likedComment(likes: number, isCommentLiked: boolean, commentId: number) {
+  const comment = comments.value.find((comment) => comment.commentId === commentId)
+  const updatedComment = ref<Comment>(comment ? comment : createComment.value)
+
+  if (isCommentLiked) {
+    likes++
+  } else if (likes >= 1) {
+    likes--
+  } else {
+    return
+  }
   if (updatedComment.value) {
-    const index = updatedComment.value.likedBy.findIndex((user) => user === userId)
+    const index = updatedComment.value.likedBy.findIndex((user) => user === updatedComment.value.userId)
     updatedComment.value.likes = likes
     if (isCommentLiked && index < 0) {
-      updatedComment.value.likedBy.push(userId)
+      updatedComment.value.likedBy.push(updatedComment.value.userId)
     } else {
       if (index >= 0) {
         updatedComment.value.likedBy.splice(index, 1)

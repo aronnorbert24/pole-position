@@ -2,15 +2,15 @@
   <div class="mt-10 computer:ml-auto computer:mr-10 computer:w-3/5">
     <TitleSeparator :title="article.category" @showArticlesByCategory="showArticlesByCategory" />
     <SingleArticle :article="article" />
-    <div
+    <button
       id="likeButton"
-      class="flex h-12 w-24 rounded-xl transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer phone:ml-2 phone:h-10 phone:w-16"
+      class="flex h-16 w-28 rounded-xl transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer phone:ml-2 phone:h-10 phone:w-16"
       :class="getLikedClass"
       @click.prevent="likedArticle"
     >
       <LikeIcon />
       <p class="ml-1 mt-2">{{ likes }}</p>
-    </div>
+    </button>
     <div class="mt-12 h-fit w-full rounded-xl bg-white p-2">
       <SortComment @sortComments="sortComments" />
       <button
@@ -86,7 +86,7 @@ const emit = defineEmits<{
   (e: 'deleteComment', comment: Comment): void
   (e: 'sortComments', activeSort: string): void
   (e: 'saveReply', parentComment: Comment): void
-  (e: 'likedComment', comment: Comment, likes: number, isCommentLiked: boolean, commentId: number, userId: string): void
+  (e: 'likedComment', likes: number, isCommentLiked: boolean, commentId: number): void
 }>()
 
 const createComment = computed(() => {
@@ -121,15 +121,8 @@ function saveComment(comment: Comment) {
   toggleCreateComment()
 }
 
-function likedComment(comment: Comment, likes: number, isCommentLiked: boolean, commentId: number, userId: string) {
-  if (isCommentLiked) {
-    likes++
-  } else if (likes >= 1) {
-    likes--
-  } else {
-    return
-  }
-  emit('likedComment', comment, likes, isCommentLiked, commentId, userId)
+function likedComment(likes: number, isCommentLiked: boolean, commentId: number) {
+  emit('likedComment', likes, isCommentLiked, commentId)
 }
 
 function sortComments(activeSort: string) {
