@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@vueuse/core": "^10.5.0",
+    "flatted": "^3.2.9",
     "vue": "^3.3.4",
     "vue-click-outside": "^1.1.0"
   },

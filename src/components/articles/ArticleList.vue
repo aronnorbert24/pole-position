@@ -28,11 +28,9 @@ const emit = defineEmits<{
   (e: 'showArticle', article: Article): void
 }>()
 
-const f1 = props.f1Articles
-
 const categories = [
   {
-    category: f1,
+    category: props.f1Articles,
     title: 'F1',
   },
   {
