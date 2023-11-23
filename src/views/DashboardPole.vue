@@ -12,13 +12,6 @@
     />
     <div class="tabletLandscape:flex computer:flex">
       <div class="mx-auto w-7/12 phone:w-11/12 tablet:w-9/12 tabletLandscape:ml-16 computer:mx-0">
-        <SearchResults
-          v-if="isSearchResultShowing"
-          title="Search Results"
-          :articles="searchedArticles"
-          @showArticle="showArticle"
-        />
-        <CreateArticle v-if="isCreateArticleShowing" :article="article" class="mt-10" @saveArticle="saveArticle" />
         <ArticleList
           v-if="isHomePageShowing"
           :f1Articles="f1LatestArticles"
@@ -30,27 +23,6 @@
           @likedArticle="likedArticle"
           @showArticlesByCategory="showArticlesByCategory"
           @showArticle="showArticle"
-        />
-        <ArticlesByCategory
-          v-if="isArticlesByCategoryShowing"
-          :title="categoryTitle"
-          :articles="articlesByCategory"
-          @showArticle="showArticle"
-        />
-        <ArticleLayout
-          v-if="isSingleArticleShowing"
-          :article="singleArticle"
-          :user="user"
-          :comments="commentsByArticle"
-          :createComment="createComment"
-          @likedArticle="likedArticle"
-          @showArticlesByCategory="showArticlesByCategory"
-          @saveComment="saveComment"
-          @editComment="editComment"
-          @deleteComment="deleteComment"
-          @sortComments="sortComments"
-          @saveReply="saveReply"
-          @likedComment="likedComment"
         />
       </div>
       <div class="mx-auto w-3/12 phone:w-11/12 tablet:w-9/12 tabletLandscape:mr-20 computer:mx-0 computer:ml-10">
@@ -82,14 +54,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { onClickOutside } from '@vueuse/core'
-import { parse, stringify } from 'flatted'
-import CreateArticle from '../components/articles/CreateArticle.vue'
 import ArticleList from '../components/articles/ArticleList.vue'
-import ArticleLayout from '../components/articles/ArticleLayout.vue'
-import ArticlesByCategory from '../components/articles/ArticlesByCategory.vue'
 import PoleTrending from '../components/articles/PoleTrending.vue'
 import ChampionshipPopup from '../components/articles/ChampionshipPopup.vue'
-import SearchResults from '../components/articles/SearchResults.vue'
 import SearchResultsPopup from '../components/articles/SearchResultsPopup.vue'
 import PoleHeader from '../components/header/PoleHeader.vue'
 import PoleLink from '../components/header/PoleLink.vue'
@@ -99,147 +66,11 @@ import { Article } from '../types/article.ts'
 import { User } from '../types/user.ts'
 import { Comment } from '../types/comment.ts'
 
-const isCreateArticleShowing = ref(false)
-const isHomePageShowing = ref(false)
-const isChampionshipPopupShowing = ref(false)
-const isArticlesByCategoryShowing = ref(false)
-const isSingleArticleShowing = ref(false)
 const isSearchBarShowing = ref(false)
-const isSearchResultShowing = ref(false)
 const closeChampionshipPopupRef = ref(null)
 const closeSearchBarRef = ref(null)
-const searchQuery = ref('')
 
-const searchedArticles = computed(() => {
-  if (!searchQuery.value) {
-    return []
-  }
-  return articles.value.filter((article: Article) => {
-    const filterSmall = searchQuery.value.toLowerCase()
-    const titleSmall = article.title.toLowerCase()
-    const subheadingSmall = article.subheading.toLowerCase()
-    return titleSmall.includes(filterSmall) || subheadingSmall.includes(filterSmall)
-  })
-})
-
-const searchedArticlesPopup = computed(() => {
-  if (searchedArticles.value.length === 0) {
-    return []
-  }
-  return searchedArticles.value.slice(0, 3)
-})
-
-const articles = ref<Article[]>([])
-const singleArticle = ref<Article>({
-  articleId: 0,
-  title: '',
-  subheading: '',
-  separatedText: [],
-  image: '',
-  category: '',
-  datePublished: new Date(),
-  likedBy: [],
-  likes: 0,
-  views: 0,
-})
-const f1Articles = ref<Article[]>([])
-const f2Articles = ref<Article[]>([])
-const f3Articles = ref<Article[]>([])
-const wecArticles = ref<Article[]>([])
-const motogpArticles = ref<Article[]>([])
-const f1LatestArticles = ref<Article[]>([])
-const f2LatestArticles = ref<Article[]>([])
-const f3LatestArticles = ref<Article[]>([])
-const wecLatestArticles = ref<Article[]>([])
-const motogpLatestArticles = ref<Article[]>([])
-const trendingArticles = ref<Article[]>([])
-const articlesByCategory = ref<Article[]>([])
-const categoryTitle = ref('')
-const user = ref<User>({
-  userId: '67890',
-  username: 'Anonymous',
-  password: 'qwertyqwerty',
-  userPicture:
-    'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
-})
-const comments = ref<Comment[]>([])
-const commentsByArticle = computed(() => {
-  const singleComments = comments.value.filter((comment) => comment.articleId === singleArticle.value.articleId)
-  return singleComments ? singleComments : []
-})
-const createComment = ref<Comment>({
-  articleId: 0,
-  userId: '',
-  parentId: 0,
-  replies: [],
-  commentId: 0,
-  body: '',
-  date: new Date(),
-  likes: 0,
-  likedBy: [],
-})
-const article = ref<Article>({
-  articleId: 0,
-  title: 'Article Title',
-  subheading: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
-  separatedText: [],
-  image: 'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
-  category: 'F1',
-  datePublished: new Date(),
-  likedBy: [],
-  likes: 0,
-  views: 0,
-})
-
-function saveToLocalStorage() {
-  localStorage.setItem('articles', JSON.stringify(articles.value))
-  localStorage.setItem('comments', stringify(comments.value))
-}
-
-function getFromLocalStorage() {
-  const savedArticles = localStorage.getItem('articles')
-  articles.value = savedArticles ? JSON.parse(savedArticles) : []
-  const savedComments = localStorage.getItem('comments')
-  comments.value = savedComments ? parse(savedComments) : []
-}
-
-function showHome() {
-  if (!articles.value) {
-    return
-  }
-  previewArticles()
-  isCreateArticleShowing.value = false
-  isArticlesByCategoryShowing.value = false
-  isHomePageShowing.value = true
-  isSingleArticleShowing.value = false
-  isSearchResultShowing.value = false
-}
-
-function showCreate() {
-  isHomePageShowing.value = false
-  isArticlesByCategoryShowing.value = false
-  isCreateArticleShowing.value = true
-  isSingleArticleShowing.value = false
-  isSearchResultShowing.value = false
-}
-
-function showArticlesByCategory(title: string) {
-  title === 'F1'
-    ? (articlesByCategory.value = f1Articles.value)
-    : title === 'F2'
-    ? (articlesByCategory.value = f2Articles.value)
-    : title === 'F3'
-    ? (articlesByCategory.value = f3Articles.value)
-    : title === 'WEC'
-    ? (articlesByCategory.value = wecArticles.value)
-    : (articlesByCategory.value = motogpArticles.value)
-  categoryTitle.value = title
-  isArticlesByCategoryShowing.value = true
-  isHomePageShowing.value = false
-  isCreateArticleShowing.value = false
-  isSingleArticleShowing.value = false
-  isSearchResultShowing.value = false
-}
+// Create the preview articles from the pinia store here.
 
 function showArticle(article: Article) {
   singleArticle.value = article
@@ -278,130 +109,18 @@ function saveArticle(article: Article) {
   category === 'F1'
     ? f1Articles.value.unshift(article)
     : category === 'F2'
-    ? f2Articles.value.unshift(article)
-    : category === 'F3'
-    ? f3Articles.value.unshift(article)
-    : category === 'WEC'
-    ? wecArticles.value.unshift(article)
-    : motogpArticles.value.unshift(article)
+      ? f2Articles.value.unshift(article)
+      : category === 'F3'
+        ? f3Articles.value.unshift(article)
+        : category === 'WEC'
+          ? wecArticles.value.unshift(article)
+          : motogpArticles.value.unshift(article)
   showHome()
   saveToLocalStorage()
 }
 
-function saveComment(comment: Comment) {
-  comments.value.push(comment)
-  trending()
-  saveToLocalStorage()
-}
-
-function saveReply(parentComment: Comment) {
-  const updatedParentComment: Comment = {
-    articleId: parentComment.articleId,
-    userId: parentComment.userId,
-    parentId: parentComment.parentId,
-    commentId: parentComment.commentId,
-    replies: parentComment.replies,
-    body: parentComment.body,
-    date: parentComment.date,
-    likedBy: parentComment.likedBy,
-    likes: parentComment.likes,
-  }
-  if (updatedParentComment) {
-    const index = comments.value.findIndex((comment) => comment.commentId === updatedParentComment.commentId)
-    comments.value[index] = updatedParentComment
-  }
-  filterArticles()
-  previewArticles()
-  saveToLocalStorage()
-  trending()
-  showArticle(singleArticle.value)
-}
-
-function editComment(comment: Comment) {
-  const updatedComment: Comment = {
-    articleId: comment.articleId,
-    userId: comment.userId,
-    parentId: comment.parentId,
-    commentId: comment.commentId,
-    replies: comment.replies,
-    body: comment.body,
-    date: comment.date,
-    likedBy: comment.likedBy,
-    likes: comment.likes,
-  }
-  if (updatedComment.parentId) {
-    const parentComment = comments.value.find((comment) => comment.commentId === updatedComment.parentId)
-    if (parentComment) {
-      const index = parentComment.replies.findIndex(
-        (comment: Comment) => comment.commentId === updatedComment.commentId
-      )
-      parentComment.replies[index] = updatedComment
-    }
-  } else {
-    const i = comments.value.findIndex((comment) => comment.commentId === updatedComment.commentId)
-    comments.value[i] = updatedComment
-  }
-  filterArticles()
-  previewArticles()
-  saveToLocalStorage()
-  trending()
-  showArticle(singleArticle.value)
-}
-
-function deleteComment(commentToDelete: Comment) {
-  if (commentToDelete.parentId) {
-    const parentComment = comments.value.find((comment) => comment.commentId === commentToDelete.parentId)
-    if (parentComment) {
-      const index = parentComment.replies.findIndex(
-        (comment: Comment) => comment.commentId === commentToDelete.commentId
-      )
-      parentComment.replies.splice(index, 1)
-    }
-  } else {
-    const i = comments.value.findIndex((comment) => comment.commentId === commentToDelete.commentId)
-    comments.value.splice(i, 1)
-  }
-  filterArticles()
-  previewArticles()
-  saveToLocalStorage()
-  trending()
-  showArticle(singleArticle.value)
-}
-
-function filterArticles() {
-  f1Articles.value = articles.value.filter((article) => article.category === 'F1')
-  f2Articles.value = articles.value.filter((article) => article.category === 'F2')
-  f3Articles.value = articles.value.filter((article) => article.category === 'F3')
-  wecArticles.value = articles.value.filter((article) => article.category === 'WEC')
-  motogpArticles.value = articles.value.filter((article) => article.category === 'MotoGP')
-}
-
-function previewArticles() {
-  f1LatestArticles.value = f1Articles.value.slice(0, 3)
-  f2LatestArticles.value = f2Articles.value.slice(0, 3)
-  f3LatestArticles.value = f3Articles.value.slice(0, 3)
-  wecLatestArticles.value = wecArticles.value.slice(0, 3)
-  motogpLatestArticles.value = motogpArticles.value.slice(0, 3)
-  isHomePageShowing.value = true
-}
-
 function searchArticles(search: string) {
   searchQuery.value = search
-}
-
-function sortArticles() {
-  return articles.value.sort((a: Article, b: Article) => {
-    return a.views < b.views ? 1 : a.views > b.views ? -1 : 0
-  })
-}
-
-function sortComments(activeSort: string) {
-  comments.value = sortComment(activeSort, comments.value)
-}
-
-function trending() {
-  const sortedArticles = sortArticles()
-  trendingArticles.value = sortedArticles.slice(0, 5)
 }
 
 function viewedArticle(views: number) {
