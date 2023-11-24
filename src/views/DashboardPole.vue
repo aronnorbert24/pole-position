@@ -3,7 +3,7 @@
     v-if="isChampionshipPopupShowing || isSearchBarShowing"
     class="absolute z-10 h-full w-full bg-black opacity-50"
   ></div>
-  <div class="z-0 h-fit w-screen">
+  <div class="z-0 flex h-fit w-screen flex-col">
     <PoleHeader @showHome="showHome" @showPopup="toggleChampionshipPopup" />
     <PoleLink
       @showCreate="showCreate"
@@ -11,7 +11,7 @@
       @showSearchBar="toggleSearchBar"
     />
     <div class="tabletLandscape:flex computer:flex">
-      <div class="tablet:w-9/12 tabletLandscape:ml-16 mx-auto w-7/12 phone:w-11/12 computer:mx-0">
+      <div class="mx-auto w-7/12 phone:w-11/12 tablet:w-9/12 tabletLandscape:ml-16 computer:mx-0">
         <SearchResults
           v-if="isSearchResultShowing"
           title="Search Results"
@@ -37,21 +37,27 @@
           :articles="articlesByCategory"
           @showArticle="showArticle"
         />
-        <SingleArticle
+        <ArticleLayout
           v-if="isSingleArticleShowing"
           :article="singleArticle"
           :user="user"
-          :comment="comment"
-          :comments="comments"
+          :comments="commentsByArticle"
+          :createComment="createComment"
           @likedArticle="likedArticle"
           @showArticlesByCategory="showArticlesByCategory"
+          @saveComment="saveComment"
+          @editComment="editComment"
+          @deleteComment="deleteComment"
+          @sortComments="sortComments"
+          @saveReply="saveReply"
+          @likedComment="likedComment"
         />
       </div>
-      <div class="tablet:w-9/12 tabletLandscape:mr-20 mx-auto w-3/12 phone:w-11/12 computer:mx-0 computer:ml-10">
+      <div class="mx-auto w-3/12 phone:w-11/12 tablet:w-9/12 tabletLandscape:mr-20 computer:mx-0 computer:ml-10">
         <PoleTrending :trending="trendingArticles" @showArticle="showArticle" />
       </div>
     </div>
-    <PoleFooter @showArticlesByCategory="showArticlesByCategory" />
+    <PoleFooter class="mt-auto" @showArticlesByCategory="showArticlesByCategory" />
     <ChampionshipPopup
       v-if="isChampionshipPopupShowing"
       textf1="Soon to show the F1 standings"
@@ -76,9 +82,10 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { onClickOutside } from '@vueuse/core'
+import { parse, stringify } from 'flatted'
 import CreateArticle from '../components/articles/CreateArticle.vue'
 import ArticleList from '../components/articles/ArticleList.vue'
-import SingleArticle from '../components/articles/SingleArticle.vue'
+import ArticleLayout from '../components/articles/ArticleLayout.vue'
 import ArticlesByCategory from '../components/articles/ArticlesByCategory.vue'
 import PoleTrending from '../components/articles/PoleTrending.vue'
 import ChampionshipPopup from '../components/articles/ChampionshipPopup.vue'
@@ -87,6 +94,7 @@ import SearchResultsPopup from '../components/articles/SearchResultsPopup.vue'
 import PoleHeader from '../components/header/PoleHeader.vue'
 import PoleLink from '../components/header/PoleLink.vue'
 import PoleFooter from '../components/footer/PoleFooter.vue'
+import { sortComment } from '../helpers/helper.ts'
 import { Article } from '../types/article.ts'
 import { User } from '../types/user.ts'
 import { Comment } from '../types/comment.ts'
@@ -123,6 +131,7 @@ const searchedArticlesPopup = computed(() => {
 
 const articles = ref<Article[]>([])
 const singleArticle = ref<Article>({
+  articleId: 0,
   title: '',
   subheading: '',
   separatedText: [],
@@ -147,26 +156,30 @@ const trendingArticles = ref<Article[]>([])
 const articlesByCategory = ref<Article[]>([])
 const categoryTitle = ref('')
 const user = ref<User>({
-  userId: '12345',
+  userId: '67890',
   username: 'Anonymous',
   password: 'qwertyqwerty',
   userPicture:
     'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
 })
 const comments = ref<Comment[]>([])
-const comment = ref<Comment>({
-  articleId: '',
+const commentsByArticle = computed(() => {
+  const singleComments = comments.value.filter((comment) => comment.articleId === singleArticle.value.articleId)
+  return singleComments ? singleComments : []
+})
+const createComment = ref<Comment>({
+  articleId: 0,
   userId: '',
-  childrenId: [],
-  commentId: '',
-  body: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
+  parentId: 0,
+  replies: [],
+  commentId: 0,
+  body: '',
   date: new Date(),
   likes: 0,
-  dislikes: 0,
   likedBy: [],
-  dislikedBy: [],
 })
 const article = ref<Article>({
+  articleId: 0,
   title: 'Article Title',
   subheading: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
   separatedText: [],
@@ -180,11 +193,14 @@ const article = ref<Article>({
 
 function saveToLocalStorage() {
   localStorage.setItem('articles', JSON.stringify(articles.value))
+  localStorage.setItem('comments', stringify(comments.value))
 }
 
 function getFromLocalStorage() {
   const savedArticles = localStorage.getItem('articles')
   articles.value = savedArticles ? JSON.parse(savedArticles) : []
+  const savedComments = localStorage.getItem('comments')
+  comments.value = savedComments ? parse(savedComments) : []
 }
 
 function showHome() {
@@ -231,8 +247,8 @@ function showArticle(article: Article) {
   isArticlesByCategoryShowing.value = false
   isHomePageShowing.value = false
   isCreateArticleShowing.value = false
-  isSingleArticleShowing.value = true
   isSearchResultShowing.value = false
+  isSingleArticleShowing.value = true
 }
 
 function showSearchedArticles() {
@@ -272,6 +288,86 @@ function saveArticle(article: Article) {
   saveToLocalStorage()
 }
 
+function saveComment(comment: Comment) {
+  comments.value.push(comment)
+  trending()
+  saveToLocalStorage()
+}
+
+function saveReply(parentComment: Comment) {
+  const updatedParentComment: Comment = {
+    articleId: parentComment.articleId,
+    userId: parentComment.userId,
+    parentId: parentComment.parentId,
+    commentId: parentComment.commentId,
+    replies: parentComment.replies,
+    body: parentComment.body,
+    date: parentComment.date,
+    likedBy: parentComment.likedBy,
+    likes: parentComment.likes,
+  }
+  if (updatedParentComment) {
+    const index = comments.value.findIndex((comment) => comment.commentId === updatedParentComment.commentId)
+    comments.value[index] = updatedParentComment
+  }
+  filterArticles()
+  previewArticles()
+  saveToLocalStorage()
+  trending()
+  showArticle(singleArticle.value)
+}
+
+function editComment(comment: Comment) {
+  const updatedComment: Comment = {
+    articleId: comment.articleId,
+    userId: comment.userId,
+    parentId: comment.parentId,
+    commentId: comment.commentId,
+    replies: comment.replies,
+    body: comment.body,
+    date: comment.date,
+    likedBy: comment.likedBy,
+    likes: comment.likes,
+  }
+  if (updatedComment.parentId) {
+    const parentComment = comments.value.find((comment) => comment.commentId === updatedComment.parentId)
+    if (parentComment) {
+      const index = parentComment.replies.findIndex(
+        (comment: Comment) => comment.commentId === updatedComment.commentId
+      )
+      parentComment.replies[index] = updatedComment
+    }
+  } else {
+    const i = comments.value.findIndex((comment) => comment.commentId === updatedComment.commentId)
+    comments.value[i] = updatedComment
+  }
+  filterArticles()
+  previewArticles()
+  saveToLocalStorage()
+  trending()
+  showArticle(singleArticle.value)
+}
+
+function deleteComment(commentToDelete: Comment) {
+  if (commentToDelete.parentId) {
+    const parentComment = comments.value.find((comment) => comment.commentId === commentToDelete.parentId)
+    if (parentComment) {
+      const index = parentComment.replies.findIndex(
+        (comment: Comment) => comment.commentId === commentToDelete.commentId
+      )
+      parentComment.replies.splice(index, 1)
+    }
+  } else {
+    const i = comments.value.findIndex((comment) => comment.commentId === commentToDelete.commentId)
+    comments.value.splice(i, 1)
+  }
+  filterArticles()
+  previewArticles()
+  saveToLocalStorage()
+  trending()
+  showArticle(singleArticle.value)
+}
+
 function filterArticles() {
   f1Articles.value = articles.value.filter((article) => article.category === 'F1')
   f2Articles.value = articles.value.filter((article) => article.category === 'F2')
@@ -299,6 +395,10 @@ function sortArticles() {
   })
 }
 
+function sortComments(activeSort: string) {
+  comments.value = sortComment(activeSort, comments.value)
+}
+
 function trending() {
   const sortedArticles = sortArticles()
   trendingArticles.value = sortedArticles.slice(0, 5)
@@ -312,6 +412,7 @@ function viewedArticle(views: number) {
 
 function likedArticle(article: Article, likes: number, isPostLiked: boolean, date: Date, userId: string) {
   const updatedArticle = {
+    articleId: article.articleId,
     title: article.title,
     subheading: article.subheading,
     separatedText: article.separatedText,
@@ -322,9 +423,17 @@ function likedArticle(article: Article, likes: number, isPostLiked: boolean, dat
     likes: article.likes,
     views: article.views,
   }
+  let updatedLikes = likes
+  if (isPostLiked) {
+    updatedLikes++
+  } else if (updatedLikes >= 1) {
+    updatedLikes--
+  } else {
+    return
+  }
   if (updatedArticle) {
     const index = updatedArticle.likedBy.findIndex((user) => user === userId)
-    updatedArticle.likes = likes
+    updatedArticle.likes = updatedLikes
     if (isPostLiked && index < 0) {
       updatedArticle.likedBy.push(userId)
     } else {
@@ -339,6 +448,49 @@ function likedArticle(article: Article, likes: number, isPostLiked: boolean, dat
   filterArticles()
   previewArticles()
   saveToLocalStorage()
+  trending()
+  showArticle(singleArticle.value)
+}
+
+function likedComment(likes: number, isCommentLiked: boolean, commentId: number) {
+  const comment = comments.value.find((comment) => comment.commentId === commentId)
+  const updatedComment = ref<Comment>(comment ? comment : createComment.value)
+
+  if (isCommentLiked) {
+    likes++
+  } else if (likes >= 1) {
+    likes--
+  } else {
+    return
+  }
+  if (updatedComment.value) {
+    const index = updatedComment.value.likedBy.findIndex((user) => user === updatedComment.value.userId)
+    updatedComment.value.likes = likes
+    if (isCommentLiked && index < 0) {
+      updatedComment.value.likedBy.push(updatedComment.value.userId)
+    } else {
+      if (index >= 0) {
+        updatedComment.value.likedBy.splice(index, 1)
+      }
+    }
+  }
+  if (updatedComment.value.parentId) {
+    const parentComment = comments.value.find((comment) => comment.commentId === updatedComment.value.parentId)
+    if (parentComment) {
+      const index = parentComment.replies.findIndex(
+        (comment: Comment) => comment.commentId === updatedComment.value.commentId
+      )
+      parentComment.replies[index] = updatedComment.value
+    }
+  } else {
+    const i = comments.value.findIndex((comment) => comment.commentId === commentId)
+    comments.value[i] = updatedComment.value
+  }
+  filterArticles()
+  previewArticles()
+  saveToLocalStorage()
+  trending()
+  showArticle(singleArticle.value)
 }
 
 onMounted(async () => {
