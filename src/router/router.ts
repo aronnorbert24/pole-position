@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DashboardPole from '../views/DashboardPole.vue'
+import CreateArticleView from '../views/CreateArticleView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -9,12 +10,12 @@ const router = createRouter({
       name: 'dashboard',
       component: DashboardPole,
     },
-    /*{
-      path: '/post/:id',
-      name: 'post',
-      component: PostView
-    },
     {
+      path: '/create-article',
+      name: 'create',
+      component: CreateArticleView,
+    },
+    /*{
       path: '/author/:username',
       name: 'author',
       component: AuthorView

@@ -19,7 +19,9 @@ const emit = defineEmits<{
   (e: 'showArticle', article: Article): void
 }>()
 
-const { getArticlesByCategory } = useArticleStore()
+const { getArticlesByCategory, getFromLocalStorage } = useArticleStore()
+
+getFromLocalStorage()
 
 const categories = [
   {

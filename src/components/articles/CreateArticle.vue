@@ -5,14 +5,14 @@
       type="text"
       maxlength="80"
       class="mt-2 w-full rounded-2xl bg-slate-200 p-2 text-black"
-      :placeholder="article.title"
+      :placeholder="newArticle.title"
       v-model="updatedArticle.title"
     />
     <label class="text-md mt-5 text-red-600"> Please enter the subheading of your article:</label>
     <textarea
       type="text"
       class="mt-5 h-32 w-full rounded-2xl bg-slate-200 p-2 text-black"
-      :placeholder="article.subheading"
+      :placeholder="newArticle.subheading"
       v-model="updatedArticle.subheading"
     >
     </textarea>
@@ -34,38 +34,31 @@
     <ArticleCategory :category="updatedArticle.category" @updateNewCategory="updateCategory" />
     <label class="text-md font-normal text-red-600">Please select an image suitable to the article:</label>
     <input type="file" accept="image/*" class="ml-56 mt-5 w-full phone:ml-16" @change="uploadImage" />
-    <button class="mt-5 bg-slate-200" @click.prevent="saveArticle()">Save</button>
+    <RouterLink to="/" class="mt-5 bg-slate-200" @click.prevent="save()">Save</RouterLink>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useArticleStore } from '../../stores/ArticleStore.ts'
 import ArticleCategory from './ArticleCategory.vue'
 import { Article } from '../../types/article.ts'
 
-interface Props {
-  article: Article
-}
-
-const props = defineProps<Props>()
-
-const emit = defineEmits<{
-  (e: 'saveArticle', article: Article): void
-}>()
+const { newArticle, saveArticle } = useArticleStore()
 
 const numberOfOccurences = ref<number>()
 const text = ref('Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye')
 const updatedArticle = ref<Article>({
-  articleId: props.article.articleId,
-  title: props.article.title,
-  subheading: props.article.subheading,
-  separatedText: props.article.separatedText,
-  category: props.article.category,
-  image: props.article.image,
-  datePublished: props.article.datePublished,
-  likedBy: props.article.likedBy,
-  likes: props.article.likes,
-  views: props.article.views,
+  articleId: newArticle.articleId,
+  title: newArticle.title,
+  subheading: newArticle.subheading,
+  separatedText: newArticle.separatedText,
+  category: newArticle.category,
+  image: newArticle.image,
+  datePublished: newArticle.datePublished,
+  likedBy: newArticle.likedBy,
+  likes: newArticle.likes,
+  views: newArticle.views,
 })
 
 function updateCategory(category: string) {
@@ -95,7 +88,7 @@ function emphasizeText(body: string) {
   return body.split('*')
 }
 
-function saveArticle() {
+function save() {
   if (!updatedArticle.value.title.length) {
     return
   }
@@ -108,6 +101,6 @@ function saveArticle() {
   updatedArticle.value.datePublished = new Date()
   updatedArticle.value.articleId = new Date().getTime()
 
-  emit('saveArticle', updatedArticle.value)
+  saveArticle(updatedArticle.value)
 }
 </script>

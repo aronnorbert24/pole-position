@@ -33,11 +33,7 @@ export const useCommentStore = defineStore({
     },
     async getFromLocalStorage() {
       const newComments = localStorage.getItem('comments')
-      if (newComments) {
-        this.comments = parse(newCommments)
-        return
-      }
-      this.comments = []
+      this.comments = newComments ? parse(newCommments) : []
     },
     likedComment(comment: Comment, isCommentLiked: boolean, commentId: number) {
       const updatedComment = ref<Comment>(comment)
