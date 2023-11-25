@@ -1,5 +1,5 @@
 <template>
-  <div v-for="category in categories" :key="category.title">
+  <div class="mt-10" v-for="category in categories" :key="category.title">
     <ArticlesByCategory
       :title="category.title"
       :articles="category.category"
@@ -10,43 +10,36 @@
 </template>
 
 <script setup lang="ts">
+import { useArticleStore } from '../../stores/ArticleStore'
 import ArticlesByCategory from './ArticlesByCategory.vue'
 import { Article } from '../../types/article.ts'
-
-interface Props {
-  f1Articles: Article[]
-  f2Articles: Article[]
-  f3Articles: Article[]
-  wecArticles: Article[]
-  motogpArticles: Article[]
-}
-
-const props = defineProps<Props>()
 
 const emit = defineEmits<{
   (e: 'showArticlesByCategory', title: string): void
   (e: 'showArticle', article: Article): void
 }>()
 
+const { getArticlesByCategory } = useArticleStore()
+
 const categories = [
   {
-    category: props.f1Articles,
+    category: getArticlesByCategory('F1'),
     title: 'F1',
   },
   {
-    category: props.f2Articles,
+    category: getArticlesByCategory('F2'),
     title: 'F2',
   },
   {
-    category: props.f3Articles,
+    category: getArticlesByCategory('F3'),
     title: 'F3',
   },
   {
-    category: props.wecArticles,
+    category: getArticlesByCategory('WEC'),
     title: 'WEC',
   },
   {
-    category: props.motogpArticles,
+    category: getArticlesByCategory('MotoGP'),
     title: 'MotoGP',
   },
 ]

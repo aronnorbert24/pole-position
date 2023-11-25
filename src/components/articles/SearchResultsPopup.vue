@@ -8,21 +8,21 @@
     >
       X
     </p>
-    <PoleSearch @searchArticles="searchArticles" />
+    <PoleSearch />
     <div>
-      <EmptySearchResult v-if="articles.length === 0" :title="title" />
-      <div v-if="articles.length" class="mb-5 rounded-xl bg-white text-center">
+      <EmptySearchResult v-if="getSearchedArticlesPopup.length === 0" title="Search Results" />
+      <div v-if="getSearchedArticlesPopup.length" class="mb-5 rounded-xl bg-white text-center">
         <ArticlesByCategory
           class="computer:mr-auto computer:w-9/12"
-          :articles="articles"
-          :title="title"
+          :articles="getSearchedArticlesPopup"
+          title="Search Results"
           @showArticle="showArticle"
         />
       </div>
     </div>
 
     <button
-      v-if="length > 3"
+      v-if="getSearchedArticlesPopup.length > 3"
       class="bg-gray-300 text-center text-lg font-semibold text-black transition-transform duration-300 ease-in-out hover:cursor-pointer hover:border-0 hover:bg-red-600 hover:text-white"
       @click="showSearchedArticles"
     >
@@ -32,10 +32,14 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { useArticleStore } from '../../stores/ArticleStore'
 import ArticlesByCategory from './ArticlesByCategory.vue'
 import EmptySearchResult from './EmptySearchResult.vue'
 import PoleSearch from './PoleSearch.vue'
 import { Article } from '../../types/article.ts'
+
+const { getSearchedArticlesPopup } = storeToRefs(useArticleStore())
 
 interface Props {
   articles: Article[]
@@ -57,10 +61,6 @@ function showArticle(article: Article) {
 }
 function showSearchedArticles() {
   emit('showSearchedArticles')
-}
-
-function searchArticles(searchQuery: string) {
-  emit('searchArticles', searchQuery)
 }
 
 function toggleSearchBar() {

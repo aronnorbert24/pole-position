@@ -3,7 +3,7 @@
     <TitleSeparator title="Trending" />
     <div class="h-fit bg-white text-left">
       <div
-        v-for="(article, index) in trending"
+        v-for="(article, index) in getTrendingArticles"
         :key="index"
         class="py-1 transition-transform duration-300 ease-in-out hover:cursor-pointer hover:bg-slate-400 hover:underline"
         @click="showArticle(article)"
@@ -15,14 +15,12 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { useArticleStore } from '../../stores/ArticleStore'
 import TitleSeparator from '../baseComponents/TitleSeparator.vue'
 import { Article } from '../../types/article.ts'
 
-interface Props {
-  trending: Article[]
-}
-
-defineProps<Props>()
+const { getTrendingArticles } = storeToRefs(useArticleStore())
 
 const emit = defineEmits<{
   (e: 'showArticle', article: Article): void

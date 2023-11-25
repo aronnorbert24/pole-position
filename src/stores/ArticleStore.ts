@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { Article } from '../types/article'
 
@@ -6,6 +7,7 @@ export const useArticleStore = defineStore({
   state: () => ({
     articles: [] as Article[],
     newArticle: {
+      articleId: 0,
       title: 'Article Title',
       subheading: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
       separatedText: [],
@@ -18,6 +20,7 @@ export const useArticleStore = defineStore({
       views: 0,
     } as Article,
     singleArticle: {
+      articleId: 0,
       title: '',
       subheading: '',
       separatedText: [],
@@ -52,9 +55,6 @@ export const useArticleStore = defineStore({
       return state.searchedArticles.slice(0, 3)
     },
     getArticlesByCategory: (state) => {
-      if (state.articles.length === 0) {
-        return []
-      }
       return (title: string) =>
         title === 'F1'
           ? state.articles.filter((article) => article.category === 'F1')
@@ -77,8 +77,8 @@ export const useArticleStore = defineStore({
         .slice(0, 5)
     },
     getSingleArticle: (state) => {
-      return (articleId: )
-    }
+      return (articleId: number) => state.articles.find((article) => article.articleId === articleId)
+    },
   },
   actions: {
     async saveToLocalStorage() {
@@ -87,6 +87,46 @@ export const useArticleStore = defineStore({
     async getFromLocalStorage() {
       const savedArticles = localStorage.getItem('articles')
       this.articles = savedArticles ? JSON.parse(savedArticles) : []
+    },
+    viewedArticle(article: Article) {
+      const updatedArticle = article
+      const index = this.articles.findIndex((a) => a.articleId === article.articleId)
+      updatedArticle.views++
+      this.articles[index] = updatedArticle
+      this.saveToLocalStorage()
+    },
+    saveArticle(article: Article) {
+      this.articles.unshift(article)
+      this.saveToLocalStorage()
+    },
+    searchArticles(search: string) {
+      this.searchQuery = search
+    },
+    clearSearchQuery() {
+      this.searchQuery = ''
+    },
+    likedArticle(article: Article, isPostLiked: boolean, userId: string) {
+      const updatedArticle = ref<Article>(article)
+      if (isPostLiked) {
+        updatedArticle.value.likes++
+      } else if (updatedArticle.value.likes >= 1) {
+        updatedArticle.value.likes--
+      } else {
+        return
+      }
+      if (updatedArticle.value) {
+        const index = updatedArticle.value.likedBy.findIndex((user) => user === userId)
+        if (isPostLiked && index < 0) {
+          updatedArticle.value.likedBy.push(userId)
+        } else {
+          if (index >= 0) {
+            updatedArticle.value.likedBy.filter((id) => id !== userId)
+          }
+        }
+      }
+      const i = this.articles.findIndex((a) => a.articleId === updatedArticle.value.articleId)
+      this.articles[i] = updatedArticle.value
+      this.saveToLocalStorage()
     },
   },
 })
