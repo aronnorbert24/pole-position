@@ -1,6 +1,6 @@
 <template>
   <div class="mt-10 computer:ml-auto computer:mr-10 computer:w-3/5">
-    <TitleSeparator :title="article.category" @showArticlesByCategory="showArticlesByCategory" />
+    <RouterLink :to="`/category/${article.category}`"><TitleSeparator :title="article.category" /></RouterLink>
     <SingleArticle :article="article" />
     <button
       id="likeButton"
@@ -58,6 +58,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { RouterLink } from 'vue-router'
 import SingleArticle from './SingleArticle.vue'
 import ArticleComment from './ArticleComment.vue'
 import CreateComment from './CreateComment.vue'
@@ -80,7 +81,6 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   (e: 'likedArticle', article: Article, likes: number, isPostLiked: boolean, date: Date, userId: string): void
-  (e: 'showArticlesByCategory', title: string): void
   (e: 'saveComment', comment: Comment): void
   (e: 'editComment', comment: Comment): void
   (e: 'deleteComment', comment: Comment): void
@@ -127,10 +127,6 @@ function likedComment(likes: number, isCommentLiked: boolean, commentId: number)
 
 function sortComments(activeSort: string) {
   emit('sortComments', activeSort)
-}
-
-function showArticlesByCategory(title: string) {
-  emit('showArticlesByCategory', title)
 }
 
 function saveReply(parentComment: Comment, reply: Comment) {

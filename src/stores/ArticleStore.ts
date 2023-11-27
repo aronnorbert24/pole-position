@@ -55,7 +55,7 @@ export const useArticleStore = defineStore({
       return state.searchedArticles.slice(0, 3)
     },
     getArticlesByCategory: (state) => {
-      return (title: string) =>
+      return (title: string | string[]) =>
         title === 'F1'
           ? state.articles.filter((article) => article.category === 'F1')
           : title === 'F2'

@@ -12,11 +12,16 @@
     <div>
       <EmptySearchResult v-if="getSearchedArticlesPopup.length === 0" title="Search Results" />
       <div v-if="getSearchedArticlesPopup.length" class="mb-5 rounded-xl bg-white text-center">
-        <ArticlesByCategory
-          class="computer:mr-auto computer:w-9/12"
-          :articles="getSearchedArticlesPopup"
-          title="Search Results"
-        />
+        <div class="mt-10 computer:ml-auto computer:mr-10 computer:w-3/5">
+          <RouterLink to="/search"><TitleSeparator title="Search Results" /></RouterLink>
+          <div class="mb-5 rounded-xl bg-white text-center">
+            <ul>
+              <li v-for="(article, index) in getSearchedArticlesPopup" :key="index">
+                <ArticlePreview :article="article" />
+              </li>
+            </ul>
+          </div>
+  </div>
       </div>
     </div>
 
@@ -32,7 +37,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useArticleStore } from '../../stores/ArticleStore'
-import ArticlesByCategory from './ArticlesByCategory.vue'
 import EmptySearchResult from './EmptySearchResult.vue'
 import PoleSearch from './PoleSearch.vue'
 

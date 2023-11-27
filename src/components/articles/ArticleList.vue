@@ -1,27 +1,30 @@
 <template>
   <div class="mt-10" v-for="category in categories" :key="category.title">
-    <ArticlesByCategory
-      :title="category.title"
-      :articles="category.category"
-      @showArticle="showArticle"
-      @showArticlesByCategory="showArticlesByCategory"
-    />
+    <div class="computer:ml-auto computer:mr-10 computer:w-3/5">
+    <RouterLink :to="`/category/${category.title}`"><TitleSeparator :title="category.title" /></RouterLink>
+    <div class="mb-5 rounded-xl bg-white text-center">
+      <ul>
+        <li v-for="(article, index) in category.category" :key="index">
+          <ArticlePreview :article="article" @showArticle="showArticle" />
+        </li>
+      </ul>
+    </div>
+  </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useArticleStore } from '../../stores/ArticleStore'
-import ArticlesByCategory from './ArticlesByCategory.vue'
 import { Article } from '../../types/article.ts'
+import TitleSeparator from '../baseComponents/TitleSeparator.vue';
+import ArticlePreview from './PreviewArticle.vue';
 
 const emit = defineEmits<{
-  (e: 'showArticlesByCategory', title: string): void
   (e: 'showArticle', article: Article): void
 }>()
 
-const { getArticlesByCategory, getFromLocalStorage } = useArticleStore()
+const { getArticlesByCategory } = useArticleStore()
 
-getFromLocalStorage()
 
 const categories = [
   {
@@ -46,9 +49,6 @@ const categories = [
   },
 ]
 
-function showArticlesByCategory(title: string) {
-  emit('showArticlesByCategory', title)
-}
 
 function showArticle(article: Article) {
   emit('showArticle', article)

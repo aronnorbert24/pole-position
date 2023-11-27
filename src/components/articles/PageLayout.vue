@@ -32,6 +32,7 @@ import { onClickOutside } from '@vueuse/core'
 import { useArticleStore } from '../../stores/ArticleStore'
 import ArticleList from './ArticleList.vue'
 import CreateArticle from './CreateArticle.vue'
+import ArticlesByCategory from './ArticlesByCategory.vue'
 import PoleTrending from './PoleTrending.vue'
 import ChampionshipPopup from './ChampionshipPopup.vue'
 import SearchResultsPopup from './SearchResultsPopup.vue'
@@ -45,7 +46,9 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const { clearSearchQuery } = useArticleStore()
+const { clearSearchQuery, getFromLocalStorage } = useArticleStore()
+
+getFromLocalStorage()
 
 const isSearchBarShowing = ref(false)
 const closeChampionshipPopupRef = ref(null)
@@ -53,7 +56,10 @@ const closeSearchBarRef = ref(null)
 const isChampionshipPopupShowing = ref(false)
 
 const currentComponent = computed(() => {
-  return props.component === 'Home' ? ArticleList : props.component === 'Create' ? CreateArticle : ArticleList
+  return props.component === 'Home' ? ArticleList 
+  : props.component === 'Create' ? CreateArticle 
+  : props.component === 'Category' ? ArticlesByCategory
+  : ArticleList
 })
 
 /*function showArticle(article: Article) {

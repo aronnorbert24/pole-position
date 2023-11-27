@@ -1,7 +1,9 @@
 <template>
   <div class="tablet:gap-x-20 flex gap-x-40 phone:gap-x-1">
     <div v-for="category in categories" :key="category.title">
-      <component :is="category.icon" class="bg-white" @click="showArticlesByCategory(category.title)"></component>
+      <RouterLink :to="`/category/${category.title}`">
+        <component :is="category.icon" class="bg-white"></component>
+      </RouterLink>
     </div>
     <SearchIcon @click="showSearchBar" />
   </div>
@@ -16,7 +18,6 @@ import MotogpIcon from '../icons/MotogpIcon.vue'
 import SearchIcon from '../icons/SearchIcon.vue'
 
 const emit = defineEmits<{
-  (e: 'showArticlesByCategory', title: string): void
   (e: 'showSearchBar'): void
 }>()
 
@@ -42,10 +43,6 @@ const categories = [
     title: 'MotoGP',
   },
 ]
-
-function showArticlesByCategory(title: string) {
-  emit('showArticlesByCategory', title)
-}
 
 function showSearchBar() {
   emit('showSearchBar')
