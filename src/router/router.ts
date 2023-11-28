@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import DashboardPole from '../views/DashboardPole.vue'
 import CreateArticleView from '../views/CreateArticleView.vue'
 import ArticlesByCategoryView from '../views/ArticlesByCategoryView.vue'
+import SearchResultsView from '../views/SearchResultsView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -21,14 +22,11 @@ const router = createRouter({
       name: 'categories',
       component: ArticlesByCategoryView,
     },
-    /*{
-      path: '/authors',
-      name: 'authors',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AuthorsView.vue')
-    }*/
+    {
+      path: '/search',
+      name: 'search',
+      component: SearchResultsView,
+    },
   ],
 })
 

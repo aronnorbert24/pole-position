@@ -33,6 +33,7 @@ import { useArticleStore } from '../../stores/ArticleStore'
 import ArticleList from './ArticleList.vue'
 import CreateArticle from './CreateArticle.vue'
 import ArticlesByCategory from './ArticlesByCategory.vue'
+import SearchResults from './SearchResults.vue'
 import PoleTrending from './PoleTrending.vue'
 import ChampionshipPopup from './ChampionshipPopup.vue'
 import SearchResultsPopup from './SearchResultsPopup.vue'
@@ -56,30 +57,13 @@ const closeSearchBarRef = ref(null)
 const isChampionshipPopupShowing = ref(false)
 
 const currentComponent = computed(() => {
+  
   return props.component === 'Home' ? ArticleList 
   : props.component === 'Create' ? CreateArticle 
   : props.component === 'Category' ? ArticlesByCategory
+  : props.component === 'Search' ? SearchResults
   : ArticleList
 })
-
-/*function showArticle(article: Article) {
-  singleArticle.value = article
-  article.views = viewedArticle(article.views)
-  isArticlesByCategoryShowing.value = false
-  isHomePageShowing.value = false
-  isCreateArticleShowing.value = false
-  isSearchResultShowing.value = false
-  isSingleArticleShowing.value = true
-}
-
-function showSearchedArticles() {
-  isArticlesByCategoryShowing.value = false
-  isHomePageShowing.value = false
-  isCreateArticleShowing.value = false
-  isSingleArticleShowing.value = false
-  isSearchResultShowing.value = true
-  toggleSearchBar()
-}*/
 
 function toggleChampionshipPopup() {
   isChampionshipPopupShowing.value = !isChampionshipPopupShowing.value

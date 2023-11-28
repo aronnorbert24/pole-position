@@ -37,6 +37,7 @@ export const useArticleStore = defineStore({
   getters: {
     getSearchedArticles: (state) => {
       if (!state.searchQuery) {
+        state.searchedArticles = []
         return []
       }
 
@@ -101,6 +102,7 @@ export const useArticleStore = defineStore({
     },
     searchArticles(search: string) {
       this.searchQuery = search
+      this.getSearchedArticles
     },
     clearSearchQuery() {
       this.searchQuery = ''

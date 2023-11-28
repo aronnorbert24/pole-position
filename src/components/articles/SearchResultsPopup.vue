@@ -13,7 +13,7 @@
       <EmptySearchResult v-if="getSearchedArticlesPopup.length === 0" title="Search Results" />
       <div v-if="getSearchedArticlesPopup.length" class="mb-5 rounded-xl bg-white text-center">
         <div class="mt-10 computer:ml-auto computer:mr-10 computer:w-3/5">
-          <RouterLink to="/search"><TitleSeparator title="Search Results" /></RouterLink>
+          <RouterLink to="/search"><TitleSeparator title="Search Results" @click="toggleSearchBar"/></RouterLink>
           <div class="mb-5 rounded-xl bg-white text-center">
             <ul>
               <li v-for="(article, index) in getSearchedArticlesPopup" :key="index">
@@ -25,18 +25,22 @@
       </div>
     </div>
 
-    <button
+    <RouterLink to="/search"
       v-if="getSearchedArticlesPopup.length > 3"
       class="bg-gray-300 text-center text-lg font-semibold text-black transition-transform duration-300 ease-in-out hover:cursor-pointer hover:border-0 hover:bg-red-600 hover:text-white"
+      @click="toggleSearchBar"
     >
       See more
-    </button>
+    </RouterLink>
   </div>
 </template>
 
 <script setup lang="ts">
+import { RouterLink } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useArticleStore } from '../../stores/ArticleStore'
+import ArticlePreview from './PreviewArticle.vue'
+import TitleSeparator from '../baseComponents/TitleSeparator.vue'
 import EmptySearchResult from './EmptySearchResult.vue'
 import PoleSearch from './PoleSearch.vue'
 
