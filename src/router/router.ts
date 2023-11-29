@@ -9,7 +9,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: '/',
+      path: '/pole-position',
       name: 'dashboard',
       component: DashboardPole,
     },
