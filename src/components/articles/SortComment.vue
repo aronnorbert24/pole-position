@@ -16,10 +16,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useCommentStore } from '../../stores/CommentStore'
 
-const emit = defineEmits<{
-  (e: 'sortComments', property: string): void
-}>()
+const { setActiveSort } = useCommentStore()
 
 const sortProperties: string[] = ['Oldest', 'Newest', 'Best']
 const activeSort = ref('Oldest')
@@ -30,6 +29,6 @@ function getPropertyClass(property: string) {
 
 function toggleActiveSort(priority: string) {
   activeSort.value = priority
-  emit('sortComments', activeSort.value)
+  setActiveSort(activeSort.value)
 }
 </script>

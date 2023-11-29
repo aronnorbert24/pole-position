@@ -30,9 +30,11 @@
 import { ref, computed } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 import { useArticleStore } from '../../stores/ArticleStore'
+import { useCommentStore } from '../../stores/CommentStore'
 import ArticleList from './ArticleList.vue'
 import CreateArticle from './CreateArticle.vue'
 import ArticlesByCategory from './ArticlesByCategory.vue'
+import ArticleLayout from './ArticleLayout.vue'
 import SearchResults from './SearchResults.vue'
 import PoleTrending from './PoleTrending.vue'
 import ChampionshipPopup from './ChampionshipPopup.vue'
@@ -47,9 +49,11 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const { clearSearchQuery, getFromLocalStorage } = useArticleStore()
+const { clearSearchQuery, getArticlesFromLocalStorage } = useArticleStore()
+const { getCommentsFromLocalStorage } = useCommentStore()
 
-getFromLocalStorage()
+getArticlesFromLocalStorage()
+getCommentsFromLocalStorage()
 
 const isSearchBarShowing = ref(false)
 const closeChampionshipPopupRef = ref(null)
@@ -61,6 +65,7 @@ const currentComponent = computed(() => {
   return props.component === 'Home' ? ArticleList 
   : props.component === 'Create' ? CreateArticle 
   : props.component === 'Category' ? ArticlesByCategory
+  : props.component === 'Single' ? ArticleLayout
   : props.component === 'Search' ? SearchResults
   : ArticleList
 })

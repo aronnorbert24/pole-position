@@ -11,8 +11,8 @@
   </div>
   <div class="flex">
     <button
-      class="ml-auto mr-6 mt-4 h-12 w-14 rounded-2xl bg-red-600 pr-24 text-white transition-transform ease-in-out hover:scale-110 hover:cursor-pointer"
-      @click="saveComment"
+      class="ml-auto mr-6 mt-4 h-12 w-14 rounded-2xl bg-red-600 pr-24 text-white transition-transform ease-in-out hover:scale-110 hover:cursor-pointer computer:mr-14"
+      @click="save"
     >
       Comment
     </button>
@@ -26,51 +26,70 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia';
+import { useCommentStore } from '../../stores/CommentStore';
 import { User } from '../../types/user.ts'
 import { Comment } from '../../types/comment.ts'
 
+const route = useRoute()
+const { singleComment } = storeToRefs(useCommentStore())
+const { saveComment, editComment } = useCommentStore()
+
+
 interface Props {
-  comment: Comment
+  comment: string
   user: User
 }
 
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
-  (e: 'saveComment', comment: Comment): void
-  (e: 'editComment', comment: Comment): void
   (e: 'cancelComment'): void
 }>()
 
 const updatedComment = ref<Comment>({
-  articleId: props.comment.articleId,
-  userId: props.comment.userId,
-  parentId: props.comment.parentId,
-  replies: props.comment.replies,
-  commentId: props.comment.commentId,
-  body: props.comment.body,
-  date: props.comment.date,
-  likes: props.comment.likes,
-  likedBy: props.comment.likedBy,
-})
+      articleId: 0,
+      userId: '',
+      commentId: 0,
+      parentId: 0,
+      replies: [] as Comment[],
+      body: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
+      date: new Date(),
+      likes: 0,
+      likedBy: [],
+    })
 
-function saveComment() {
+
+function save() {
   if (!updatedComment.value.body.length) {
     return
   }
 
   if (!updatedComment.value.commentId) {
+    updatedComment.value.articleId = Number(route.params.id)
     updatedComment.value.userId = props.user.userId
     updatedComment.value.date = new Date()
     updatedComment.value.commentId = new Date().getTime()
-    emit('saveComment', updatedComment.value)
+    if (props.comment === 'Reply') {
+      updatedComment.value.parentId = singleComment.value.commentId
+    }
+    saveComment(updatedComment.value)
+    emit('cancelComment')
     return
   }
-  emit('editComment', updatedComment.value)
+  editComment(updatedComment.value)
+  emit('cancelComment')
 }
 
 function cancelComment() {
   emit('cancelComment')
 }
+
+onMounted(() => {
+  if (props.comment === 'Edit') {
+    updatedComment.value = singleComment.value
+  }
+})
 </script>

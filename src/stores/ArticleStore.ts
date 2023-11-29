@@ -82,10 +82,10 @@ export const useArticleStore = defineStore({
     },
   },
   actions: {
-    async saveToLocalStorage() {
+    async saveArticlesToLocalStorage() {
       localStorage.setItem('articles', JSON.stringify(this.articles))
     },
-    async getFromLocalStorage() {
+    async getArticlesFromLocalStorage() {
       const savedArticles = localStorage.getItem('articles')
       this.articles = savedArticles ? JSON.parse(savedArticles) : []
     },
@@ -94,11 +94,11 @@ export const useArticleStore = defineStore({
       const index = this.articles.findIndex((a) => a.articleId === article.articleId)
       updatedArticle.views++
       this.articles[index] = updatedArticle
-      this.saveToLocalStorage()
+      this.saveArticlesToLocalStorage()
     },
     saveArticle(article: Article) {
       this.articles.unshift(article)
-      this.saveToLocalStorage()
+      this.saveArticlesToLocalStorage()
     },
     searchArticles(search: string) {
       this.searchQuery = search
@@ -122,13 +122,14 @@ export const useArticleStore = defineStore({
           updatedArticle.value.likedBy.push(userId)
         } else {
           if (index >= 0) {
-            updatedArticle.value.likedBy.filter((id) => id !== userId)
+            updatedArticle.value.likedBy.splice(index, 1)
           }
         }
       }
       const i = this.articles.findIndex((a) => a.articleId === updatedArticle.value.articleId)
       this.articles[i] = updatedArticle.value
-      this.saveToLocalStorage()
+      this.getSingleArticle(updatedArticle.value.articleId)
+      this.saveArticlesToLocalStorage()
     },
   },
 })

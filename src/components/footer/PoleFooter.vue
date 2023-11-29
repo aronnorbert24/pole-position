@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-36 w-screen bg-red-600 px-16 pb-4 align-bottom phone:px-4">
+  <div class="mt-36 bg-red-600 px-16 pb-4 align-bottom phone:px-4">
     <div class="flex justify-between">
       <div
         class="flex transition-transform duration-300 ease-in-out hover:cursor-pointer"

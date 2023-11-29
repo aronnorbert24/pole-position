@@ -1,6 +1,6 @@
 <template>
   <div v-if="isCurrentCommentVisible" class="mt-5 flex">
-    <div class="flex h-20 w-3/12">
+    <div class="flex phone:mr-6 h-20 w-3/12 phone:w-full">
       <img class="h-16 w-16 rounded-full border-2 border-red-600" :src="user.userPicture" />
     </div>
     <div class="pb-4 pr-2 text-left">
@@ -12,9 +12,9 @@
   </div>
   <div class="flex justify-between">
     <button
-      class="flex h-16 w-28 rounded-xl transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer phone:ml-2 phone:h-10 phone:w-16"
+      class="flex h-16 w-28 rounded-xl transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer phone:ml-2 phone:h-14 phone:w-18"
       :class="getLikedClass"
-      @click.prevent="likedComment"
+      @click.prevent="liked"
     >
       <LikeIcon />
       <p class="ml-1 mt-2">{{ updatedLikes }}</p>
@@ -31,9 +31,7 @@
     <CreateComment
       v-if="isReplyCommentVisible"
       :user="user"
-      :comment="updatedComment"
-      @saveComment="saveReply"
-      @editComment="editComment"
+      :comment="category"
       @cancelComment="toggleComments"
     />
   </div>
@@ -41,6 +39,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useCommentStore } from '../../stores/CommentStore'
 import CreateComment from './CreateComment.vue'
 import LikeIcon from '../icons/LikeIcon.vue'
 import CommentIcons from '../icons/CommentIcons.vue'
@@ -48,22 +47,15 @@ import { formatDate } from '../../helpers/helper.ts'
 import { User } from '../../types/user.ts'
 import { Comment } from '../../types/comment.ts'
 
+const { setSingleComment, likedComment, deleteToComment } = useCommentStore()
+
 interface Props {
   user: User
   comment: Comment
-  createComment: Comment
 }
 
 const props = defineProps<Props>()
 
-const emit = defineEmits<{
-  (e: 'likedComment', likes: number, isCommentLiked: boolean, commentId: number): void
-  (e: 'saveReply', parentComment: Comment, reply: Comment): void
-  (e: 'editComment', editedComment: Comment): void
-  (e: 'deleteComment', comment: Comment): void
-}>()
-
-const updatedComment = ref<Comment>(props.comment)
 const category = ref('Reply')
 
 const isUserTheAuthor = computed(() => {
@@ -87,28 +79,17 @@ const getLikedClass = computed(() => {
 const isReplyCommentVisible = ref(false)
 const isCurrentCommentVisible = ref(true)
 
-function likedComment() {
-  emit('likedComment', updatedLikes.value, !isCommentLiked.value, props.comment.commentId)
-}
-
-function saveReply(comment: Comment) {
-  comment.parentId = props.comment.commentId
-  toggleReplyComment()
-  emit('saveReply', props.comment, comment)
-}
-
-function editComment(comment: Comment) {
-  toggleComments()
-  emit('editComment', comment)
+function liked() {
+  likedComment(props.comment, !isCommentLiked.value, props.user.userId)
 }
 
 function deleteComment() {
-  emit('deleteComment', props.comment)
+  deleteToComment(props.comment)
 }
 
 function toggleComment(type: string) {
-  updatedComment.value = type === 'Reply' ? props.createComment : props.comment
   category.value = type
+  setSingleComment(props.comment)
   if (category.value === 'Edit') {
     toggleCurrentComment()
   }

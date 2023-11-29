@@ -1,17 +1,16 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { useArticleStore } from './ArticleStore'
 import { parse, stringify } from 'flatted'
+import { sortComment } from '../helpers/helper'
 import { Comment } from '../types/comment'
 
 export const useCommentStore = defineStore({
   id: 'comment',
   state: () => ({
     comments: [] as Comment[],
-    newComment: {
+    singleComment: {
       articleId: 0,
       userId: '',
-      childrenId: [],
       commentId: 0,
       parentId: 0,
       replies: [] as Comment[],
@@ -20,22 +19,74 @@ export const useCommentStore = defineStore({
       likes: 0,
       likedBy: [],
     } as Comment,
+    activeSort: 'Oldest',
+    singleArticleComments: [] as Comment[]
   }),
   getters: {
     getArticleComments: (state) => {
-      const articleStore: any = useArticleStore()
-      return state.comments.filter((comment: any) => comment.commentId === articleStore.post.articleId)
+      return (articleId: number) => state.comments.filter((comment: any) => comment.articleId === articleId)
     },
+    getSortedComments(state) {
+      return (articleId: number) => sortComment(state.activeSort, this.getArticleComments(articleId))
+    }
   },
   actions: {
-    async saveToLocalStorage() {
+    async saveCommentsToLocalStorage() {
       localStorage.setItem('comments', stringify(this.comments))
     },
-    async getFromLocalStorage() {
+    async getCommentsFromLocalStorage() {
       const newComments = localStorage.getItem('comments')
       this.comments = newComments ? parse(newComments) : []
     },
-    likedComment(comment: Comment, isCommentLiked: boolean, commentId: number) {
+    saveComment(comment: Comment) {
+      const updatedComment: Comment = {
+        articleId: comment.articleId,
+        userId: comment.userId,
+        parentId: comment.parentId,
+        commentId: comment.commentId,
+        replies: comment.replies,
+        body: comment.body,
+        date: comment.date,
+        likedBy: comment.likedBy,
+        likes: comment.likes,
+      }
+      
+      if (updatedComment) {
+       if (updatedComment.parentId) {
+          const index = this.comments.findIndex((comment: Comment) => comment.commentId === updatedComment.parentId)
+          this.comments[index].replies.push(updatedComment)
+        } else {
+          this.comments.push(updatedComment)
+        }
+        this.saveCommentsToLocalStorage()
+      }
+    },
+    editComment(comment: Comment) {
+      const updatedComment: Comment = {
+        articleId: comment.articleId,
+        userId: comment.userId,
+        parentId: comment.parentId,
+        commentId: comment.commentId,
+        replies: comment.replies,
+        body: comment.body,
+        date: comment.date,
+        likedBy: comment.likedBy,
+        likes: comment.likes,
+      }
+      
+      if (updatedComment) {
+       if (updatedComment.parentId) {
+          const parentIndex = this.comments.findIndex((comment: Comment) => comment.commentId === updatedComment.parentId)
+          const index = this.comments[parentIndex].replies.findIndex((comment: Comment) => comment.commentId === updatedComment.commentId)
+          this.comments[parentIndex].replies[index] = updatedComment
+        } else {
+          const index = this.comments.findIndex((comment: Comment) => comment.commentId === updatedComment.commentId)
+          this.comments[index] = updatedComment
+        }
+        this.saveCommentsToLocalStorage()
+      }
+    },
+    likedComment(comment: Comment, isCommentLiked: boolean, userId: string) {
       const updatedComment = ref<Comment>(comment)
 
       if (isCommentLiked) {
@@ -46,9 +97,9 @@ export const useCommentStore = defineStore({
         return
       }
       if (updatedComment.value) {
-        const index = updatedComment.value.likedBy.findIndex((user: string) => user === updatedComment.value.userId)
+        const index = updatedComment.value.likedBy.findIndex((id: string) => id === userId)
         if (isCommentLiked && index < 0) {
-          updatedComment.value.likedBy.push(updatedComment.value.userId)
+          updatedComment.value.likedBy.push(userId)
         } else {
           if (index >= 0) {
             updatedComment.value.likedBy.splice(index, 1)
@@ -56,20 +107,41 @@ export const useCommentStore = defineStore({
         }
       }
       if (updatedComment.value.parentId) {
-        const parentComment = this.comments.find((comment) => comment.commentId === updatedComment.value.parentId)
-        if (parentComment) {
-          const index = parentComment.replies.findIndex(
+        const parentIndex = this.comments.findIndex((comment) => comment.commentId === updatedComment.value.parentId)
+        if (parentIndex) {
+          const index = this.comments[parentIndex].replies.findIndex(
             (comment: Comment) => comment.commentId === updatedComment.value.commentId
           )
           if (index) {
-            parentComment.replies[index] = updatedComment.value
+            this.comments[parentIndex].replies[index] = updatedComment.value
           }
         }
       } else {
-        const i = this.comments.findIndex((comment) => comment.commentId === commentId)
+        const i = this.comments.findIndex((c) => c.commentId === updatedComment.value.commentId)
         this.comments[i] = updatedComment.value
       }
-      this.saveToLocalStorage()
+      this.saveCommentsToLocalStorage()
     },
+    deleteToComment(commentToDelete: Comment) {
+      if (commentToDelete.parentId) {
+        const parentIndex = this.comments.findIndex((comment) => comment.commentId === commentToDelete.parentId)
+        if (parentIndex) {
+          const index = this.comments[parentIndex].replies.findIndex(
+            (comment: Comment) => comment.commentId === commentToDelete.commentId
+          )
+          this.comments[parentIndex].replies.splice(index, 1)
+        }
+      } else {
+        const i = this.comments.findIndex((comment) => comment.commentId === commentToDelete.commentId)
+        this.comments.splice(i, 1)
+      }
+      this.saveCommentsToLocalStorage()
+    },
+    setActiveSort(activeSort: string) {
+      this.activeSort = activeSort
+    },
+    setSingleComment(comment: Comment) {
+      this.singleComment = comment
+    }
   },
 })

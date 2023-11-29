@@ -5,7 +5,7 @@
     <div class="mb-5 rounded-xl bg-white text-center">
       <ul>
         <li v-for="(article, index) in category.category" :key="index">
-          <ArticlePreview :article="article" @showArticle="showArticle" />
+          <ArticlePreview :article="article"/>
         </li>
       </ul>
     </div>
@@ -15,13 +15,8 @@
 
 <script setup lang="ts">
 import { useArticleStore } from '../../stores/ArticleStore'
-import { Article } from '../../types/article.ts'
 import TitleSeparator from '../baseComponents/TitleSeparator.vue';
 import ArticlePreview from './PreviewArticle.vue';
-
-const emit = defineEmits<{
-  (e: 'showArticle', article: Article): void
-}>()
 
 const { getArticlesByCategory } = useArticleStore()
 
@@ -48,9 +43,4 @@ const categories = [
     title: 'MotoGP',
   },
 ]
-
-
-function showArticle(article: Article) {
-  emit('showArticle', article)
-}
 </script>

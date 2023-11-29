@@ -1,6 +1,6 @@
 <template>
   <svg
-    class="svg-icon"
+    class="svg-icon phone:scale-75 ml-4 transition-transform duration-300 ease-in-out hover:scale-110 hover:cursor-pointer"
     style="width: 24px; height: 24px; vertical-align: middle; fill: currentColor; overflow: hidden"
     viewBox="0 0 1024 1024"
     version="1.1"

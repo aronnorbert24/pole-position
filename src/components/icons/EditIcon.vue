@@ -1,7 +1,7 @@
 <template>
   <svg
     version="1.0"
-    class="feather feather-edit"
+    class="feather feather-edit ml-4 transition-transform duration-300 ease-in-out hover:scale-110 hover:cursor-pointer "
     fill="none"
     height="24"
     stroke="currentColor"

@@ -9,7 +9,7 @@
     </div>
     <div class="flex justify-between">
       <ChampionshipIcon
-        class="my-5 mr-10 scale-110 rounded-2xl border-2 border-red-600 bg-white transition-transform duration-300 ease-in-out hover:cursor-pointer phone:mr-2 phone:scale-100 tablet:mr-4 computer:hover:scale-125"
+        class="my-5 mr-10 scale-110 rounded-2xl border-2 border-red-600 bg-white transition-transform duration-300 ease-in-out hover:cursor-pointer phone:mr-2 phone:scale-100 tablet:mr-8 computer:hover:scale-125"
         @click="showPopup"
       />
     </div>

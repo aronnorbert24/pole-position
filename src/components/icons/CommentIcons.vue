@@ -1,16 +1,8 @@
 <template>
-  <button
-    class="ml-4 h-12 w-16 transition-transform duration-300 ease-in-out hover:scale-110 hover:cursor-pointer"
-    @click.prevent="toggleComment('Edit')"
-  >
-    <EditIcon />
-  </button>
-  <button
-    class="ml-4 h-12 w-16 transition-transform duration-300 ease-in-out hover:scale-110 hover:cursor-pointer"
-    @click.prevent="deleteComment"
-  >
-    <DeleteIcon />
-  </button>
+  <div class="phone:w-6/12 flex justify-end">
+    <EditIcon @click="toggleComment('Edit')" />
+    <DeleteIcon @click="deleteComment"/>
+</div>
 </template>
 
 <script setup lang="ts">
