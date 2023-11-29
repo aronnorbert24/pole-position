@@ -1,10 +1,10 @@
 <template>
   <div class="mt-10 computer:ml-auto computer:mr-10 computer:w-3/5">
-    <TitleSeparator :title="title" @click="showArticlesByCategory(title)" />
+    <TitleSeparator :title="route.params.id" />
     <div class="mb-5 rounded-xl bg-white text-center">
       <ul>
-        <li v-for="(article, index) in articles" :key="index">
-          <ArticlePreview :article="article" @showArticle="showArticle" />
+        <li v-for="(article, index) in getArticlesByCategory(route.params.id)" :key="index">
+          <ArticlePreview :article="article"/>
         </li>
       </ul>
     </div>
@@ -12,27 +12,13 @@
 </template>
 
 <script setup lang="ts">
+import { useRoute } from 'vue-router'
+import { useArticleStore } from '../../stores/ArticleStore';
 import ArticlePreview from './PreviewArticle.vue'
 import TitleSeparator from '../baseComponents/TitleSeparator.vue'
-import { Article } from '../../types/article.ts'
 
-interface Props {
-  articles: Article[]
-  title: string
-}
+const route = useRoute()
+const { getArticlesByCategory } = useArticleStore()
 
-defineProps<Props>()
 
-const emit = defineEmits<{
-  (e: 'showArticle', article: Article): void
-  (e: 'showArticlesByCategory', title: string): void
-}>()
-
-function showArticlesByCategory(title: string) {
-  emit('showArticlesByCategory', title)
-}
-
-function showArticle(article: Article) {
-  emit('showArticle', article)
-}
 </script>

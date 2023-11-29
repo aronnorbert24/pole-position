@@ -1,11 +1,11 @@
 <template>
-  <RedRectangle />
-  <div class="tablet:ml-20 tabletLandscape:ml-16 ml-40 mr-5 flex justify-between phone:ml-4">
-    <IconLinks @showArticlesByCategory="showArticlesByCategory" @showSearchBar="showSearchBar" />
-    <ButtonLinks class="hidden computer:block" @showCreate="showCreate" />
+  <RedRectangle class="phone:mt-44 tablet:mt-60" />
+  <div class="ml-40 mr-5 flex justify-between phone:ml-4 tablet:ml-20 tabletLandscape:ml-16">
+    <IconLinks @showSearchBar="showSearchBar" />
+    <ButtonLinks class="phone:hidden tablet:hidden flex" />
   </div>
-  <RedRectangle class="computer:hidden" />
-  <ButtonLinks class="computer:hidden" @showCreate="showCreate" />
+  <RedRectangle class="tablet:top-3 tablet:mt-72 computer:hidden tabletLandscape:hidden" />
+  <ButtonLinks class="computer:hidden tabletLandscape:hidden" />
 </template>
 
 <script setup lang="ts">
@@ -14,17 +14,9 @@ import ButtonLinks from '../baseComponents/ButtonLinks.vue'
 import IconLinks from '../baseComponents/IconLinks.vue'
 
 const emit = defineEmits<{
-  (e: 'showCreate'): void
-  (e: 'showArticlesByCategory', title: string): void
   (e: 'showSearchBar'): void
 }>()
 
-function showCreate() {
-  emit('showCreate')
-}
-function showArticlesByCategory(title: string) {
-  emit('showArticlesByCategory', title)
-}
 function showSearchBar() {
   emit('showSearchBar')
 }

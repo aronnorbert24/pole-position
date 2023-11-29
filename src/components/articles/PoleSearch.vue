@@ -7,9 +7,9 @@
         placeholder="Search here for an article..."
         class="mx-auto h-10 w-4/12 rounded-3xl bg-gray-300 pl-2 phone:w-6/12"
         @input="liveSearch"
-        @keyup.enter="submitSearch"
+        @keyup.enter="search"
       />
-      <button class="ml-28 bg-gray-300 text-black hover:border-black hover:bg-red-600 phone:ml-3" @click="submitSearch">
+      <button class="ml-28 bg-gray-300 text-black hover:border-black hover:bg-red-600 phone:ml-3" @click="search">
         Search
       </button>
     </div>
@@ -18,17 +18,16 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useArticleStore } from '../../stores/ArticleStore'
 import { debounce } from '../../helpers/helper.ts'
 
-const emit = defineEmits<{
-  (e: 'searchArticles', searchQuery: string): void
-}>()
+const { searchArticles } = useArticleStore()
 
 const searchQuery = ref('')
 
-const liveSearch = ref(debounce(submitSearch, 300))
+const liveSearch = ref(debounce(search, 300))
 
-function submitSearch() {
-  emit('searchArticles', searchQuery.value)
+function search() {
+  searchArticles(searchQuery.value)
 }
 </script>

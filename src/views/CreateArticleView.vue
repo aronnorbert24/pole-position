@@ -1,5 +1,5 @@
 <template>
-  <PageLayout component="Home" />
+  <PageLayout component="Create" />
 </template>
 
 <script setup lang="ts">

@@ -8,60 +8,47 @@
     >
       X
     </p>
-    <PoleSearch @searchArticles="searchArticles" />
+    <PoleSearch />
     <div>
-      <EmptySearchResult v-if="articles.length === 0" :title="title" />
-      <div v-if="articles.length" class="mb-5 rounded-xl bg-white text-center">
-        <ArticlesByCategory
-          class="computer:mr-auto computer:w-9/12"
-          :articles="articles"
-          :title="title"
-          @showArticle="showArticle"
-        />
+      <EmptySearchResult v-if="getSearchedArticlesPopup.length === 0" title="Search Results" />
+      <div v-if="getSearchedArticlesPopup.length" class="mb-5 rounded-xl bg-white text-center">
+        <div class="mt-10 computer:ml-auto computer:mr-10 computer:w-3/5">
+          <RouterLink to="/search"><TitleSeparator title="Search Results" @click="toggleSearchBar"/></RouterLink>
+          <div class="mb-5 rounded-xl bg-white text-center">
+            <ul>
+              <li v-for="(article, index) in getSearchedArticlesPopup" :key="index">
+                <ArticlePreview :article="article" />
+              </li>
+            </ul>
+          </div>
+  </div>
       </div>
     </div>
 
-    <button
-      v-if="length > 3"
+    <RouterLink to="/search"
+      v-if="getSearchedArticlesPopup.length > 3"
       class="bg-gray-300 text-center text-lg font-semibold text-black transition-transform duration-300 ease-in-out hover:cursor-pointer hover:border-0 hover:bg-red-600 hover:text-white"
-      @click="showSearchedArticles"
+      @click="toggleSearchBar"
     >
       See more
-    </button>
+    </RouterLink>
   </div>
 </template>
 
 <script setup lang="ts">
-import ArticlesByCategory from './ArticlesByCategory.vue'
+import { RouterLink } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useArticleStore } from '../../stores/ArticleStore'
+import ArticlePreview from './PreviewArticle.vue'
+import TitleSeparator from '../baseComponents/TitleSeparator.vue'
 import EmptySearchResult from './EmptySearchResult.vue'
 import PoleSearch from './PoleSearch.vue'
-import { Article } from '../../types/article.ts'
 
-interface Props {
-  articles: Article[]
-  title: string
-  length: number
-}
-
-defineProps<Props>()
+const { getSearchedArticlesPopup } = storeToRefs(useArticleStore())
 
 const emit = defineEmits<{
-  (e: 'showArticle', article: Article): void
-  (e: 'showSearchedArticles'): void
-  (e: 'searchArticles', searchQuery: string): void
   (e: 'toggleSearchBar'): void
 }>()
-
-function showArticle(article: Article) {
-  emit('showArticle', article)
-}
-function showSearchedArticles() {
-  emit('showSearchedArticles')
-}
-
-function searchArticles(searchQuery: string) {
-  emit('searchArticles', searchQuery)
-}
 
 function toggleSearchBar() {
   emit('toggleSearchBar')

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import DashboardPole from './views/DashboardPole.vue'
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <DashboardPole/>
+  <RouterView />
 </template>
