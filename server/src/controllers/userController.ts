@@ -25,8 +25,8 @@ class UserController {
   }
   async register(req: Request, res: Response) {
     try {
-      const newUser = req.body
-      const duplicateUser = await userService.findUserByUsername(newUser.username)
+      const { username, email, password, userPicture } = req.body
+      const duplicateUser = await userService.findUserByUsername(username)
 
       // check if the email has been used before
       if (duplicateUser) {
@@ -34,7 +34,14 @@ class UserController {
       }
       // hash user password
       const salt = genSaltSync(10)
-      newUser.password = hashSync(newUser.password, salt)
+      const newPassword = hashSync(password, salt)
+      // Create object with the properties
+      const newUser = {
+        username: username,
+        email: email,
+        password: newPassword,
+        userPicture: userPicture
+      }
       // save data to the database
       const savedUser = await userService.register(newUser)
       return res.status(201).json(savedUser)

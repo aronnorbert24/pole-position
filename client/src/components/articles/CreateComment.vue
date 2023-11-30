@@ -37,13 +37,12 @@ import { Comment } from '../../types/comment.ts'
 const route = useRoute()
 const { singleComment } = storeToRefs(useCommentStore())
 const { saveComment, editComment } = useCommentStore()
-const { loggedInUserPicture } = useUserStore()
+const { loggedInUserPicture, loggedInUserId } = storeToRefs(useUserStore())
 
 
 interface Props {
   comment: string
   user: User
-  userId: string
 }
 
 const props = defineProps<Props>()
@@ -72,7 +71,7 @@ function save() {
 
   if (!updatedComment.value.commentId) {
     updatedComment.value.articleId = Number(route.params.id)
-    updatedComment.value.userId = props.userId
+    updatedComment.value.userId = loggedInUserId.value
     updatedComment.value.date = new Date()
     updatedComment.value.commentId = new Date().getTime()
     if (props.comment === 'Reply') {

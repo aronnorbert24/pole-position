@@ -1,7 +1,7 @@
 <template>
   <div v-if="isCurrentCommentVisible" class="mt-5 flex">
     <div class="flex phone:mr-6 h-20 w-3/12 phone:w-full">
-      <img class="h-16 w-16 rounded-full border-2 border-red-600" :src="user.userPicture" />
+      <img class="h-16 w-16 rounded-full border-2 border-red-600" :src="loggedInUserPicture" />
     </div>
     <div class="pb-4 pr-2 text-left">
       <p class="text-lg font-semibold text-black">{{ user.username }}</p>
@@ -39,7 +39,9 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useCommentStore } from '../../stores/CommentStore'
+import { useUserStore } from '../../stores/UserStore'
 import CreateComment from './CreateComment.vue'
 import LikeIcon from '../icons/LikeIcon.vue'
 import CommentIcons from '../icons/CommentIcons.vue'
@@ -48,6 +50,7 @@ import { User } from '../../types/user.ts'
 import { Comment } from '../../types/comment.ts'
 
 const { setSingleComment, likedComment, deleteToComment } = useCommentStore()
+const { loggedInUserPicture, loggedInUserId } = storeToRefs(useUserStore())
 
 interface Props {
   user: User
@@ -59,14 +62,14 @@ const props = defineProps<Props>()
 const category = ref('Reply')
 
 const isUserTheAuthor = computed(() => {
-  return props.user.userId === props.comment.userId
+  return props.comment.userId === loggedInUserId.value
 })
 
 const formattedDate = computed(() => {
   return formatDate(props.comment.date)
 })
 const isCommentLiked = computed(() => {
-  return props.comment.likedBy.includes(props.user.userId)
+  return props.comment.likedBy.includes(loggedInUserId.value)
 })
 const updatedLikes = computed(() => {
   return props.comment.likes
@@ -80,7 +83,7 @@ const isReplyCommentVisible = ref(false)
 const isCurrentCommentVisible = ref(true)
 
 function liked() {
-  likedComment(props.comment, !isCommentLiked.value, props.user.userId)
+  likedComment(props.comment, !isCommentLiked.value, loggedInUserId.value)
 }
 
 function deleteComment() {
