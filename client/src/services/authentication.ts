@@ -23,8 +23,8 @@ export async function registerUser(data: User, gravatar: string) {
       email: data.email,
       password: data.password,
       userPicture: gravatar
-    },
-    )
+    })
+
     localStorage.setItem('username', response.data.username)
     return response.data
   } catch (error) {

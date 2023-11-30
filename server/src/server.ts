@@ -1,4 +1,4 @@
-import express, { Response } from 'express'
+import express, { Request, Response, NextFunction } from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import user from './routes/user'
@@ -26,6 +26,18 @@ mongoose
 
 app.get('/', function (res: Response) {
   res.send('Hey Bro!')
+})
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
+
+  if (req.method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET')
+    return res.status(200).json({})
+  }
+
+  next()
 })
 
 app.use('/user', user)

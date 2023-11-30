@@ -25,6 +25,9 @@ export const useUserStore = defineStore({
       } else if (property === 'email') {
         this.newEmail = value
       }
+    },
+    toggleIsLoggedIn() {
+      this.isLoggedIn = !this.isLoggedIn
     }
   }
 })
