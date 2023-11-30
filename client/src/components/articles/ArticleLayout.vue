@@ -24,7 +24,6 @@
         v-if="isCreateCommentVisible"
         comment="Create"
         :user="user"
-        :userId="loggedInUserId"
         @cancelComment="toggleCreateComment"
       />
       <div v-for="(articleComment, index) in rootComments" :key="index">

@@ -27,11 +27,11 @@
   
   <script setup lang="ts">
   import { ref, computed } from 'vue'
-  import { RouterLink, /*useRouter*/ } from 'vue-router'
+  import { RouterLink, useRouter } from 'vue-router'
   import md5 from 'md5'
   import UserInput from '../components/baseComponents/UserInput.vue'
   //import ErrorMessage from '../components/baseComponents/ErrorMessage.vue'
-  //import { registerUser } from '../services/authentication'
+  import { registerUser } from '../services/authentication'
   import { User } from '../types/user'
   
   const user = ref<User>({
@@ -47,21 +47,21 @@
     return `https://www.gravatar.com/avatar/${hash}?d=https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd`
   })
   
- //const router = useRouter()
+ const router = useRouter()
   
   async function register() {
     if (!isInputValid()) {
       return
     }
-  /*
+  
     try {
-      await registerUser(user.value, gravatar)
+      await registerUser(user.value, gravatar.value)
       router.push({ name: 'Dashboard' })
     } catch (error: any) {
       console.error('Register Error', error)
       errorMessage.value = error.response.data
     }
-*/  }
+  }
   
   function isInputValid() {  
     if (
