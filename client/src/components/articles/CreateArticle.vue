@@ -34,7 +34,7 @@
     <ArticleCategory :category="updatedArticle.category" @updateNewCategory="updateCategory" />
     <label class="text-md font-normal text-red-600">Please select an image suitable to the article:</label>
     <input type="file" accept="image/*" class="ml-56 mt-5 w-full phone:ml-16" @change="uploadImage" />
-    <RouterLink to="/" class="mt-5 bg-slate-200" @click.prevent="save()">Save</RouterLink>
+    <RouterLink to="/pole-position/" class="mt-5 bg-slate-200" @click.prevent="save()">Save</RouterLink>
   </div>
 </template>
 

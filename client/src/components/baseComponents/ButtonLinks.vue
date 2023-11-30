@@ -1,6 +1,6 @@
 <template>
   <div class="flex">
-    <RouterLink to="/create-article"
+    <RouterLink to="/pole-position/create-article"
       ><ButtonLink text="Create Article" class="ml-7 mr-6 tablet:ml-24 tabletLandscape:ml-16" @click="showCreate"
     /></RouterLink>
     <div class="flex tablet:ml-auto tablet:mr-6 tabletLandscape:ml-auto tabletLandscape:mr-8">
@@ -9,18 +9,28 @@
         <PolePositionIcon class="relative ml-0.5 mt-0.5 h-8 w-8" />
       </div>
     </div>
-    <ButtonLink class="mr-7 tablet:mr-24 tabletLandscape:mr-20" text="Log Out" />
+    <RouterLink v-if="!isUserLoggedIn" to="/pole-position/login"><ButtonLink class="mr-7 tablet:mr-24 tabletLandscape:mr-20" text="Log In" /></RouterLink>
+    <ButtonLink v-if="isUserLoggedIn" class="mr-7 tablet:mr-24 tabletLandscape:mr-20" text="Log Out" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useUserStore } from '../../stores/UserStore';
 import PolePositionIcon from '../icons/PolePositionIcon.vue'
 import ButtonLink from './ButtonLink.vue'
+
+const { isLoggedIn } = useUserStore()
 
 const emit = defineEmits(['showCreate'])
 
 function showCreate() {
   emit('showCreate')
 }
+
+const isUserLoggedIn = computed(() => {
+  return isLoggedIn
+})
+
 </script>

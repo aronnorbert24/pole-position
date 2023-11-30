@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@vueuse/core": "^10.5.0",
+    "axios": "^1.6.2",
     "flatted": "^3.2.9",
     "pinia": "^2.1.7",
     "vue": "^3.3.4",

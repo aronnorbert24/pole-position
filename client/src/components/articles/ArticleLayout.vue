@@ -1,6 +1,6 @@
 <template>
   <div class="mt-10 computer:ml-auto computer:mr-10 computer:w-3/5">
-    <RouterLink :to="`/category/${getSingleArticle(Number(route.params.id))!.category}`"><TitleSeparator :title="getSingleArticle(Number(route.params.id))!.category" /></RouterLink>
+    <RouterLink :to="`/pole-position/category/${getSingleArticle(Number(route.params.id))!.category}`"><TitleSeparator :title="getSingleArticle(Number(route.params.id))!.category" /></RouterLink>
     <SingleArticle :article="getSingleArticle(Number(route.params.id))!" />
     <button
       id="likeButton"

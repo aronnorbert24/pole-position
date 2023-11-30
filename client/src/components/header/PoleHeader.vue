@@ -1,7 +1,7 @@
 <template>
   <div class="z-0 mb-16 flex w-full justify-between phone:mb-0">
     <div class="m-5 flex justify-between phone:ml-2">
-      <RouterLink to="/">
+      <RouterLink to="/pole-position/">
         <PolePositionIcon
           class="scale-110 rounded-full border-2 border-red-600 bg-white transition-transform duration-300 ease-in-out hover:cursor-pointer phone:scale-100 computer:hover:scale-125"
         />
