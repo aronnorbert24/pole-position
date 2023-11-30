@@ -3,7 +3,7 @@ import { User } from '../types/user'
 
 export async function loginUser(username: string, password: string) {
   try {
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/login`, {
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/login`, {
       username,
       password,
     })
@@ -18,7 +18,7 @@ export async function loginUser(username: string, password: string) {
 
 export async function registerUser(data: User) {
   try {
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/register`, {
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/register`, {
       firstName: data.username,
       email: data.email,
       password: data.password,
