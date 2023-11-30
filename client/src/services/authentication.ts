@@ -1,12 +1,32 @@
 import axios from 'axios'
+import { User } from '../types/user'
 
-export async function loginUser(email: string, password: string) {
+export async function loginUser(username: string, password: string) {
   try {
-    await axios.post('/login', {
-      email,
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/login`, {
+      username,
       password,
     })
+
+    localStorage.setItem('username', response.data.username)
+    return response.data
   } catch (error) {
     console.error(error)
+    throw error
+  }
+}
+
+export async function registerUser(data: User) {
+  try {
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/register`, {
+      firstName: data.username,
+      email: data.email,
+      password: data.password,
+    })
+    localStorage.setItem('username', response.data.username)
+    return response.data
+  } catch (error) {
+    console.error(error)
+    throw error
   }
 }

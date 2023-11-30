@@ -1,9 +1,9 @@
 <template>
     <div class="h-screen w-screen flex-col bg-gradient-to-br from-red-600 to-red-300 pt-10 font-header">
       <div class="ml-auto mr-auto h-1/6 w-1/2 items-center justify-center rounded-3xl bg-yellow-50">
-        <p class="pt-8 text-4xl font-semibold leading-10">Welcome to Pole Position!</p>
+        <p class="pt-8 text-xl font-semibold leading-10 phone:pt-10 phone:text-xl">Welcome to Pole Position!</p>
       </div>
-      <div class="m-auto mt-10 h-1/3 justify-center rounded-3xl bg-yellow-50 phone:w-8/12 computer:w-4/12">
+      <div class="m-auto mt-10 h-2/5 justify-center rounded-3xl bg-yellow-50 phone:w-8/12 computer:w-4/12">
         <p class="ml-auto mr-auto w-full pt-4 text-3xl font-semibold">Login</p>
   
         <UserInput v-model="username" type="text" label="Username:" property="username" />

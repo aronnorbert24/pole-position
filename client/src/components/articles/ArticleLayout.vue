@@ -24,6 +24,7 @@
         v-if="isCreateCommentVisible"
         comment="Create"
         :user="user"
+        :userId="loggedInUserId"
         @cancelComment="toggleCreateComment"
       />
       <div v-for="(articleComment, index) in rootComments" :key="index">
@@ -65,7 +66,7 @@ const route = useRoute()
 const { likedArticle, viewedArticle } = useArticleStore()
 const { getSingleArticle } = storeToRefs(useArticleStore())
 const { getSortedComments } = storeToRefs(useCommentStore())
-const { user } = storeToRefs(useUserStore())
+const { user, loggedInUserId } = storeToRefs(useUserStore())
 
 
 const rootComments = computed(() => {
@@ -74,7 +75,7 @@ const rootComments = computed(() => {
 
 const isCreateCommentVisible = ref(false)
 const isLiked = computed(() => {
-  return (getSingleArticle.value(Number(route.params.id))!.likedBy.includes(user.value.userId))
+  return (getSingleArticle.value(Number(route.params.id))!.likedBy.includes(loggedInUserId.value))
 })
 
 const getLikedClass = computed(() => {
@@ -88,7 +89,7 @@ function likeArticle() {
   if (!getSingleArticle.value(Number(route.params.id))!) {
     return
   }
-  likedArticle(getSingleArticle.value(Number(route.params.id))!, !isLiked.value, user.value.userId)
+  likedArticle(getSingleArticle.value(Number(route.params.id))!, !isLiked.value, loggedInUserId.value)
 }
 
 function toggleCreateComment() {

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DashboardPole from '../views/DashboardPole.vue'
 import Login from '../views/PoleLogin.vue'
+import Register from '../views/PoleRegister.vue'
 import CreateArticleView from '../views/CreateArticleView.vue'
 import ArticlesByCategoryView from '../views/ArticlesByCategoryView.vue'
 import SingleArticleView from '../views/SingleArticleView.vue'
@@ -17,6 +18,11 @@ const router = createRouter({
       path: '/pole-position/login',
       name: 'login',
       component: Login,
+    },
+    {
+      path: '/pole-position/register',
+      name: 'register',
+      component: Register,
     },
     {
       path: '/pole-position/create-article',

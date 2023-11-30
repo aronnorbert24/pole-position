@@ -1,6 +1,6 @@
 <template>
   <div class="flex">
-    <img class="h-16 w-16 rounded-full border-2 border-red-600" :src="user.userPicture" />
+    <img class="h-16 w-16 rounded-full border-2 border-red-600" :src="loggedInUserPicture" />
     <textarea
       type="text"
       maxlength="500"
@@ -30,17 +30,20 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia';
 import { useCommentStore } from '../../stores/CommentStore';
+import { useUserStore } from '../../stores/UserStore';
 import { User } from '../../types/user.ts'
 import { Comment } from '../../types/comment.ts'
 
 const route = useRoute()
 const { singleComment } = storeToRefs(useCommentStore())
 const { saveComment, editComment } = useCommentStore()
+const { loggedInUserPicture } = useUserStore()
 
 
 interface Props {
   comment: string
   user: User
+  userId: string
 }
 
 const props = defineProps<Props>()
@@ -69,7 +72,7 @@ function save() {
 
   if (!updatedComment.value.commentId) {
     updatedComment.value.articleId = Number(route.params.id)
-    updatedComment.value.userId = props.user.userId
+    updatedComment.value.userId = props.userId
     updatedComment.value.date = new Date()
     updatedComment.value.commentId = new Date().getTime()
     if (props.comment === 'Reply') {
