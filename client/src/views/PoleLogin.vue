@@ -23,52 +23,46 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { ref } from 'vue'
+  import { storeToRefs } from 'pinia'
   import { useUserStore } from '../stores/UserStore'
-  import { RouterLink, /*useRouter*/ } from 'vue-router'
-  //import { loginUser } from '../services/authentication'
+  import { RouterLink, useRouter } from 'vue-router'
+  import { loginUser } from '../services/authentication'
   import UserInput from '../components/baseComponents/UserInput.vue'
-  //import ErrorMessage from '../components/baseComponents/ErrorMessage.vue'
+  import ErrorMessage from '../components/baseComponents/ErrorMessage.vue'
   
-  const { newUsername, newPassword } = useUserStore()
-
-  const username = computed(() => {
-    return newUsername
-  })
-  const password = computed(() => {
-    return newPassword
-  })
+  const { getNewUsername, getNewPassword } = storeToRefs(useUserStore())
   
   const errorMessage = ref('')
   
-  //const router = useRouter()
+  const router = useRouter()
   
   async function login() {
     if (!isInputValid()) {
       return
     }
   
-    /*try {
-      await loginUser(username.value, password.value)
+    try {
+      await loginUser(getNewUsername.value, getNewPassword.value)
       router.go(-1)
     } catch (error: any) {
       console.error('Register Error', error)
       errorMessage.value = error.response.data
-    }*/
+    }
   }
   
   function isInputValid() {
-    if (username.value.trim() === '' || password.value.trim() === '') {
+      if (getNewUsername.value.trim() === '' || getNewPassword.value.trim() === '') {
       errorMessage.value = 'Please fill in every field.'
       return false
     }
   
-    if (username.value.length < 3) {
+    if (getNewUsername.value.length < 3) {
       errorMessage.value = 'Username must be at least 3 characters'
       return false
     }
   
-    if (password.value.length < 8) {
+    if (getNewPassword.value.length < 8) {
       errorMessage.value = 'Password must be at least 8 characters long.'
       return false
     }

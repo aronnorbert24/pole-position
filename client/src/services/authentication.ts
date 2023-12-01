@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { User } from '../types/user'
+import { setItems } from '../helpers/helper'
 
 export async function loginUser(username: string, password: string) {
   try {
@@ -8,7 +8,7 @@ export async function loginUser(username: string, password: string) {
       password,
     })
 
-    localStorage.setItem('username', response.data.username)
+    setItems(response.data)
     return response.data
   } catch (error) {
     console.error(error)
@@ -16,16 +16,16 @@ export async function loginUser(username: string, password: string) {
   }
 }
 
-export async function registerUser(data: User, gravatar: string) {
+export async function registerUser(username: string, password: string, email: string, gravatar: string) {
   try {
     const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/register-user`, {
-      username: data.username,
-      email: data.email,
-      password: data.password,
+      username,
+      email,
+      password,
       userPicture: gravatar
     })
-
-    localStorage.setItem('username', response.data.username)
+    
+    setItems(response.data)
     return response.data
   } catch (error) {
     console.error(error)

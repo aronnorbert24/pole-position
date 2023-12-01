@@ -28,22 +28,19 @@
   <script setup lang="ts">
   import { ref, computed } from 'vue'
   import { RouterLink, useRouter } from 'vue-router'
+  import { storeToRefs } from 'pinia'
+  import { useUserStore } from '../stores/UserStore'
   import md5 from 'md5'
   import UserInput from '../components/baseComponents/UserInput.vue'
-  //import ErrorMessage from '../components/baseComponents/ErrorMessage.vue'
+  import ErrorMessage from '../components/baseComponents/ErrorMessage.vue'
   import { registerUser } from '../services/authentication'
-  import { User } from '../types/user'
   
-  const user = ref<User>({
-    username: '',
-    email: '',
-    password: '',
-  })
+  const { getNewUsername, getNewPassword, getNewEmail } = storeToRefs(useUserStore())
   
   const errorMessage = ref('')
 
   const gravatar = computed(() => {
-    const hash = md5(user.value.email.trim().toLowerCase())
+    const hash = md5(getNewEmail.value.trim().toLowerCase())
     return `https://www.gravatar.com/avatar/${hash}?d=https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd`
   })
   
@@ -55,8 +52,8 @@
     }
   
     try {
-      await registerUser(user.value, gravatar.value)
-      router.push({ name: 'Dashboard' })
+      await registerUser(getNewUsername.value, getNewPassword.value, getNewEmail.value, gravatar.value)
+      router.push({ name: 'dashboard' })
     } catch (error: any) {
       console.error('Register Error', error)
       errorMessage.value = error.response.data
@@ -65,25 +62,25 @@
   
   function isInputValid() {  
     if (
-      user.value.username.trim() === '' ||
-      user.value.email.trim() === '' ||
-      user.value.password.trim() === ''
+      getNewUsername.value.trim() === '' ||
+      getNewEmail.value.trim() === '' ||
+      getNewPassword.value.trim() === ''
     ) {
       errorMessage.value = 'Please fill in every field.'
       return false
     }
   
-    if (!/^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/.test(user.value.email)) {
+    if (!/^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/.test(getNewEmail.value)) {
       errorMessage.value = 'Please enter a valid email address'
       return false
     }
 
-    if (user.value.username.length < 3) {
+    if (getNewUsername.value.length < 3) {
       errorMessage.value = 'Username must be at least 3 characters long.'
       return false
     }
   
-    if (user.value.password.length < 8) {
+    if (getNewPassword.value.length < 8) {
       errorMessage.value = 'Password must be at least 8 characters long.'
       return false
     }

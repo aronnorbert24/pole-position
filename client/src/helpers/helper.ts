@@ -53,3 +53,14 @@ function sortByBest(a: Comment, b: Comment) {
   const next: any = b.likes
   return next - previous
 }
+
+export function setItems(data: any) {
+  localStorage.setItem('username', data.username)
+  localStorage.setItem('email', data.email)
+  localStorage.setItem('userId', data._id)
+  localStorage.setItem('userPicture', data.userPicture)
+}
+
+export function getItems(property: string) {
+  return localStorage.getItem(property)
+}
