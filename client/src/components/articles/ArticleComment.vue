@@ -1,7 +1,7 @@
 <template>
   <div v-if="isCurrentCommentVisible" class="mt-5 flex">
     <div class="flex phone:mr-6 h-20 w-3/12 phone:w-full">
-      <img class="h-16 w-16 rounded-full border-2 border-red-600" :src="loggedInUserPicture" />
+      <img class="h-16 w-16 rounded-full border-2 border-red-600" :src="getUserPicture" />
     </div>
     <div class="pb-4 pr-2 text-left">
       <p class="text-lg font-semibold text-black">{{ user.username }}</p>
@@ -12,6 +12,7 @@
   </div>
   <div class="flex justify-between">
     <button
+    v-if="getUserId"
       class="flex h-16 w-28 rounded-xl transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer phone:ml-2 phone:h-14 phone:w-18"
       :class="getLikedClass"
       @click.prevent="liked"
@@ -20,7 +21,7 @@
       <p class="ml-1 mt-2">{{ updatedLikes }}</p>
     </button>
     <button
-      v-if="!comment.parentId && isCurrentCommentVisible"
+      v-if="!comment.parentId && isCurrentCommentVisible && getUserId"
       class="text-md h-12 w-24 bg-gray-300 text-black hover:cursor-pointer"
       @click="toggleComment('Reply')"
     >
@@ -50,7 +51,7 @@ import { User } from '../../types/user.ts'
 import { Comment } from '../../types/comment.ts'
 
 const { setSingleComment, likedComment, deleteToComment } = useCommentStore()
-const { loggedInUserPicture, loggedInUserId } = storeToRefs(useUserStore())
+const { getUserPicture, getUserId } = storeToRefs(useUserStore())
 
 interface Props {
   user: User
@@ -62,14 +63,14 @@ const props = defineProps<Props>()
 const category = ref('Reply')
 
 const isUserTheAuthor = computed(() => {
-  return props.comment.userId === loggedInUserId.value
+  return props.comment.userId === getUserId.value
 })
 
 const formattedDate = computed(() => {
   return formatDate(props.comment.date)
 })
 const isCommentLiked = computed(() => {
-  return props.comment.likedBy.includes(loggedInUserId.value)
+  return props.comment.likedBy.includes(getUserId.value)
 })
 const updatedLikes = computed(() => {
   return props.comment.likes
@@ -83,7 +84,7 @@ const isReplyCommentVisible = ref(false)
 const isCurrentCommentVisible = ref(true)
 
 function liked() {
-  likedComment(props.comment, !isCommentLiked.value, loggedInUserId.value)
+  likedComment(props.comment, !isCommentLiked.value, getUserId.value)
 }
 
 function deleteComment() {

@@ -3,6 +3,7 @@
     <RouterLink :to="`/pole-position/category/${getSingleArticle(Number(route.params.id))!.category}`"><TitleSeparator :title="getSingleArticle(Number(route.params.id))!.category" /></RouterLink>
     <SingleArticle :article="getSingleArticle(Number(route.params.id))!" />
     <button
+      v-if="getUserId"
       id="likeButton"
       class="flex h-16 w-28 rounded-xl transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer phone:ml-2 phone:h-14 phone:w-18"
       :class="getLikedClass"
@@ -12,9 +13,9 @@
       <p class="ml-1 mt-2">{{ getSingleArticle(Number(route.params.id))!.likes }}</p>
     </button>
     <div class="mt-12 h-fit w-full rounded-xl bg-white p-2">
-      <SortComment />
+      <SortComment v-if="rootComments.length"/>
       <button
-        v-if="!isCreateCommentVisible"
+        v-if="!isCreateCommentVisible && getUserId"
         class="mb-6 mt-2 h-12 w-32 bg-gray-300 text-center text-lg text-black hover:cursor-pointer"
         @click="toggleCreateComment"
       >
@@ -65,7 +66,7 @@ const route = useRoute()
 const { likedArticle, viewedArticle } = useArticleStore()
 const { getSingleArticle } = storeToRefs(useArticleStore())
 const { getSortedComments } = storeToRefs(useCommentStore())
-const { user, loggedInUserId } = storeToRefs(useUserStore())
+const { user, getUserId } = storeToRefs(useUserStore())
 
 
 const rootComments = computed(() => {
@@ -74,7 +75,7 @@ const rootComments = computed(() => {
 
 const isCreateCommentVisible = ref(false)
 const isLiked = computed(() => {
-  return (getSingleArticle.value(Number(route.params.id))!.likedBy.includes(loggedInUserId.value))
+  return (getSingleArticle.value(Number(route.params.id))!.likedBy.includes(getUserId.value))
 })
 
 const getLikedClass = computed(() => {
@@ -88,7 +89,7 @@ function likeArticle() {
   if (!getSingleArticle.value(Number(route.params.id))!) {
     return
   }
-  likedArticle(getSingleArticle.value(Number(route.params.id))!, !isLiked.value, loggedInUserId.value)
+  likedArticle(getSingleArticle.value(Number(route.params.id))!, !isLiked.value, getUserId.value)
 }
 
 function toggleCreateComment() {
