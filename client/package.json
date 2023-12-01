@@ -10,13 +10,16 @@
   },
   "dependencies": {
     "@vueuse/core": "^10.5.0",
+    "axios": "^1.6.2",
     "flatted": "^3.2.9",
+    "md5": "^2.3.0",
     "pinia": "^2.1.7",
     "vue": "^3.3.4",
     "vue-click-outside": "^1.1.0",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
+    "@types/md5": "^2.3.5",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
     "@vitejs/plugin-vue": "^4.5.0",

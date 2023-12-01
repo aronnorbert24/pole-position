@@ -1,7 +1,7 @@
 <template>
   <div class="mt-10" v-for="category in categories" :key="category.title">
     <div class="computer:ml-auto computer:mr-10 computer:w-3/5">
-    <RouterLink :to="`/category/${category.title}`"><TitleSeparator :title="category.title" /></RouterLink>
+    <RouterLink :to="`/pole-position/category/${category.title}`"><TitleSeparator :title="category.title" /></RouterLink>
     <div class="mb-5 rounded-xl bg-white text-center">
       <ul>
         <li v-for="(article, index) in category.category" :key="index">

@@ -1,7 +1,7 @@
 <template>
   <div class="tablet:gap-x-20 flex gap-x-32 phone:gap-x-1 tabletLandscape:gap-x-10">
     <div v-for="category in categories" :key="category.title">
-      <RouterLink :to="`/category/${category.title}`">
+      <RouterLink :to="`/pole-position/category/${category.title}`">
         <component :is="category.icon" class="bg-white"></component>
       </RouterLink>
     </div>
