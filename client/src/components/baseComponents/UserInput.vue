@@ -20,7 +20,6 @@
     property: string
     type: string
     label: string
-    modelValue: string
   }
   
   const props = defineProps<Props>()

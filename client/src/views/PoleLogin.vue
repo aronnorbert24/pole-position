@@ -6,16 +6,16 @@
       <div class="m-auto mt-10 h-2/5 justify-center rounded-3xl bg-yellow-50 phone:w-8/12 computer:w-4/12">
         <p class="ml-auto mr-auto w-full pt-4 text-3xl font-semibold">Login</p>
   
-        <UserInput v-model="username" type="text" label="Username:" property="username" />
-        <UserInput v-model="password" type="password" label="Password:" property="password" />
-       <!-- <ErrorMessage :error="errorMessage" /> -->
+        <UserInput type="text" label="Username:" property="username" />
+        <UserInput type="password" label="Password:" property="password" />
+        <ErrorMessage :error="errorMessage" /> 
         <button
           class="mt-10 h-10 w-10/12 rounded-3xl border-none bg-gradient-to-br from-red-600 to-red-300 font-semibold text-white transition-transform duration-500 ease-in-out hover:scale-110"
           @click="login"
         >
           Login
         </button>
-        <p class="mt-12 font-priority text-sm font-medium">
+        <p class="mt-6 font-priority text-sm font-medium">
           You don't have an <strong>account?</strong> <RouterLink href="#" to="/pole-position/register">Sign up</RouterLink> now!
         </p>
       </div>

@@ -6,11 +6,11 @@
       <div class="h-2/5 m-auto mt-10 justify-center rounded-3xl bg-yellow-50 phone:w-8/12 computer:w-4/12">
         <p class="ml-auto mr-auto w-full pt-4 text-3xl font-semibold">Register</p>
   
-        <UserInput v-model="user.username" type="text" label="Username:" property="username" />
-        <UserInput v-model="user.email" type="email" label="Email:" property="email" />
-        <UserInput v-model="user.password" type="password" label="Password:" property="password" />
+        <UserInput type="text" label="Username:" property="username" />
+        <UserInput type="email" label="Email:" property="email" />
+        <UserInput type="password" label="Password:" property="password" />
   
-        <!--<ErrorMessage :error="errorMessage" />-->
+        <ErrorMessage :error="errorMessage" />
   
         <button
           class="mt-10 h-10 w-6/12 rounded-3xl border-none bg-gradient-to-br from-red-600 to-red-300 font-semibold text-white transition-transform duration-500 ease-in-out hover:scale-110 phone:mt-5"
