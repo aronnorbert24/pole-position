@@ -27,10 +27,14 @@ class UserController {
     try {
       const { username, email, password, userPicture } = req.body
       const duplicateUser = await userService.findUserByUsername(username)
+      const duplicateEmail = await userService.findUserByEmail(email)
 
       // check if the email has been used before
       if (duplicateUser) {
         return res.status(400).send('A user with that username already exists.')
+      }
+      if (duplicateEmail) {
+        return res.status(400).send('A user with that email already exists.')
       }
       // hash user password
       const salt = genSaltSync(10)

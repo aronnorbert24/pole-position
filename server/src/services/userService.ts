@@ -5,6 +5,10 @@ class UserService {
     return UserModel.findOne({ username })
   }
 
+  async findUserByEmail(email: string) {
+    return UserModel.findOne({ email })
+  }
+
   async register(data: User) {
     const newUser = new UserModel({
       username: data.username,
