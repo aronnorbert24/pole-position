@@ -23,23 +23,23 @@ const articleStore = useArticleStore()
 
 const categories = [
   {
-    category: articleStore.getArticlesByCategory('F1'),
+    category: articleStore.getArticlesByCategory('F1').slice(0, 3),
     title: 'F1',
   },
   {
-    category: articleStore.getArticlesByCategory('F2'),
+    category: articleStore.getArticlesByCategory('F2').slice(0, 3),
     title: 'F2',
   },
   {
-    category: articleStore.getArticlesByCategory('F3'),
+    category: articleStore.getArticlesByCategory('F3').slice(0, 3),
     title: 'F3',
   },
   {
-    category: articleStore.getArticlesByCategory('WEC'),
+    category: articleStore.getArticlesByCategory('WEC').slice(0, 3),
     title: 'WEC',
   },
   {
-    category: articleStore.getArticlesByCategory('MotoGP'),
+    category: articleStore.getArticlesByCategory('MotoGP').slice(0, 3),
     title: 'MotoGP',
   },
 ]
