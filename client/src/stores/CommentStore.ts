@@ -26,10 +26,10 @@ export const useCommentStore = defineStore({
   }),
   getters: {
     getArticleComments: (state) => {
-      return (articleId: number) => state.comments.filter((comment: any) => comment.articleId === articleId)
+      return (articleId: string | string[]) => state.comments.filter((comment: any) => comment.articleId === articleId)
     },
     getSortedComments(state) {
-      return (articleId: number) => sortComment(state.activeSort, this.getArticleComments(articleId))
+      return (articleId: string | string[]) => sortComment(state.activeSort, this.getArticleComments(articleId))
     }
   },
   actions: {

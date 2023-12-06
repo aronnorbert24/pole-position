@@ -63,7 +63,7 @@ const articleStore = useArticleStore()
 const commentStore = useCommentStore()
 const userStore = useUserStore()
 
-const link = computed(() => Number(route.params.id))
+const link = computed(() => route.params.id)
 const singleArticle = computed(() => articleStore.getArticleById(link.value)!)
 
 const rootComments = computed(() => {

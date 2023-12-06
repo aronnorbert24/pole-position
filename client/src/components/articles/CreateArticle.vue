@@ -34,6 +34,7 @@
     <ArticleCategory :category="updatedArticle.category" @updateNewCategory="updateCategory" />
     <label class="text-md font-normal text-red-600">Please select an image suitable to the article:</label>
     <input type="file" accept="image/*" class="ml-56 mt-5 w-full phone:ml-16" @change="uploadImage" />
+    <ErrorMessage v-if="errorMessage" :error="errorMessage" />
     <RouterLink to="/pole-position/" class="mt-5 bg-slate-200" @click.prevent="save()">Save</RouterLink>
   </div>
 </template>
@@ -42,11 +43,13 @@
 import { ref } from 'vue'
 import { useArticleStore } from '../../stores/ArticleStore.ts'
 import ArticleCategory from './ArticleCategory.vue'
+import ErrorMessage from '../baseComponents/ErrorMessage.vue'
 import { Article } from '../../types/article.ts'
 
 const articleStore = useArticleStore()
 
 const numberOfOccurences = ref<number>()
+const errorMessage = ref('')
 const text = ref('Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye')
 const updatedArticle = ref<Article>({
   articleId: articleStore.newArticle.articleId,
@@ -98,8 +101,10 @@ function save() {
     ? (updatedArticle.value.separatedText = emphasizeText(text.value))
     : updatedArticle.value.separatedText.push(text.value)
 
+  if (!updatedArticle.value.separatedText.length) {
+    errorMessage.value = 'Please enter something in the body of your article.'
+  }
   updatedArticle.value.datePublished = new Date()
-  updatedArticle.value.articleId = new Date().getTime()
 
   articleStore.saveArticle(updatedArticle.value)
 }

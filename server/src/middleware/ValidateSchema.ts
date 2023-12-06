@@ -1,6 +1,7 @@
 import Joi, { ObjectSchema } from 'joi'
 import { NextFunction, Request, Response } from 'express'
 import { User } from '../models/User'
+import { Article } from '../models/Article'
 
 export const ValidateSchema = (schema: ObjectSchema) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -28,24 +29,31 @@ export const Schemas = {
       password: Joi.string().required(),
     }),
   },
-  /*todo: {
-    create: Joi.object<Todo>({
+  article: {
+    create: Joi.object<Article>({
       title: Joi.string().required(),
-      description: Joi.string().allow('').optional(),
-      priority: Joi.string().required(),
-      isChecked: Joi.boolean().required(),
-      dueDate: Joi.date().required(),
-      userId: Joi.string().required(),
+      subheading: Joi.string().required(),
+      separatedText: Joi.array().items(Joi.string()),
+      image: Joi.string().required(),
+      category: Joi.string().required(),
+      datePublished: Joi.date().required(),
+      likedBy: Joi.array().items(Joi.string()),
+      likes: Joi.number().required(),
+      views: Joi.number().required(),
     }),
-    update: Joi.object<Todo>({
+    update: Joi.object<Article>({
       title: Joi.string().required(),
-      description: Joi.string().allow('').optional(),
-      priority: Joi.string().required(),
-      isChecked: Joi.boolean().required(),
-      dueDate: Joi.date().required(),
+      subheading: Joi.string().required(),
+      separatedText: Joi.array().items(Joi.string()),
+      image: Joi.string().required(),
+      category: Joi.string().required(),
+      datePublished: Joi.date().required(),
+      likedBy: Joi.array().items(Joi.string()),
+      likes: Joi.number().required(),
+      views: Joi.number().required(),
     }),
-    get: Joi.object<Todo>({
+    /*get: Joi.object<Article>({
       userId: Joi.string().required(),
-    }),
-  },*/
+    }),*/
+  },
 }

@@ -1,13 +1,14 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { Article } from '../types/article'
+import { save } from '../services/article'
 
 export const useArticleStore = defineStore({
   id: 'article',
   state: () => ({
     articles: [] as Article[],
     newArticle: {
-      articleId: 0,
+      articleId: '',
       title: 'Article Title',
       subheading: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
       separatedText: [],
@@ -20,7 +21,7 @@ export const useArticleStore = defineStore({
       views: 0,
     } as Article,
     singleArticle: {
-      articleId: 0,
+      articleId: '',
       title: '',
       subheading: '',
       separatedText: [],
@@ -69,7 +70,7 @@ export const useArticleStore = defineStore({
         .slice(0, 5)
     },
     getArticleById: (state) => {
-      return (articleId: number) => state.articles.find((article) => article.articleId === articleId)
+      return (articleId: string | string[]) => state.articles.find((article) => article.articleId === articleId)
     },
   },
   actions: {
@@ -87,9 +88,29 @@ export const useArticleStore = defineStore({
       this.articles[index] = updatedArticle
       this.saveArticlesToLocalStorage()
     },
-    saveArticle(article: Article) {
-      this.articles.unshift(article)
-      this.saveArticlesToLocalStorage()
+    async saveArticle(article: Article) {
+      try {
+        await save(article)
+        const id: string = localStorage.getItem('articleId')!
+        const newArticle: Article = {
+          articleId: id,
+          title: article.title,
+          subheading: article.subheading,
+          separatedText: article.separatedText,
+          image: article.image,
+          category: article.category,
+          datePublished: article.datePublished,
+          likedBy: article.likedBy,
+          likes: article.likes,
+          views: article.views,       
+        }
+        this.articles.unshift(newArticle)
+        this.saveArticlesToLocalStorage()
+      } catch (error) {
+        console.error(error)
+        throw error
+      }
+      
     },
     searchArticles(search: string) {
       this.searchQuery = search
