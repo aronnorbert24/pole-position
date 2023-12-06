@@ -77,7 +77,7 @@ export const useArticleStore = defineStore({
         })
         .slice(0, 5)
     },
-    getSingleArticle: (state) => {
+    getArticleById: (state) => {
       return (articleId: number) => state.articles.find((article) => article.articleId === articleId)
     },
   },
@@ -109,26 +109,25 @@ export const useArticleStore = defineStore({
     },
     likedArticle(article: Article, isPostLiked: boolean, userId: string) {
       const updatedArticle = ref<Article>(article)
-      if (isPostLiked) {
-        updatedArticle.value.likes++
-      } else if (updatedArticle.value.likes >= 1) {
-        updatedArticle.value.likes--
-      } else {
-        return
-      }
       if (updatedArticle.value) {
         const index = updatedArticle.value.likedBy.findIndex((user) => user === userId)
-        if (isPostLiked && index < 0) {
-          updatedArticle.value.likedBy.push(userId)
-        } else {
+        if (isPostLiked) {
+          if (index < 0) {
+            updatedArticle.value.likedBy.push(userId)
+          }
+          updatedArticle.value.likes++
+        } else if (updatedArticle.value.likes >= 1) {
           if (index >= 0) {
             updatedArticle.value.likedBy.splice(index, 1)
           }
+          updatedArticle.value.likes--
+        } else {
+          return
         }
       }
       const i = this.articles.findIndex((a) => a.articleId === updatedArticle.value.articleId)
       this.articles[i] = updatedArticle.value
-      this.getSingleArticle(updatedArticle.value.articleId)
+      this.getArticleById(updatedArticle.value.articleId)
       this.saveArticlesToLocalStorage()
     },
   },

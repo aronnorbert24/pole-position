@@ -1,21 +1,21 @@
 <template>
   <div class="mt-10 computer:ml-auto computer:mr-10 computer:w-3/5">
-    <RouterLink :to="`/pole-position/category/${getSingleArticle(Number(route.params.id))!.category}`"><TitleSeparator :title="getSingleArticle(Number(route.params.id))!.category" /></RouterLink>
-    <SingleArticle :article="getSingleArticle(Number(route.params.id))!" />
+    <RouterLink :to="`/pole-position/category/${singleArticle.category}`"><TitleSeparator :title="singleArticle.category" /></RouterLink>
+    <SingleArticle :article="singleArticle" />
     <button
-      v-if="getUserId"
+      v-if="userStore.getUserId"
       id="likeButton"
       class="flex h-16 w-28 rounded-xl transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer phone:ml-2 phone:h-14 phone:w-18"
       :class="getLikedClass"
       @click.prevent="likeArticle"
     >
       <LikeIcon />
-      <p class="ml-1 mt-2">{{ getSingleArticle(Number(route.params.id))!.likes }}</p>
+      <p class="ml-1 mt-2">{{ singleArticle.likes }}</p>
     </button>
     <div class="mt-12 h-fit w-full rounded-xl bg-white p-2">
       <SortComment v-if="rootComments.length"/>
       <button
-        v-if="!isCreateCommentVisible && getUserId"
+        v-if="!isCreateCommentVisible && userStore.getUserId"
         class="mb-6 mt-2 h-12 w-32 bg-gray-300 text-center text-lg text-black hover:cursor-pointer"
         @click="toggleCreateComment"
       >
@@ -63,33 +63,35 @@ import LikeIcon from '../icons/LikeIcon.vue'
 import { Comment } from '../../types/comment.ts'
 
 const route = useRoute()
-const { likedArticle, viewedArticle } = useArticleStore()
-const { getSingleArticle } = storeToRefs(useArticleStore())
-const { getSortedComments } = storeToRefs(useCommentStore())
-const { user, getUserId } = storeToRefs(useUserStore())
+const articleStore = useArticleStore()
+const commentStore = useCommentStore()
+const userStore = useUserStore()
+const { user } = storeToRefs(useUserStore())
 
+const link = computed(() => Number(route.params.id))
+const singleArticle = computed(() => articleStore.getArticleById(link.value)!)
 
 const rootComments = computed(() => {
-  return getSortedComments.value(Number(route.params.id)).filter((comment: Comment) => !comment.parentId)
+  return commentStore.getSortedComments(link.value).filter((comment: Comment) => !comment.parentId)
 })
 
 const isCreateCommentVisible = ref(false)
 const isLiked = computed(() => {
-  return (getSingleArticle.value(Number(route.params.id))!.likedBy.includes(getUserId.value))
+  return (singleArticle.value.likedBy.includes(userStore.getUserId))
 })
 
 const getLikedClass = computed(() => {
-  if (!getSingleArticle.value(Number(route.params.id))!) {
+  if (!singleArticle.value) {
     return 'bg-white text-black'
   }
   return !isLiked.value ? 'bg-white text-black' : 'bg-red-600 text-white'
 })
 
 function likeArticle() {
-  if (!getSingleArticle.value(Number(route.params.id))!) {
+  if (!singleArticle.value) {
     return
   }
-  likedArticle(getSingleArticle.value(Number(route.params.id))!, !isLiked.value, getUserId.value)
+  articleStore.likedArticle(singleArticle.value, !isLiked.value, userStore.getUserId)
 }
 
 function toggleCreateComment() {
@@ -97,6 +99,6 @@ function toggleCreateComment() {
 }
 
 onMounted(() => {
-  viewedArticle(getSingleArticle.value(Number(route.params.id))!)
+  articleStore.viewedArticle(singleArticle.value)
 })
 </script>

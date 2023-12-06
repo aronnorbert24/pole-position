@@ -18,7 +18,7 @@
 import { ref } from 'vue'
 import { useCommentStore } from '../../stores/CommentStore'
 
-const { setActiveSort } = useCommentStore()
+const commentStore = useCommentStore()
 
 const sortProperties: string[] = ['Oldest', 'Newest', 'Best']
 const activeSort = ref('Oldest')
@@ -29,6 +29,6 @@ function getPropertyClass(property: string) {
 
 function toggleActiveSort(priority: string) {
   activeSort.value = priority
-  setActiveSort(activeSort.value)
+  commentStore.setActiveSort(activeSort.value)
 }
 </script>

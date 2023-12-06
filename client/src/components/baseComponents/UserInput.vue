@@ -24,12 +24,12 @@
   
   const props = defineProps<Props>()
   
-  const { updateProperty } = useUserStore()
+  const userStore = useUserStore()
   
   const liveUpdate = ref(debounce(update, 300))
 
   function update() {
-    updateProperty(props.property, updatedValue.value)
+    userStore.updateProperty(props.property, updatedValue.value)
   }
   
   const updatedValue = ref('')

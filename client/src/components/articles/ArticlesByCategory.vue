@@ -3,7 +3,7 @@
     <TitleSeparator :title="route.params.id" />
     <div class="mb-5 rounded-xl bg-white text-center">
       <ul>
-        <li v-for="(article, index) in getArticlesByCategory(route.params.id)" :key="index">
+        <li v-for="(article, index) in articleStore.getArticlesByCategory(route.params.id)" :key="index">
           <ArticlePreview :article="article"/>
         </li>
       </ul>
@@ -18,7 +18,7 @@ import ArticlePreview from './PreviewArticle.vue'
 import TitleSeparator from '../baseComponents/TitleSeparator.vue'
 
 const route = useRoute()
-const { getArticlesByCategory } = useArticleStore()
+const articleStore = useArticleStore()
 
 
 </script>
