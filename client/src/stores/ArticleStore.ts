@@ -56,16 +56,7 @@ export const useArticleStore = defineStore({
       return state.searchedArticles.slice(0, 3)
     },
     getArticlesByCategory: (state) => {
-      return (title: string | string[]) =>
-        title === 'F1'
-          ? state.articles.filter((article) => article.category === 'F1')
-          : title === 'F2'
-            ? state.articles.filter((article) => article.category === 'F2')
-            : title === 'F3'
-              ? state.articles.filter((article) => article.category === 'F3')
-              : title === 'WEC'
-                ? state.articles.filter((article) => article.category === 'WEC')
-                : state.articles.filter((article) => article.category === 'MotoGP')
+      return (title: string | string[]) => state.articles.filter((article) => article.category === title)
     },
     getTrendingArticles: (state) => {
       if (state.articles.length === 0) {
