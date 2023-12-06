@@ -24,19 +24,16 @@
       <CreateComment
         v-if="isCreateCommentVisible"
         comment="Create"
-        :user="user"
         @cancelComment="toggleCreateComment"
       />
       <div v-for="(articleComment, index) in rootComments" :key="index">
         <ArticleComment
-          :user="user"
           :comment="articleComment"
         />
         <div v-for="(reply, index) in articleComment.replies" :key="index">
           <div class="ml-40 phone:ml-6">
             <ArticleComment
               v-if="articleComment.replies.length"
-              :user="user"
               :comment="reply"
             />
           </div>
@@ -49,7 +46,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
-import { storeToRefs } from 'pinia'
 import { useArticleStore } from '../../stores/ArticleStore'
 import { useCommentStore } from '../../stores/CommentStore'
 import { useUserStore } from '../../stores/UserStore'
@@ -66,7 +62,6 @@ const route = useRoute()
 const articleStore = useArticleStore()
 const commentStore = useCommentStore()
 const userStore = useUserStore()
-const { user } = storeToRefs(useUserStore())
 
 const link = computed(() => Number(route.params.id))
 const singleArticle = computed(() => articleStore.getArticleById(link.value)!)
