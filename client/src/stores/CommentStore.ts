@@ -122,7 +122,7 @@ export const useCommentStore = defineStore({
       }
       this.saveCommentsToLocalStorage()
     },
-    deleteToComment(commentToDelete: Comment) {
+    deleteComment(commentToDelete: Comment) {
       if (commentToDelete.parentId) {
         const parentIndex = this.comments.findIndex((comment) => comment.commentId === commentToDelete.parentId)
         if (parentIndex) {

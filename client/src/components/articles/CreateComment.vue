@@ -1,6 +1,6 @@
 <template>
   <div class="flex">
-    <img class="h-16 w-16 rounded-full border-2 border-red-600" :src="loggedInUserPicture" />
+    <img class="h-16 w-16 rounded-full border-2 border-red-600" :src="userStore.getUserPicture" />
     <textarea
       type="text"
       maxlength="500"
@@ -36,8 +36,8 @@ import { Comment } from '../../types/comment.ts'
 
 const route = useRoute()
 const { singleComment } = storeToRefs(useCommentStore())
-const { saveComment, editComment } = useCommentStore()
-const { loggedInUserPicture, loggedInUserId } = storeToRefs(useUserStore())
+const commentStore = useCommentStore()
+const userStore = useUserStore()
 
 
 interface Props {
@@ -71,17 +71,17 @@ function save() {
 
   if (!updatedComment.value.commentId) {
     updatedComment.value.articleId = Number(route.params.id)
-    updatedComment.value.userId = loggedInUserId.value
+    updatedComment.value.userId = userStore.loggedInUserId
     updatedComment.value.date = new Date()
     updatedComment.value.commentId = new Date().getTime()
     if (props.comment === 'Reply') {
       updatedComment.value.parentId = singleComment.value.commentId
     }
-    saveComment(updatedComment.value)
+    commentStore.saveComment(updatedComment.value)
     emit('cancelComment')
     return
   }
-  editComment(updatedComment.value)
+  commentStore.editComment(updatedComment.value)
   emit('cancelComment')
 }
 

@@ -18,28 +18,28 @@ import { useArticleStore } from '../../stores/ArticleStore'
 import TitleSeparator from '../baseComponents/TitleSeparator.vue';
 import ArticlePreview from './PreviewArticle.vue';
 
-const { getArticlesByCategory } = useArticleStore()
+const articleStore = useArticleStore()
 
 
 const categories = [
   {
-    category: getArticlesByCategory('F1'),
+    category: articleStore.getArticlesByCategory('F1'),
     title: 'F1',
   },
   {
-    category: getArticlesByCategory('F2'),
+    category: articleStore.getArticlesByCategory('F2'),
     title: 'F2',
   },
   {
-    category: getArticlesByCategory('F3'),
+    category: articleStore.getArticlesByCategory('F3'),
     title: 'F3',
   },
   {
-    category: getArticlesByCategory('WEC'),
+    category: articleStore.getArticlesByCategory('WEC'),
     title: 'WEC',
   },
   {
-    category: getArticlesByCategory('MotoGP'),
+    category: articleStore.getArticlesByCategory('MotoGP'),
     title: 'MotoGP',
   },
 ]

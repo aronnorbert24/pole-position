@@ -77,7 +77,7 @@ export const useArticleStore = defineStore({
         })
         .slice(0, 5)
     },
-    getSingleArticle: (state) => {
+    getArticleById: (state) => {
       return (articleId: number) => state.articles.find((article) => article.articleId === articleId)
     },
   },
@@ -128,7 +128,7 @@ export const useArticleStore = defineStore({
       }
       const i = this.articles.findIndex((a) => a.articleId === updatedArticle.value.articleId)
       this.articles[i] = updatedArticle.value
-      this.getSingleArticle(updatedArticle.value.articleId)
+      this.getArticleById(updatedArticle.value.articleId)
       this.saveArticlesToLocalStorage()
     },
   },

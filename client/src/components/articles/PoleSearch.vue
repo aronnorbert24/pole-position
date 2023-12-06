@@ -21,13 +21,13 @@ import { ref } from 'vue'
 import { useArticleStore } from '../../stores/ArticleStore'
 import { debounce } from '../../helpers/helper.ts'
 
-const { searchArticles } = useArticleStore()
+const articleStore = useArticleStore()
 
 const searchQuery = ref('')
 
 const liveSearch = ref(debounce(search, 300))
 
 function search() {
-  searchArticles(searchQuery.value)
+  articleStore.searchArticles(searchQuery.value)
 }
 </script>

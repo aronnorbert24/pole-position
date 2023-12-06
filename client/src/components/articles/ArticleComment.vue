@@ -1,7 +1,7 @@
 <template>
   <div v-if="isCurrentCommentVisible" class="mt-5 flex">
     <div class="flex phone:mr-6 h-20 w-3/12 phone:w-full">
-      <img class="h-16 w-16 rounded-full border-2 border-red-600" :src="getUserPicture" />
+      <img class="h-16 w-16 rounded-full border-2 border-red-600" :src="userStore.getUserPicture.value" />
     </div>
     <div class="pb-4 pr-2 text-left">
       <p class="text-lg font-semibold text-black">{{ user.username }}</p>
@@ -10,18 +10,17 @@
     </div>
     <CommentIcons v-if="isUserTheAuthor" @toggleComment="toggleComment" @deleteComment="deleteComment" />
   </div>
-  <div class="flex justify-between">
+  <div v-if="userStore.getUserId.value" class="flex justify-between">
     <button
-    v-if="getUserId"
       class="flex h-16 w-28 rounded-xl transition-transform duration-300 ease-in-out hover:scale-125 hover:cursor-pointer phone:ml-2 phone:h-14 phone:w-18"
       :class="getLikedClass"
       @click.prevent="liked"
     >
       <LikeIcon />
-      <p class="ml-1 mt-2">{{ updatedLikes }}</p>
+      <p class="ml-1 mt-2">{{ props.comment.likes }}</p>
     </button>
     <button
-      v-if="!comment.parentId && isCurrentCommentVisible && getUserId"
+      v-if="!comment.parentId && isCurrentCommentVisible"
       class="text-md h-12 w-24 bg-gray-300 text-black hover:cursor-pointer"
       @click="toggleComment('Reply')"
     >
@@ -50,8 +49,8 @@ import { formatDate } from '../../helpers/helper.ts'
 import { User } from '../../types/user.ts'
 import { Comment } from '../../types/comment.ts'
 
-const { setSingleComment, likedComment, deleteToComment } = useCommentStore()
-const { getUserPicture, getUserId } = storeToRefs(useUserStore())
+const commentStore = useCommentStore()
+const userStore = storeToRefs(useUserStore())
 
 interface Props {
   user: User
@@ -62,18 +61,13 @@ const props = defineProps<Props>()
 
 const category = ref('Reply')
 
-const isUserTheAuthor = computed(() => {
-  return props.comment.userId === getUserId.value
-})
+const isUserTheAuthor = computed(() => props.comment.userId === userStore.getUserId.value)
 
 const formattedDate = computed(() => {
   return formatDate(props.comment.date)
 })
 const isCommentLiked = computed(() => {
-  return props.comment.likedBy.includes(getUserId.value)
-})
-const updatedLikes = computed(() => {
-  return props.comment.likes
+  return props.comment.likedBy.includes(userStore.getUserId.value)
 })
 
 const getLikedClass = computed(() => {
@@ -84,16 +78,16 @@ const isReplyCommentVisible = ref(false)
 const isCurrentCommentVisible = ref(true)
 
 function liked() {
-  likedComment(props.comment, !isCommentLiked.value, getUserId.value)
+  commentStore.likedComment(props.comment, !isCommentLiked.value, userStore.getUserId.value)
 }
 
 function deleteComment() {
-  deleteToComment(props.comment)
+  commentStore.deleteComment(props.comment)
 }
 
 function toggleComment(type: string) {
   category.value = type
-  setSingleComment(props.comment)
+  commentStore.setSingleComment(props.comment)
   if (category.value === 'Edit') {
     toggleCurrentComment()
   }

@@ -24,14 +24,13 @@
   
   <script setup lang="ts">
   import { ref } from 'vue'
-  import { storeToRefs } from 'pinia'
   import { useUserStore } from '../stores/UserStore'
   import { RouterLink, useRouter } from 'vue-router'
   import { loginUser } from '../services/authentication'
   import UserInput from '../components/baseComponents/UserInput.vue'
   import ErrorMessage from '../components/baseComponents/ErrorMessage.vue'
   
-  const { getNewUsername, getNewPassword } = storeToRefs(useUserStore())
+  const userStore = useUserStore()
   
   const errorMessage = ref('')
   
@@ -43,7 +42,7 @@
     }
   
     try {
-      await loginUser(getNewUsername.value, getNewPassword.value)
+      await loginUser(userStore.getNewUsername, userStore.getNewPassword)
       router.go(-1)
     } catch (error: any) {
       console.error('Register Error', error)
@@ -52,17 +51,17 @@
   }
   
   function isInputValid() {
-      if (getNewUsername.value.trim() === '' || getNewPassword.value.trim() === '') {
+      if (userStore.getNewUsername.trim() === '' || userStore.getNewPassword.trim() === '') {
       errorMessage.value = 'Please fill in every field.'
       return false
     }
   
-    if (getNewUsername.value.length < 3) {
+    if (userStore.getNewUsername.length < 3) {
       errorMessage.value = 'Username must be at least 3 characters'
       return false
     }
   
-    if (getNewPassword.value.length < 8) {
+    if (userStore.getNewPassword.length < 8) {
       errorMessage.value = 'Password must be at least 8 characters long.'
       return false
     }

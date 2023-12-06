@@ -28,19 +28,18 @@
   <script setup lang="ts">
   import { ref, computed } from 'vue'
   import { RouterLink, useRouter } from 'vue-router'
-  import { storeToRefs } from 'pinia'
   import { useUserStore } from '../stores/UserStore'
   import md5 from 'md5'
   import UserInput from '../components/baseComponents/UserInput.vue'
   import ErrorMessage from '../components/baseComponents/ErrorMessage.vue'
   import { registerUser } from '../services/authentication'
   
-  const { getNewUsername, getNewPassword, getNewEmail } = storeToRefs(useUserStore())
+  const userStore = useUserStore()
   
   const errorMessage = ref('')
 
   const gravatar = computed(() => {
-    const hash = md5(getNewEmail.value.trim().toLowerCase())
+    const hash = md5(userStore.getNewEmail.trim().toLowerCase())
     return `https://www.gravatar.com/avatar/${hash}?d=https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd`
   })
   
@@ -52,7 +51,7 @@
     }
   
     try {
-      await registerUser(getNewUsername.value, getNewPassword.value, getNewEmail.value, gravatar.value)
+      await registerUser(userStore.getNewUsername, userStore.getNewPassword, userStore.getNewEmail, gravatar.value)
       router.push({ name: 'dashboard' })
     } catch (error: any) {
       console.error('Register Error', error)
@@ -62,25 +61,25 @@
   
   function isInputValid() {  
     if (
-      getNewUsername.value.trim() === '' ||
-      getNewEmail.value.trim() === '' ||
-      getNewPassword.value.trim() === ''
+      userStore.getNewUsername.trim() === '' ||
+      userStore.getNewEmail.trim() === '' ||
+      userStore.getNewPassword.trim() === ''
     ) {
       errorMessage.value = 'Please fill in every field.'
       return false
     }
   
-    if (!/^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/.test(getNewEmail.value)) {
+    if (!/^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/.test(userStore.getNewEmail)) {
       errorMessage.value = 'Please enter a valid email address'
       return false
     }
 
-    if (getNewUsername.value.length < 3) {
+    if (userStore.getNewUsername.length < 3) {
       errorMessage.value = 'Username must be at least 3 characters long.'
       return false
     }
   
-    if (getNewPassword.value.length < 8) {
+    if (userStore.getNewPassword.length < 8) {
       errorMessage.value = 'Password must be at least 8 characters long.'
       return false
     }

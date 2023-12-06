@@ -5,14 +5,14 @@
       type="text"
       maxlength="80"
       class="mt-2 w-full rounded-2xl bg-slate-200 p-2 text-black"
-      :placeholder="newArticle.title"
+      :placeholder="articleStore.newArticle.title"
       v-model="updatedArticle.title"
     />
     <label class="text-md mt-5 text-red-600"> Please enter the subheading of your article:</label>
     <textarea
       type="text"
       class="mt-5 h-32 w-full rounded-2xl bg-slate-200 p-2 text-black"
-      :placeholder="newArticle.subheading"
+      :placeholder="articleStore.newArticle.subheading"
       v-model="updatedArticle.subheading"
     >
     </textarea>
@@ -44,21 +44,21 @@ import { useArticleStore } from '../../stores/ArticleStore.ts'
 import ArticleCategory from './ArticleCategory.vue'
 import { Article } from '../../types/article.ts'
 
-const { newArticle, saveArticle } = useArticleStore()
+const articleStore = useArticleStore()
 
 const numberOfOccurences = ref<number>()
 const text = ref('Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye')
 const updatedArticle = ref<Article>({
-  articleId: newArticle.articleId,
-  title: newArticle.title,
-  subheading: newArticle.subheading,
-  separatedText: newArticle.separatedText,
-  category: newArticle.category,
-  image: newArticle.image,
-  datePublished: newArticle.datePublished,
-  likedBy: newArticle.likedBy,
-  likes: newArticle.likes,
-  views: newArticle.views,
+  articleId: articleStore.newArticle.articleId,
+  title: articleStore.newArticle.title,
+  subheading: articleStore.newArticle.subheading,
+  separatedText: articleStore.newArticle.separatedText,
+  category: articleStore.newArticle.category,
+  image: articleStore.newArticle.image,
+  datePublished: articleStore.newArticle.datePublished,
+  likedBy: articleStore.newArticle.likedBy,
+  likes: articleStore.newArticle.likes,
+  views: articleStore.newArticle.views,
 })
 
 function updateCategory(category: string) {
@@ -101,6 +101,6 @@ function save() {
   updatedArticle.value.datePublished = new Date()
   updatedArticle.value.articleId = new Date().getTime()
 
-  saveArticle(updatedArticle.value)
+  articleStore.saveArticle(updatedArticle.value)
 }
 </script>

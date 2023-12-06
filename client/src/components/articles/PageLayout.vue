@@ -53,15 +53,15 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const { clearSearchQuery, getArticlesFromLocalStorage } = useArticleStore()
-const { getCommentsFromLocalStorage } = useCommentStore()
-const { getItemsFromLocalStorage, logOutUser } = useUserStore()
+const articleStore = useArticleStore()
+const commentStore = useCommentStore()
+const userStore = useUserStore()
 
 const router = useRouter()
 
-getItemsFromLocalStorage()
-getArticlesFromLocalStorage()
-getCommentsFromLocalStorage()
+userStore.getItemsFromLocalStorage()
+articleStore.getArticlesFromLocalStorage()
+commentStore.getCommentsFromLocalStorage()
 
 const isSearchBarShowing = ref(false)
 const closeChampionshipPopupRef = ref(null)
@@ -83,7 +83,7 @@ const currentComponent = computed(() => {
 })
 
 function logout() {
-  logOutUser()
+  userStore.logOutUser()
   itemsToDelete.forEach(i => localStorage.removeItem(i))
   router.currentRoute.value.name === 'dashboard' ? location.reload() : router.push({name: 'dashboard'})
 
@@ -100,7 +100,7 @@ function toggleLogoutPopup() {
 function toggleSearchBar() {
   isSearchBarShowing.value = !isSearchBarShowing.value
   if (isSearchBarShowing.value) {
-    clearSearchQuery()
+    articleStore.clearSearchQuery()
   }
 }
 
