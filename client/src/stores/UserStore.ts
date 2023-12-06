@@ -1,15 +1,9 @@
 import { defineStore } from 'pinia'
-import { User } from '../types/user'
 import { getItems } from '../helpers/helper'
 
 export const useUserStore = defineStore({
   id: 'user',
   state: () => ({
-    user: {
-      username: 'Anonymous',
-      password: 'qwertyqwerty',
-      email: 'qwerty@qwerty.com',
-  } as User,
     newUsername: 'Anonymous',
     newPassword: '',
     newEmail: '',

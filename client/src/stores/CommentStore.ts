@@ -11,6 +11,8 @@ export const useCommentStore = defineStore({
     singleComment: {
       articleId: 0,
       userId: '',
+      username: 'Anonymous',
+      userPicture: 'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
       commentId: 0,
       parentId: 0,
       replies: [] as Comment[],
@@ -42,6 +44,8 @@ export const useCommentStore = defineStore({
       const updatedComment: Comment = {
         articleId: comment.articleId,
         userId: comment.userId,
+        username: comment.username,
+        userPicture: comment.userPicture,
         parentId: comment.parentId,
         commentId: comment.commentId,
         replies: comment.replies,
@@ -62,6 +66,8 @@ export const useCommentStore = defineStore({
       const updatedComment: Comment = {
         articleId: comment.articleId,
         userId: comment.userId,
+        username: comment.username,
+        userPicture: comment.userPicture,
         parentId: comment.parentId,
         commentId: comment.commentId,
         replies: comment.replies,

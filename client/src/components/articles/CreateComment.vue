@@ -31,7 +31,6 @@ import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia';
 import { useCommentStore } from '../../stores/CommentStore';
 import { useUserStore } from '../../stores/UserStore';
-import { User } from '../../types/user.ts'
 import { Comment } from '../../types/comment.ts'
 
 const route = useRoute()
@@ -42,7 +41,6 @@ const userStore = useUserStore()
 
 interface Props {
   comment: string
-  user: User
 }
 
 const props = defineProps<Props>()
@@ -54,6 +52,8 @@ const emit = defineEmits<{
 const updatedComment = ref<Comment>({
       articleId: 0,
       userId: '',
+      username: 'Anonymous',
+      userPicture: 'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
       commentId: 0,
       parentId: 0,
       replies: [] as Comment[],
@@ -72,6 +72,8 @@ function save() {
   if (!updatedComment.value.commentId) {
     updatedComment.value.articleId = Number(route.params.id)
     updatedComment.value.userId = userStore.loggedInUserId
+    updatedComment.value.username = userStore.getNewUsername
+    updatedComment.value.userPicture = userStore.getUserPicture
     updatedComment.value.date = new Date()
     updatedComment.value.commentId = new Date().getTime()
     if (props.comment === 'Reply') {
