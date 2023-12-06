@@ -26,17 +26,11 @@ export async function save(data: Article) {
   }
 }
 
-export async function getTodos(_id: string, sortProperty: string, sortOrder: string, filter: string) {
+export async function getArticles() {
   try {
-    const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/todo/${_id}`, {
-      params: {
-        sortProperty: sortProperty,
-        sortOrder: sortOrder,
-        filter: filter,
-      },
+    const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/article/getArticles`, {
     })
-    localStorage.setItem('todos', JSON.stringify(response.data))
-
+    localStorage.setItem('articles', JSON.stringify(response.data))
     return response.data
   } catch (error) {
     console.error(error)
@@ -44,7 +38,7 @@ export async function getTodos(_id: string, sortProperty: string, sortOrder: str
   }
 }
 
-export async function editTodo(articleId: string, article: Article) {
+export async function editArticle(articleId: string, article: Article) {
   try {
     const response = await axios.patch(`${import.meta.env.VITE_BASE_URL}/article/edit/${articleId}`, {
         title: article.title,
@@ -65,9 +59,9 @@ export async function editTodo(articleId: string, article: Article) {
   }
 }
 
-export async function deleteTodo(id: string) {
+export async function deleteArticle(id: string) {
   try {
-    await axios.delete(`${import.meta.env.VITE_BASE_URL}/todo/delete/${id}`)
+    await axios.delete(`${import.meta.env.VITE_BASE_URL}/article/delete/${id}`)
   } catch (error) {
     console.error(error)
     throw error

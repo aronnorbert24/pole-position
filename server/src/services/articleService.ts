@@ -14,9 +14,15 @@ class ArticleService {
         views: data.views,
     })
 
-    const savedTodo = await newArticle.save()
+    const savedArticle = await newArticle.save()
 
-    return savedTodo
+    return savedArticle
+  }
+
+  async getArticles() {
+    const articles = await ArticleModel.find({})
+    console.log('In service ' + articles)
+    return articles
   }
 }
 

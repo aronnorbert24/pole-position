@@ -60,7 +60,7 @@ const userStore = useUserStore()
 const router = useRouter()
 
 userStore.getItemsFromLocalStorage()
-articleStore.getArticlesFromLocalStorage()
+articleStore.getArticlesFromDatabase()
 commentStore.getCommentsFromLocalStorage()
 
 const isSearchBarShowing = ref(false)

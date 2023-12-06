@@ -1,5 +1,5 @@
 <template>
-  <RouterLink :to="`/pole-position/article/${article.articleId}`">
+  <RouterLink :to="`/pole-position/article/${article._id}`">
     <div class="flex h-40 px-4 phone:px-0">
       <div
         class="mx-auto my-auto w-3/12 transition-transform duration-300 ease-in-out hover:cursor-pointer phone:w-5/12"

@@ -7,7 +7,7 @@
         :key="index"
         class="py-1 transition-transform duration-300 ease-in-out hover:cursor-pointer hover:bg-slate-400 hover:underline"
       >
-        <RouterLink :to="`/pole-position/article/${article.articleId}`"><p class="text-md px-2 font-medium text-red-600">{{ article.title }}</p></RouterLink>
+        <RouterLink :to="`/pole-position/article/${article._id}`"><p class="text-md px-2 font-medium text-red-600">{{ article.title }}</p></RouterLink>
       </div>
     </div>
   </div>

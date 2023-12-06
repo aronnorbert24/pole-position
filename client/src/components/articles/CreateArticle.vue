@@ -52,7 +52,7 @@ const numberOfOccurences = ref<number>()
 const errorMessage = ref('')
 const text = ref('Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye')
 const updatedArticle = ref<Article>({
-  articleId: articleStore.newArticle.articleId,
+  _id: articleStore.newArticle._id,
   title: articleStore.newArticle.title,
   subheading: articleStore.newArticle.subheading,
   separatedText: articleStore.newArticle.separatedText,

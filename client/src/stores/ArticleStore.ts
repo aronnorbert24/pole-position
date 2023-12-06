@@ -1,14 +1,14 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { Article } from '../types/article'
-import { save } from '../services/article'
+import { save, getArticles } from '../services/article'
 
 export const useArticleStore = defineStore({
   id: 'article',
   state: () => ({
     articles: [] as Article[],
     newArticle: {
-      articleId: '',
+      _id: '',
       title: 'Article Title',
       subheading: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
       separatedText: [],
@@ -21,7 +21,7 @@ export const useArticleStore = defineStore({
       views: 0,
     } as Article,
     singleArticle: {
-      articleId: '',
+      _id: '',
       title: '',
       subheading: '',
       separatedText: [],
@@ -70,20 +70,24 @@ export const useArticleStore = defineStore({
         .slice(0, 5)
     },
     getArticleById: (state) => {
-      return (articleId: string | string[]) => state.articles.find((article) => article.articleId === articleId)
+      return (articleId: string | string[]) => state.articles.find((article) => article._id === articleId)
     },
   },
   actions: {
     async saveArticlesToLocalStorage() {
       localStorage.setItem('articles', JSON.stringify(this.articles))
     },
-    async getArticlesFromLocalStorage() {
-      const savedArticles = localStorage.getItem('articles')
-      this.articles = savedArticles ? JSON.parse(savedArticles) : []
+    async getArticlesFromDatabase() {
+      try {
+        this.articles = await getArticles()
+      } catch (error) {
+        console.error(error)
+        throw error
+      }
     },
     viewedArticle(article: Article) {
       const updatedArticle = article
-      const index = this.articles.findIndex((a) => a.articleId === article.articleId)
+      const index = this.articles.findIndex((a) => a._id === article._id)
       updatedArticle.views++
       this.articles[index] = updatedArticle
       this.saveArticlesToLocalStorage()
@@ -93,7 +97,7 @@ export const useArticleStore = defineStore({
         await save(article)
         const id: string = localStorage.getItem('articleId')!
         const newArticle: Article = {
-          articleId: id,
+          _id: id,
           title: article.title,
           subheading: article.subheading,
           separatedText: article.separatedText,
@@ -137,9 +141,9 @@ export const useArticleStore = defineStore({
           return
         }
       }
-      const i = this.articles.findIndex((a) => a.articleId === updatedArticle.value.articleId)
+      const i = this.articles.findIndex((a) => a._id === updatedArticle.value._id)
       this.articles[i] = updatedArticle.value
-      this.getArticleById(updatedArticle.value.articleId)
+      this.getArticleById(updatedArticle.value._id)
       this.saveArticlesToLocalStorage()
     },
   },
