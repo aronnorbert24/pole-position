@@ -50,8 +50,6 @@ export const useCommentStore = defineStore({
         likedBy: comment.likedBy,
         likes: comment.likes,
       }
-      
-      if (updatedComment) {
        if (updatedComment.parentId) {
           const index = this.comments.findIndex((comment: Comment) => comment.commentId === updatedComment.parentId)
           this.comments[index].replies.push(updatedComment)
@@ -59,7 +57,6 @@ export const useCommentStore = defineStore({
           this.comments.push(updatedComment)
         }
         this.saveCommentsToLocalStorage()
-      }
     },
     editComment(comment: Comment) {
       const updatedComment: Comment = {
@@ -74,7 +71,6 @@ export const useCommentStore = defineStore({
         likes: comment.likes,
       }
       
-      if (updatedComment) {
        if (updatedComment.parentId) {
           const parentIndex = this.comments.findIndex((comment: Comment) => comment.commentId === updatedComment.parentId)
           const index = this.comments[parentIndex].replies.findIndex((comment: Comment) => comment.commentId === updatedComment.commentId)
@@ -84,42 +80,26 @@ export const useCommentStore = defineStore({
           this.comments[index] = updatedComment
         }
         this.saveCommentsToLocalStorage()
-      }
     },
     likedComment(comment: Comment, isCommentLiked: boolean, userId: string) {
       const updatedComment = ref<Comment>(comment)
-
-      if (isCommentLiked) {
-        updatedComment.value.likes++
-      } else if (updatedComment.value.likes >= 1) {
-        updatedComment.value.likes--
-      } else {
-        return
-      }
+      const likedByIndex = updatedComment.value.likedBy.findIndex((id: string) => id === userId)
       if (updatedComment.value) {
-        const index = updatedComment.value.likedBy.findIndex((id: string) => id === userId)
-        if (isCommentLiked && index < 0) {
-          updatedComment.value.likedBy.push(userId)
+        if (isCommentLiked) {
+          if (likedByIndex < 0) {
+            updatedComment.value.likedBy.push(userId)
+          }
+          updatedComment.value.likes++
+        } else if (updatedComment.value.likes >= 1) {
+          if (likedByIndex >= 0) {
+            updatedComment.value.likedBy.splice(likedByIndex, 1)
+          }
+          updatedComment.value.likes--
         } else {
-          if (index >= 0) {
-            updatedComment.value.likedBy.splice(index, 1)
-          }
+          return
         }
       }
-      if (updatedComment.value.parentId) {
-        const parentIndex = this.comments.findIndex((comment) => comment.commentId === updatedComment.value.parentId)
-        if (parentIndex) {
-          const index = this.comments[parentIndex].replies.findIndex(
-            (comment: Comment) => comment.commentId === updatedComment.value.commentId
-          )
-          if (index) {
-            this.comments[parentIndex].replies[index] = updatedComment.value
-          }
-        }
-      } else {
-        const i = this.comments.findIndex((c) => c.commentId === updatedComment.value.commentId)
-        this.comments[i] = updatedComment.value
-      }
+      this.editComment(updatedComment.value)
       this.saveCommentsToLocalStorage()
     },
     deleteComment(commentToDelete: Comment) {

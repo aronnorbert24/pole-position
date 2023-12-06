@@ -65,9 +65,7 @@ export const useUserStore = defineStore({
       this.newEmail = getItems('email')! 
       this.loggedInUserId = getItems('userId')!
       this.userPicture = getItems('userPicture') ? getItems('userPicture')! : 'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd'
-      if (this.loggedInUserId) {
-        this.isLoggedIn = true
-      }
+      this.isLoggedIn = this.loggedInUserId ? true : false
     }
   }
 })
