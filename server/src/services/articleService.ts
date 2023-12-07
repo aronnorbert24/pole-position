@@ -21,8 +21,18 @@ class ArticleService {
 
   async getArticles() {
     const articles = await ArticleModel.find({})
-    console.log('In service ' + articles)
     return articles
+  }
+
+  async findArticleById(articleId: string) {
+    const article = await ArticleModel.findById(articleId).exec()
+    return article
+  }
+
+  async updateArticleById(articleId: string, newArticle: Article) {
+    await ArticleModel.findByIdAndUpdate(articleId, newArticle)
+    const updatedArticle = this.findArticleById(articleId)
+    return updatedArticle
   }
 }
 

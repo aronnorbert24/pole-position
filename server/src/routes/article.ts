@@ -6,5 +6,6 @@ const article = Router()
 
 article.get('/getArticles', articleController.getArticles)
 article.post('/save', ValidateSchema(Schemas.article.create), articleController.saveArticle)
+article.patch('/edit/:id', ValidateSchema(Schemas.article.update), articleController.editArticle)
 
 export default article

@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { Article } from '../types/article'
-import { save, getArticles } from '../services/article'
+import { save, getArticles, editArticle, deleteArticle } from '../services/article'
 
 export const useArticleStore = defineStore({
   id: 'article',
@@ -15,18 +15,6 @@ export const useArticleStore = defineStore({
       image:
         'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
       category: 'F1',
-      datePublished: new Date(),
-      likedBy: [],
-      likes: 0,
-      views: 0,
-    } as Article,
-    singleArticle: {
-      _id: '',
-      title: '',
-      subheading: '',
-      separatedText: [],
-      image: '',
-      category: '',
       datePublished: new Date(),
       likedBy: [],
       likes: 0,
@@ -84,6 +72,9 @@ export const useArticleStore = defineStore({
         console.error(error)
         throw error
       }
+    },
+    setSingleArticle(article: Article) {
+      this.newArticle = article
     },
     viewedArticle(article: Article) {
       const updatedArticle = article
@@ -146,5 +137,19 @@ export const useArticleStore = defineStore({
       this.getArticleById(updatedArticle.value._id)
       this.saveArticlesToLocalStorage()
     },
+    async editArticle(article: Article) {
+      const newArticle = await editArticle(article)
+      const index = this.articles.findIndex((article: Article) => article._id === newArticle._id)
+      this.articles[index] = newArticle
+      this.saveArticlesToLocalStorage()
+    },
+    async deleteArticle(id: string) {
+      await deleteArticle(id)
+      this.articles = this.articles.filter((article) => article._id !== id)
+      this.saveArticlesToLocalStorage()
+    },
+    emptyNewArticle() {
+      this.newArticle._id = ''
+    }
   },
 })

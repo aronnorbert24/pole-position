@@ -4,7 +4,6 @@ import articleService from '../services/articleService'
 class ArticleController {
   async saveArticle(req: Request, res: Response) {
     try {
-      console.log('In Controller')
       const newArticle = req.body
 
       const savedArticle = await articleService.saveArticle(newArticle)
@@ -13,15 +12,28 @@ class ArticleController {
       return res.status(500).send('Saving Article failed. Please check your input, and try again.')
     }
   }
-  async getArticles(req: Request, res: Response) {
+  async getArticles(_req: Request, res: Response) {
     try {
-      const article = req.body
-      console.log('Before Service' + article)
       const articles = await articleService.getArticles()
-      console.log('After Service')
       return res.status(201).json(articles)
     } catch (error) {
       return res.status(500).send('Unable to get Articles at this time. Please try again.')
+    }
+  }
+  async editArticle(req: Request, res: Response) {
+    try {
+      const articleId = req.params.id
+      const newArticle = req.body
+
+      if (!articleId) {
+        return res.status(400).send('Invalid article id provided.')
+      }
+
+      const updatedArticle = await articleService.updateArticleById(articleId, newArticle)
+
+      return res.status(200).json(updatedArticle)
+    } catch (error) {
+      return res.status(500).send('Unable to update the article. Please check your input and try again later.')
     }
   }
 }

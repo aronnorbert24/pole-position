@@ -38,9 +38,9 @@ export async function getArticles() {
   }
 }
 
-export async function editArticle(articleId: string, article: Article) {
+export async function editArticle(article: Article) {
   try {
-    const response = await axios.patch(`${import.meta.env.VITE_BASE_URL}/article/edit/${articleId}`, {
+    const response = await axios.patch(`${import.meta.env.VITE_BASE_URL}/article/edit/${article._id}`, {
         title: article.title,
         subheading: article.subheading,
         separatedText: article.separatedText,

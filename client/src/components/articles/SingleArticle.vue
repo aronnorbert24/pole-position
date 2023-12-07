@@ -6,6 +6,7 @@
         <p class="text-2xl font-semibold text-white phone:text-lg">{{ article.title }}</p>
       </div>
     </div>
+    <CommentIcons v-if="userStore.getIsUserAdmin" class="ml-auto mt-2 mb-4" @toggle="toggleArticle" @delete="deleteArticle" />
     <div class="mt-2 flex justify-between">
       <p class="text-md font-medium text-black">By: Pole Position</p>
       <p class="text-md font-medium text-black phone:text-sm">{{ formattedDate }}</p>
@@ -27,7 +28,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router';
+import { useArticleStore } from '../../stores/ArticleStore';
+import { useUserStore } from '../../stores/UserStore';
+import CommentIcons from '../icons/CommentIcons.vue';
 import { formatDate } from '../../helpers/helper.ts'
 import { Article } from '../../types/article.ts'
 
@@ -35,11 +40,16 @@ interface Props {
   article: Article
 }
 
+const router = useRouter()
 const props = defineProps<Props>()
+
+const articleStore = useArticleStore()
+const userStore = useUserStore()
 
 const formattedDate = computed(() => {
   return formatDate(props.article.datePublished)
 })
+const category = ref('')
 
 function emphasizeClass(index: number, paragraph: string) {
   if (index % 2 === 1) {
@@ -47,5 +57,15 @@ function emphasizeClass(index: number, paragraph: string) {
       ? 'border-l-4 border-red-600 bg-gradient-to-r text-lg from-pink-300 to-white font-semibold p-3 leading-2 italic'
       : 'border-l-4 border-red-600 bg-gradient-to-r text-lg from-pink-300 to-white font-semibold p-3 leading-2'
   }
+}
+
+function deleteArticle() {
+  articleStore.deleteArticle(props.article._id)
+}
+
+function toggleArticle(type: string) {
+  category.value = type
+  articleStore.setSingleArticle(props.article)
+  router.push({name: 'create'})
 }
 </script>
