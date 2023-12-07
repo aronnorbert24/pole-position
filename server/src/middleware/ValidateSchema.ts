@@ -52,8 +52,5 @@ export const Schemas = {
       likes: Joi.number().required(),
       views: Joi.number().required(),
     }),
-    /*get: Joi.object<Article>({
-      userId: Joi.string().required(),
-    }),*/
   },
 }

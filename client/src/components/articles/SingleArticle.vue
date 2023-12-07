@@ -6,7 +6,7 @@
         <p class="text-2xl font-semibold text-white phone:text-lg">{{ article.title }}</p>
       </div>
     </div>
-    <CommentIcons v-if="userStore.getIsUserAdmin" class="ml-auto mt-2 mb-4" @toggle="toggleArticle" @delete="deleteArticle" />
+    <CommentIcons v-if="userStore.getIsUserAdmin" class="ml-auto mt-2 mb-4" @toggle="toggleArticle" @delete="toggleDeletePopup" />
     <div class="mt-2 flex justify-between">
       <p class="text-md font-medium text-black">By: Pole Position</p>
       <p class="text-md font-medium text-black phone:text-sm">{{ formattedDate }}</p>
@@ -24,15 +24,20 @@
         <p>{{ paragraph }}</p>
       </div>
     </div>
+    <ErrorMessage v-if="errorMessage" :error="errorMessage" />
+    <LogoutPopup text="delete this article?" class="mt-96 mx-auto" v-if="isDeletePopupShowing" @toggleDeletePopup="toggleDeletePopup" ref="closeLogoutPopupRef" @confirm="deleteArticle" @cancel="toggleDeletePopup" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router';
+import { onClickOutside } from '@vueuse/core'
 import { useArticleStore } from '../../stores/ArticleStore';
 import { useUserStore } from '../../stores/UserStore';
 import CommentIcons from '../icons/CommentIcons.vue';
+import ErrorMessage from '../baseComponents/ErrorMessage.vue';
+import LogoutPopup from '../baseComponents/LogoutPopup.vue';
 import { formatDate } from '../../helpers/helper.ts'
 import { Article } from '../../types/article.ts'
 
@@ -49,7 +54,10 @@ const userStore = useUserStore()
 const formattedDate = computed(() => {
   return formatDate(props.article.datePublished)
 })
+const errorMessage = ref('')
 const category = ref('')
+const isDeletePopupShowing = ref(false)
+const closeDeletePopupRef = ref(null)
 
 function emphasizeClass(index: number, paragraph: string) {
   if (index % 2 === 1) {
@@ -59,8 +67,15 @@ function emphasizeClass(index: number, paragraph: string) {
   }
 }
 
-function deleteArticle() {
-  articleStore.deleteArticle(props.article._id)
+async function deleteArticle() {
+  try {
+  await articleStore.deleteArticle(props.article._id)
+  router.push({name: 'dashboard'})
+  } catch (error: any) {
+    errorMessage.value = error.message
+    console.error(error)
+    throw error
+  }
 }
 
 function toggleArticle(type: string) {
@@ -68,4 +83,10 @@ function toggleArticle(type: string) {
   articleStore.setSingleArticle(props.article)
   router.push({name: 'create'})
 }
+
+function toggleDeletePopup() {
+  isDeletePopupShowing.value = !isDeletePopupShowing.value
+}
+
+onClickOutside(closeDeletePopupRef, toggleDeletePopup)
 </script>

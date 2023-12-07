@@ -23,7 +23,7 @@
       ref="closeChampionshipPopupRef"
     />
     <SearchResultsPopup v-if="isSearchBarShowing" @toggleSearchBar="toggleSearchBar" ref="closeSearchBarRef" />
-    <LogoutPopup v-if="isLogoutPopupShowing" @toggleLogoutPopup="toggleLogoutPopup" ref="closeLogoutPopupRef" @confirm="logout" @cancel="toggleLogoutPopup" />
+    <LogoutPopup text="logout?" v-if="isLogoutPopupShowing" @toggleLogoutPopup="toggleLogoutPopup" ref="closeLogoutPopupRef" @confirm="logout" @cancel="toggleLogoutPopup" />
   </div>
 </template>
 

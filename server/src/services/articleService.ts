@@ -34,6 +34,10 @@ class ArticleService {
     const updatedArticle = this.findArticleById(articleId)
     return updatedArticle
   }
+
+  async deleteArticleById(articleId: string) {
+    await ArticleModel.findByIdAndDelete(articleId)
+  }
 }
 
 export default new ArticleService()
