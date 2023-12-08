@@ -64,7 +64,7 @@ const commentStore = useCommentStore()
 const userStore = useUserStore()
 
 const link = computed(() => route.params.id)
-const singleArticle = computed(() => articleStore.getArticleById(link.value)!)
+const singleArticle = computed(() => articleStore.getSingleArticle)
 
 const rootComments = computed(() => {
   return commentStore.getSortedComments(link.value).filter((comment: Comment) => !comment.parentId)

@@ -67,3 +67,13 @@ export async function deleteArticle(id: string) {
     throw error
   }
 }
+
+export async function getSingleArticle(id: string | string[]) {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/article/${id}`)
+      return response.data
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
+  }

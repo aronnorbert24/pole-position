@@ -80,7 +80,7 @@ async function deleteArticle() {
 
 function toggleArticle(type: string) {
   category.value = type
-  articleStore.setSingleArticle(props.article)
+  articleStore.setNewArticle(props.article)
   router.push({name: 'create'})
 }
 

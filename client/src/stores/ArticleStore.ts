@@ -1,13 +1,26 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { Article } from '../types/article'
-import { save, getArticles, editArticle, deleteArticle } from '../services/article'
+import { save, getArticles, getSingleArticle, editArticle, deleteArticle } from '../services/article'
 
 export const useArticleStore = defineStore({
   id: 'article',
   state: () => ({
     articles: [] as Article[],
     newArticle: {
+      _id: '',
+      title: 'Article Title',
+      subheading: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
+      separatedText: [],
+      image:
+        'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
+      category: 'F1',
+      datePublished: new Date(),
+      likedBy: [],
+      likes: 0,
+      views: 0,
+    } as Article,
+    singleArticle: {
       _id: '',
       title: 'Article Title',
       subheading: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
@@ -57,9 +70,9 @@ export const useArticleStore = defineStore({
         })
         .slice(0, 5)
     },
-    getArticleById: (state) => {
-      return (articleId: string | string[]) => state.articles.find((article) => article._id === articleId)
-    },
+    getSingleArticle: (state) => {
+      return state.singleArticle
+    }
   },
   actions: {
     async saveArticlesToLocalStorage() {
@@ -73,7 +86,12 @@ export const useArticleStore = defineStore({
         throw error
       }
     },
-    setSingleArticle(article: Article) {
+    async getArticleById(articleId: string | string[]) {
+      const article: Article = await getSingleArticle(articleId)
+      this.singleArticle = article ? article : this.newArticle
+
+    },
+    setNewArticle(article: Article) {
       this.newArticle = article
     },
     viewedArticle(article: Article) {

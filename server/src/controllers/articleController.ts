@@ -47,6 +47,17 @@ class ArticleController {
       return res.status(500).send('Unable to delete article at this time. Please try again.')
     }
   }
+
+  async getSingleArticle(req: Request, res: Response) {
+    try {
+      const articleId = req.params.id
+
+      const singleArticle = await articleService.findArticleById(articleId)
+      return res.status(200).json(singleArticle)
+    } catch (error) {
+      return res.status(500).send('Unable to delete article at this time. Please try again.')
+    }
+  }
 }
 
 

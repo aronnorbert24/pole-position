@@ -7,15 +7,27 @@
         :key="index"
         class="py-1 transition-transform duration-300 ease-in-out hover:cursor-pointer hover:bg-slate-400 hover:underline"
       >
-        <RouterLink :to="`/pole-position/article/${article._id}`"><p class="text-md px-2 font-medium text-red-600">{{ article.title }}</p></RouterLink>
+        <p class="text-md px-2 font-medium text-red-600" @click="getSingleArticle(article._id)">{{ article.title }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import { useArticleStore } from '../../stores/ArticleStore'
 import TitleSeparator from '../baseComponents/TitleSeparator.vue'
 
+const router = useRouter()
 const articleStore = useArticleStore()
+
+function getSingleArticle(id: string) {
+  try {
+    articleStore.getArticleById(id)
+    router.push({path: `/pole-position/article/${id}`})
+  } catch (error) {
+    console.error
+    throw error
+  }
+}
 </script>
