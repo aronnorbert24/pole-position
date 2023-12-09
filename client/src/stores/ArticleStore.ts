@@ -1,12 +1,13 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { Article } from '../types/article'
-import { save, getArticles, getSingleArticle, editArticle, deleteArticle } from '../services/article'
+import { save, getArticles, getArticlesByCategory, getSingleArticle, editArticle, deleteArticle } from '../services/article'
 
 export const useArticleStore = defineStore({
   id: 'article',
   state: () => ({
     articles: [] as Article[],
+    articlesBySport: [] as Article[],
     newArticle: {
       _id: '',
       title: 'Article Title',
@@ -57,8 +58,8 @@ export const useArticleStore = defineStore({
       }
       return state.searchedArticles.slice(0, 3)
     },
-    getArticlesByCategory: (state) => {
-      return (title: string | string[]) => state.articles.filter((article) => article.category === title)
+    getArticlesBySport: (state) => {
+      return state.articlesBySport
     },
     getTrendingArticles: (state) => {
       if (state.articles.length === 0) {
@@ -81,6 +82,7 @@ export const useArticleStore = defineStore({
     async getArticlesFromDatabase() {
       try {
         this.articles = await getArticles()
+        this.getArticlesByCategory('F1')
       } catch (error) {
         console.error(error)
         throw error
@@ -89,7 +91,11 @@ export const useArticleStore = defineStore({
     async getArticleById(articleId: string | string[]) {
       const article: Article = await getSingleArticle(articleId)
       this.singleArticle = article ? article : this.newArticle
-
+    },
+    async getArticlesByCategory(category: string | string[]) {
+      const articles: Article[] = await getArticlesByCategory(category)
+      this.articlesBySport = articles ? articles : []
+      return articles
     },
     setNewArticle(article: Article) {
       this.newArticle = article

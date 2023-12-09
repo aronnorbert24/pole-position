@@ -24,6 +24,11 @@ class ArticleService {
     return articles
   }
 
+  async findArticlesByCategory(category: string) {
+    const articles = await ArticleModel.find({category: category})
+    return articles
+  }
+
   async findArticleById(articleId: string) {
     const article = await ArticleModel.findById(articleId).exec()
     return article

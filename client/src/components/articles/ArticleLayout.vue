@@ -1,6 +1,6 @@
 <template>
   <div class="mt-10 computer:ml-auto computer:mr-10 computer:w-3/5">
-    <RouterLink :to="`/pole-position/category/${singleArticle.category}`"><TitleSeparator :title="singleArticle.category" /></RouterLink>
+    <TitleSeparator :title="singleArticle.category" @click="getArticlesByCategory" />
     <SingleArticle :article="singleArticle" />
     <button
       v-if="userStore.getUserId"
@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useArticleStore } from '../../stores/ArticleStore'
 import { useCommentStore } from '../../stores/CommentStore'
 import { useUserStore } from '../../stores/UserStore'
@@ -58,6 +58,7 @@ import LikeIcon from '../icons/LikeIcon.vue'
 
 import { Comment } from '../../types/comment.ts'
 
+const router = useRouter()
 const route = useRoute()
 const articleStore = useArticleStore()
 const commentStore = useCommentStore()
@@ -87,6 +88,16 @@ function likeArticle() {
     return
   }
   articleStore.likedArticle(singleArticle.value, !isLiked.value, userStore.getUserId)
+}
+
+function getArticlesByCategory() {
+  try {
+    articleStore.getArticlesByCategory(singleArticle.value.category)
+    router.push({path: `/pole-position/category/${singleArticle.value.category}`})    
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
 }
 
 function toggleCreateComment() {

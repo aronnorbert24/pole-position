@@ -7,7 +7,7 @@
     <PoleHeader @showPopup="toggleChampionshipPopup" />
     <PoleLink @showSearchBar="toggleSearchBar" @showLogout="toggleLogoutPopup" />
     <div class="tabletLandscape:flex computer:flex">
-      <div v-if="articleStore.getArticlesByCategory('F1').length" class="mx-auto w-7/12 phone:w-11/12 tablet:w-9/12 tabletLandscape:ml-16 computer:mx-0">
+      <div v-if="articleStore.getArticlesBySport.length" class="mx-auto w-7/12 phone:w-11/12 tablet:w-9/12 tabletLandscape:ml-16 computer:mx-0">
         <component :is="currentComponent"></component>
       </div>
       <div class="mx-auto w-3/12 phone:w-11/12 tablet:w-9/12 tabletLandscape:mr-20 computer:mx-0 computer:ml-10">

@@ -41,6 +41,10 @@ class ArticleController {
     try {
       const articleId = req.params.id
 
+      if (!articleId) {
+        return res.status(400).send('Invalid article id provided.')
+      }
+
       await articleService.deleteArticleById(articleId)
       return res.status(200).send('Article successfully deleted')
     } catch (error) {
@@ -52,10 +56,29 @@ class ArticleController {
     try {
       const articleId = req.params.id
 
+      if (!articleId) {
+        return res.status(400).send('Invalid article id provided.')
+      }
+
       const singleArticle = await articleService.findArticleById(articleId)
       return res.status(200).json(singleArticle)
     } catch (error) {
       return res.status(500).send('Unable to delete article at this time. Please try again.')
+    }
+  }
+
+  async getArticlesByCategory(req: Request, res: Response) {
+    try {
+      const category = req.params.id
+
+      if (!category) {
+        return res.status(400).send('Invalid article id provided.')
+      }
+
+      const articles = await articleService.findArticlesByCategory(category)
+      return res.status(200).json(articles)
+    } catch (error) {
+      return res.status(500).send('Unable to get articles by category at this time. Please try again.')
     }
   }
 }

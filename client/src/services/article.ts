@@ -38,6 +38,17 @@ export async function getArticles() {
   }
 }
 
+export async function getArticlesByCategory(category: string | string[]) {
+  try {
+    const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/article/category/${category}`, {
+    })
+    return response.data
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
+
 export async function editArticle(article: Article) {
   try {
     const response = await axios.patch(`${import.meta.env.VITE_BASE_URL}/article/edit/${article._id}`, {
