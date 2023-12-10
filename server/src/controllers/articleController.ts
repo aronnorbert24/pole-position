@@ -12,10 +12,16 @@ class ArticleController {
       return res.status(500).send('Saving Article failed. Please check your input, and try again.')
     }
   }
-  async getArticles(_req: Request, res: Response) {
+  async getArticles(req: Request, res: Response) {
     try {
-      const articles = await articleService.getArticles()
-      return res.status(201).json(articles)
+      const isTrending = req.params.isTrending
+      if (isTrending) {
+        const articles = await articleService.getTrendingArticles()
+        return res.status(201).json(articles)
+      } else {
+        const articles = await articleService.getArticles()
+        return res.status(201).json(articles)
+      } 
     } catch (error) {
       return res.status(500).send('Unable to get Articles at this time. Please try again.')
     }

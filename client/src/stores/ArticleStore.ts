@@ -35,6 +35,7 @@ export const useArticleStore = defineStore({
       views: 0,
     } as Article,
     searchQuery: '',
+    trendingArticles: [] as Article[],
     searchedArticles: [] as Article[],
   }),
   getters: {
@@ -62,14 +63,7 @@ export const useArticleStore = defineStore({
       return state.articlesBySport
     },
     getTrendingArticles: (state) => {
-      if (state.articles.length === 0) {
-        return []
-      }
-      return state.articles
-        .sort((a: Article, b: Article) => {
-          return a.views < b.views ? 1 : a.views > b.views ? -1 : 0
-        })
-        .slice(0, 5)
+      return state.trendingArticles
     },
     getSingleArticle: (state) => {
       return state.singleArticle
@@ -81,7 +75,8 @@ export const useArticleStore = defineStore({
     },
     async getArticlesFromDatabase() {
       try {
-        this.articles = await getArticles()
+        this.articles = await getArticles(false)
+        this.trendingArticles = await getArticles(true)
       } catch (error) {
         console.error(error)
         throw error

@@ -26,10 +26,9 @@ export async function save(data: Article) {
   }
 }
 
-export async function getArticles() {
+export async function getArticles(isTrending: boolean) {
   try {
-    const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/article/getArticles`, {
-    })
+    const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/article/getArticles/${isTrending}`, {})
     localStorage.setItem('articles', JSON.stringify(response.data))
     return response.data
   } catch (error) {

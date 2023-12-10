@@ -24,6 +24,11 @@ class ArticleService {
     return articles
   }
 
+  async getTrendingArticles() {
+    const articles = await ArticleModel.find({}).sort({ views: -1 }).slice('articles', 5)
+    return articles
+  }
+
   async findArticlesByCategory(category: string) {
     const articles = await ArticleModel.find({category: category})
     return articles
