@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useArticleStore } from '../../stores/ArticleStore'
 import { useCommentStore } from '../../stores/CommentStore'
@@ -103,8 +103,4 @@ function getArticlesByCategory() {
 function toggleCreateComment() {
   isCreateCommentVisible.value = !isCreateCommentVisible.value
 }
-
-onMounted(() => {
-  articleStore.viewedArticle(singleArticle.value)
-})
 </script>

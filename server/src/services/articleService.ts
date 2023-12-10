@@ -30,6 +30,7 @@ class ArticleService {
   }
 
   async findArticleById(articleId: string) {
+    await ArticleModel.findOneAndUpdate({_id: articleId}, { $inc: { views: 1 } })
     const article = await ArticleModel.findById(articleId).exec()
     return article
   }

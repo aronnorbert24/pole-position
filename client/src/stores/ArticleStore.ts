@@ -100,13 +100,6 @@ export const useArticleStore = defineStore({
     setNewArticle(article: Article) {
       this.newArticle = article
     },
-    viewedArticle(article: Article) {
-      const updatedArticle = article
-      const index = this.articles.findIndex((a) => a._id === article._id)
-      updatedArticle.views++
-      this.articles[index] = updatedArticle
-      this.saveArticlesToLocalStorage()
-    },
     async saveArticle(article: Article) {
       try {
         await save(article)
