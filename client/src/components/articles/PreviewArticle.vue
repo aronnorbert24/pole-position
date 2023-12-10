@@ -17,6 +17,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useArticleStore } from '../../stores/ArticleStore';
 import { Article } from '../../types/article.ts'
@@ -30,8 +31,12 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-const subheading = props.article.subheading
-const previewText = subheading.slice(0, 100)
+const subheading = computed(() => {
+  return props.article.subheading
+})
+const previewText = computed(() => {
+  return subheading.value.slice(0, 100)
+})
 
 function getSingleArticle() {
   try {

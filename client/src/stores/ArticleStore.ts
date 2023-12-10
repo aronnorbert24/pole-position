@@ -82,7 +82,6 @@ export const useArticleStore = defineStore({
     async getArticlesFromDatabase() {
       try {
         this.articles = await getArticles()
-        this.getArticlesByCategory('F1')
       } catch (error) {
         console.error(error)
         throw error
@@ -131,7 +130,7 @@ export const useArticleStore = defineStore({
     clearSearchQuery() {
       this.searchQuery = ''
     },
-    likedArticle(article: Article, isPostLiked: boolean, userId: string) {
+    async likedArticle(article: Article, isPostLiked: boolean, userId: string) {
       const updatedArticle = ref<Article>(article)
       if (updatedArticle.value) {
         const index = updatedArticle.value.likedBy.findIndex((user) => user === userId)
@@ -151,7 +150,7 @@ export const useArticleStore = defineStore({
       }
       const i = this.articles.findIndex((a) => a._id === updatedArticle.value._id)
       this.articles[i] = updatedArticle.value
-      this.getArticleById(updatedArticle.value._id)
+      this.singleArticle = await editArticle(updatedArticle.value)
       this.saveArticlesToLocalStorage()
     },
     async editArticle(article: Article) {
@@ -169,4 +168,5 @@ export const useArticleStore = defineStore({
       this.newArticle._id = ''
     }
   },
+  persist: true,
 })
