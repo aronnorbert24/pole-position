@@ -14,12 +14,18 @@ class ArticleController {
   }
   async getArticles(req: Request, res: Response) {
     try {
-      const isTrending = req.params.isTrending
-      if (isTrending) {
+      const isTrending = req.query.isTrending as string
+      const searchQuery = req.query.searchQuery as string
+      
+      console.log('Search Query: ' + searchQuery)
+      if (searchQuery) {
+        const articles = await articleService.getArticles(searchQuery)
+        return res.status(201).json(articles)
+      } else if (isTrending) {
         const articles = await articleService.getTrendingArticles()
         return res.status(201).json(articles)
       } else {
-        const articles = await articleService.getArticles()
+        const articles = await articleService.getArticles('')
         return res.status(201).json(articles)
       } 
     } catch (error) {

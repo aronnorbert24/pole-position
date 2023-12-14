@@ -1,3 +1,4 @@
+import { searchArticles } from '../helpers/helper'
 import ArticleModel, { Article } from '../models/Article'
 
 class ArticleService {
@@ -19,9 +20,14 @@ class ArticleService {
     return savedArticle
   }
 
-  async getArticles() {
+  async getArticles(search: string) {
     const articles = await ArticleModel.find({})
-    return articles
+    if (!search) {
+      return articles
+    }
+    const updatedArticles = searchArticles(articles, search) 
+    console.log('Updated Articles + ' + updatedArticles)
+    return updatedArticles
   }
 
   async getTrendingArticles() {

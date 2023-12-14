@@ -26,7 +26,7 @@
     </div>
 
     <RouterLink to="/pole-position/search"
-      v-if="articleStore.getSearchedArticlesPopup.length > 3"
+      v-if="articleStore.getSearchedArticles.length > 3"
       class="bg-gray-300 text-center text-lg font-semibold text-black transition-transform duration-300 ease-in-out hover:cursor-pointer hover:border-0 hover:bg-red-600 hover:text-white"
       @click="toggleSearchBar"
     >

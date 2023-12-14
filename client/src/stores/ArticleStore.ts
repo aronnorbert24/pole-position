@@ -40,17 +40,9 @@ export const useArticleStore = defineStore({
   }),
   getters: {
     getSearchedArticles: (state) => {
-      if (!state.searchQuery) {
-        state.searchedArticles = []
+      if (state.searchedArticles.length === 0) {
         return []
       }
-
-      state.searchedArticles = state.articles.filter((article: Article) => {
-        const filterSmall = state.searchQuery.toLowerCase()
-        const titleSmall = article.title.toLowerCase()
-        const subheadingSmall = article.subheading.toLowerCase()
-        return titleSmall.includes(filterSmall) || subheadingSmall.includes(filterSmall)
-      })
       return state.searchedArticles
     },
     getSearchedArticlesPopup: (state) => {
@@ -75,8 +67,8 @@ export const useArticleStore = defineStore({
     },
     async getArticlesFromDatabase() {
       try {
-        this.articles = await getArticles(false)
-        this.trendingArticles = await getArticles(true)
+        this.articles = await getArticles(false, '')
+        this.trendingArticles = await getArticles(true, '')
       } catch (error) {
         console.error(error)
         throw error
@@ -118,12 +110,16 @@ export const useArticleStore = defineStore({
       }
       
     },
-    searchArticles(search: string) {
-      this.searchQuery = search
-      this.getSearchedArticles
+    async searchArticles(search: string) {
+      if (!search) {
+        this.searchedArticles = []
+      }
+      const searchedArticles = await getArticles(false, search)
+      this.searchedArticles = searchedArticles ? searchedArticles : []
     },
     clearSearchQuery() {
       this.searchQuery = ''
+      this.searchedArticles = []
     },
     async likedArticle(article: Article, isPostLiked: boolean, userId: string) {
       const updatedArticle = ref<Article>(article)
