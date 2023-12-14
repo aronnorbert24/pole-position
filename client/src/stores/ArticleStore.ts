@@ -1,13 +1,15 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { Article } from '../types/article'
+import { save, getArticles, getArticlesByCategory, getSingleArticle, editArticle, deleteArticle } from '../services/article'
 
 export const useArticleStore = defineStore({
   id: 'article',
   state: () => ({
     articles: [] as Article[],
+    articlesBySport: [] as Article[],
     newArticle: {
-      articleId: 0,
+      _id: '',
       title: 'Article Title',
       subheading: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
       separatedText: [],
@@ -20,33 +22,27 @@ export const useArticleStore = defineStore({
       views: 0,
     } as Article,
     singleArticle: {
-      articleId: 0,
-      title: '',
-      subheading: '',
+      _id: '',
+      title: 'Article Title',
+      subheading: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
       separatedText: [],
-      image: '',
-      category: '',
+      image:
+        'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
+      category: 'F1',
       datePublished: new Date(),
       likedBy: [],
       likes: 0,
       views: 0,
     } as Article,
     searchQuery: '',
+    trendingArticles: [] as Article[],
     searchedArticles: [] as Article[],
   }),
   getters: {
     getSearchedArticles: (state) => {
-      if (!state.searchQuery) {
-        state.searchedArticles = []
+      if (state.searchedArticles.length === 0) {
         return []
       }
-
-      state.searchedArticles = state.articles.filter((article: Article) => {
-        const filterSmall = state.searchQuery.toLowerCase()
-        const titleSmall = article.title.toLowerCase()
-        const subheadingSmall = article.subheading.toLowerCase()
-        return titleSmall.includes(filterSmall) || subheadingSmall.includes(filterSmall)
-      })
       return state.searchedArticles
     },
     getSearchedArticlesPopup: (state) => {
@@ -55,50 +51,77 @@ export const useArticleStore = defineStore({
       }
       return state.searchedArticles.slice(0, 3)
     },
-    getArticlesByCategory: (state) => {
-      return (title: string | string[]) => state.articles.filter((article) => article.category === title)
+    getArticlesBySport: (state) => {
+      return state.articlesBySport
     },
     getTrendingArticles: (state) => {
-      if (state.articles.length === 0) {
-        return []
-      }
-      return state.articles
-        .sort((a: Article, b: Article) => {
-          return a.views < b.views ? 1 : a.views > b.views ? -1 : 0
-        })
-        .slice(0, 5)
+      return state.trendingArticles
     },
-    getArticleById: (state) => {
-      return (articleId: number) => state.articles.find((article) => article.articleId === articleId)
-    },
+    getSingleArticle: (state) => {
+      return state.singleArticle
+    }
   },
   actions: {
     async saveArticlesToLocalStorage() {
       localStorage.setItem('articles', JSON.stringify(this.articles))
     },
-    async getArticlesFromLocalStorage() {
-      const savedArticles = localStorage.getItem('articles')
-      this.articles = savedArticles ? JSON.parse(savedArticles) : []
+    async getArticlesFromDatabase() {
+      try {
+        this.articles = await getArticles(false, '')
+        this.trendingArticles = await getArticles(true, '')
+      } catch (error) {
+        console.error(error)
+        throw error
+      }
     },
-    viewedArticle(article: Article) {
-      const updatedArticle = article
-      const index = this.articles.findIndex((a) => a.articleId === article.articleId)
-      updatedArticle.views++
-      this.articles[index] = updatedArticle
-      this.saveArticlesToLocalStorage()
+    async getArticleById(articleId: string | string[]) {
+      const article: Article = await getSingleArticle(articleId)
+      this.singleArticle = article ? article : this.newArticle
     },
-    saveArticle(article: Article) {
-      this.articles.unshift(article)
-      this.saveArticlesToLocalStorage()
+    async getArticlesByCategory(category: string | string[]) {
+      const articles: Article[] = await getArticlesByCategory(category)
+      this.articlesBySport = articles ? articles : []
+      return articles
     },
-    searchArticles(search: string) {
-      this.searchQuery = search
-      this.getSearchedArticles
+    setNewArticle(article: Article) {
+      this.newArticle = article
+    },
+    async saveArticle(article: Article) {
+      try {
+        await save(article)
+        const id: string = localStorage.getItem('articleId')!
+        const newArticle: Article = {
+          _id: id,
+          title: article.title,
+          subheading: article.subheading,
+          separatedText: article.separatedText,
+          image: article.image,
+          category: article.category,
+          datePublished: article.datePublished,
+          likedBy: article.likedBy,
+          likes: article.likes,
+          views: article.views,       
+        }
+        this.articles.unshift(newArticle)
+        this.saveArticlesToLocalStorage()
+      } catch (error) {
+        console.error(error)
+        throw error
+      }
+      
+    },
+    async searchArticles(search: string) {
+      if (!search) {
+        this.searchedArticles = []
+      }
+      const searchedArticles = await getArticles(false, search)
+      this.searchedArticles = searchedArticles ? searchedArticles : []
     },
     clearSearchQuery() {
       this.searchQuery = ''
+      this.searchedArticles = []
     },
-    likedArticle(article: Article, isPostLiked: boolean, userId: string) {
+    async likedArticle(article: Article, isPostLiked: boolean, userId: string) {
       const updatedArticle = ref<Article>(article)
       if (updatedArticle.value) {
         const index = updatedArticle.value.likedBy.findIndex((user) => user === userId)
@@ -116,10 +139,25 @@ export const useArticleStore = defineStore({
           return
         }
       }
-      const i = this.articles.findIndex((a) => a.articleId === updatedArticle.value.articleId)
+      const i = this.articles.findIndex((a) => a._id === updatedArticle.value._id)
       this.articles[i] = updatedArticle.value
-      this.getArticleById(updatedArticle.value.articleId)
+      this.singleArticle = await editArticle(updatedArticle.value)
       this.saveArticlesToLocalStorage()
     },
+    async editArticle(article: Article) {
+      const newArticle = await editArticle(article)
+      const index = this.articles.findIndex((article: Article) => article._id === newArticle._id)
+      this.articles[index] = newArticle
+      this.saveArticlesToLocalStorage()
+    },
+    async deleteArticle(id: string) {
+      await deleteArticle(id)
+      this.articles = this.articles.filter((article) => article._id !== id)
+      this.saveArticlesToLocalStorage()
+    },
+    emptyNewArticle() {
+      this.newArticle._id = ''
+    }
   },
+  persist: true,
 })

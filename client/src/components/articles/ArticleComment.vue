@@ -8,7 +8,7 @@
       <p class="text-sm text-slate-500">{{ formattedDate }}</p>
       <p class="mt-4 text-lg text-black">{{ comment.body }}</p>
     </div>
-    <CommentIcons v-if="isUserTheAuthor" @toggleComment="toggleComment" @deleteComment="deleteComment" />
+    <CommentIcons v-if="isUserTheAuthor" @toggle="toggleComment" @delete="deleteComment" />
   </div>
   <div v-if="userStore.getUserId" class="flex justify-between">
     <button

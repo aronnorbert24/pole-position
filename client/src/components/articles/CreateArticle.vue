@@ -34,22 +34,27 @@
     <ArticleCategory :category="updatedArticle.category" @updateNewCategory="updateCategory" />
     <label class="text-md font-normal text-red-600">Please select an image suitable to the article:</label>
     <input type="file" accept="image/*" class="ml-56 mt-5 w-full phone:ml-16" @change="uploadImage" />
-    <RouterLink to="/pole-position/" class="mt-5 bg-slate-200" @click.prevent="save()">Save</RouterLink>
+    <ErrorMessage v-if="errorMessage" :error="errorMessage" />
+    <button class="mt-5 bg-slate-200" @click.prevent="save()">Save</button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useArticleStore } from '../../stores/ArticleStore.ts'
 import ArticleCategory from './ArticleCategory.vue'
+import ErrorMessage from '../baseComponents/ErrorMessage.vue'
 import { Article } from '../../types/article.ts'
 
+const router = useRouter()
 const articleStore = useArticleStore()
 
 const numberOfOccurences = ref<number>()
+const errorMessage = ref('')
 const text = ref('Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye')
 const updatedArticle = ref<Article>({
-  articleId: articleStore.newArticle.articleId,
+  _id: articleStore.newArticle._id,
   title: articleStore.newArticle.title,
   subheading: articleStore.newArticle.subheading,
   separatedText: articleStore.newArticle.separatedText,
@@ -88,7 +93,7 @@ function emphasizeText(body: string) {
   return body.split('*')
 }
 
-function save() {
+async function save() {
   if (!updatedArticle.value.title.length) {
     return
   }
@@ -98,9 +103,18 @@ function save() {
     ? (updatedArticle.value.separatedText = emphasizeText(text.value))
     : updatedArticle.value.separatedText.push(text.value)
 
+  if (!updatedArticle.value.separatedText.length) {
+    errorMessage.value = 'Please enter something in the body of your article.'
+  }
   updatedArticle.value.datePublished = new Date()
-  updatedArticle.value.articleId = new Date().getTime()
 
-  articleStore.saveArticle(updatedArticle.value)
+  try {
+    articleStore.newArticle._id ? await articleStore.editArticle(updatedArticle.value) : await articleStore.saveArticle(updatedArticle.value)
+    router.go(-1)
+  } catch (error: any) {
+    errorMessage.value = error.message
+    console.error(error)
+    throw error
+  }
 }
 </script>

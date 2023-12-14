@@ -1,13 +1,22 @@
 import express, { Request, Response, NextFunction } from 'express'
+import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import user from './routes/user'
+import article from './routes/article'
 const { database, connectionString, port } = require('./dotenv.config')
 
 const app = express()
 
-app.use(express.urlencoded({ extended: false }))
-app.use(express.json())
+app.use(bodyParser.json({limit: '35mb'}));
+
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+    limit: '50mb',
+    parameterLimit: 50000,
+  }),
+);
 
 dotenv.config()
 
@@ -40,5 +49,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 })
 
 app.use('/user', user)
+app.use('/article', article)
 
 app.listen(port, () => console.log(port))

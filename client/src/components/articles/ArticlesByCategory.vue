@@ -3,7 +3,7 @@
     <TitleSeparator :title="route.params.id" />
     <div class="mb-5 rounded-xl bg-white text-center">
       <ul>
-        <li v-for="(article, index) in articleStore.getArticlesByCategory(route.params.id)" :key="index">
+        <li v-for="(article, index) in articleStore.getArticlesBySport" :key="index">
           <ArticlePreview :article="article"/>
         </li>
       </ul>

@@ -1,6 +1,5 @@
 <template>
-  <RouterLink :to="`/pole-position/article/${article.articleId}`">
-    <div class="flex h-40 px-4 phone:px-0">
+    <div class="flex h-40 px-4 phone:px-0" @click="getSingleArticle">
       <div
         class="mx-auto my-auto w-3/12 transition-transform duration-300 ease-in-out hover:cursor-pointer phone:w-5/12"
       >
@@ -15,18 +14,38 @@
         <p class="text-lg text-black phone:text-sm">{{ previewText }}...</p>
       </div>
     </div>
-  </RouterLink>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useArticleStore } from '../../stores/ArticleStore';
 import { Article } from '../../types/article.ts'
+
+const router = useRouter()
+
+const articleStore = useArticleStore()
 
 interface Props {
   article: Article
 }
 
 const props = defineProps<Props>()
-const subheading = props.article.subheading
-const previewText = subheading.slice(0, 100)
+const subheading = computed(() => {
+  return props.article.subheading
+})
+const previewText = computed(() => {
+  return subheading.value.slice(0, 100)
+})
+
+function getSingleArticle() {
+  try {
+    articleStore.getArticleById(props.article._id)
+    router.push({path: `/pole-position/article/${props.article._id}`})
+  } catch (error) {
+    console.error
+    throw error
+  }
+}
 
 </script>

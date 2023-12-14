@@ -1,5 +1,5 @@
 export interface Article {
-  articleId: number
+  _id: string
   title: string
   subheading: string
   separatedText: string[]

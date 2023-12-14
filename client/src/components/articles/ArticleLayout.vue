@@ -1,6 +1,6 @@
 <template>
   <div class="mt-10 computer:ml-auto computer:mr-10 computer:w-3/5">
-    <RouterLink :to="`/pole-position/category/${singleArticle.category}`"><TitleSeparator :title="singleArticle.category" /></RouterLink>
+    <TitleSeparator :title="singleArticle.category" @click="getArticlesByCategory" />
     <SingleArticle :article="singleArticle" />
     <button
       v-if="userStore.getUserId"
@@ -44,8 +44,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { ref, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useArticleStore } from '../../stores/ArticleStore'
 import { useCommentStore } from '../../stores/CommentStore'
 import { useUserStore } from '../../stores/UserStore'
@@ -58,13 +58,14 @@ import LikeIcon from '../icons/LikeIcon.vue'
 
 import { Comment } from '../../types/comment.ts'
 
+const router = useRouter()
 const route = useRoute()
 const articleStore = useArticleStore()
 const commentStore = useCommentStore()
 const userStore = useUserStore()
 
-const link = computed(() => Number(route.params.id))
-const singleArticle = computed(() => articleStore.getArticleById(link.value)!)
+const link = computed(() => route.params.id)
+const singleArticle = computed(() => articleStore.getSingleArticle)
 
 const rootComments = computed(() => {
   return commentStore.getSortedComments(link.value).filter((comment: Comment) => !comment.parentId)
@@ -89,11 +90,17 @@ function likeArticle() {
   articleStore.likedArticle(singleArticle.value, !isLiked.value, userStore.getUserId)
 }
 
+function getArticlesByCategory() {
+  try {
+    articleStore.getArticlesByCategory(singleArticle.value.category)
+    router.push({path: `/pole-position/category/${singleArticle.value.category}`})    
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
+
 function toggleCreateComment() {
   isCreateCommentVisible.value = !isCreateCommentVisible.value
 }
-
-onMounted(() => {
-  articleStore.viewedArticle(singleArticle.value)
-})
 </script>

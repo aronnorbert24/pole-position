@@ -7,7 +7,7 @@
     <PoleHeader @showPopup="toggleChampionshipPopup" />
     <PoleLink @showSearchBar="toggleSearchBar" @showLogout="toggleLogoutPopup" />
     <div class="tabletLandscape:flex computer:flex">
-      <div class="mx-auto w-7/12 phone:w-11/12 tablet:w-9/12 tabletLandscape:ml-16 computer:mx-0">
+      <div v-if="articleStore.getArticlesBySport.length" class="mx-auto w-7/12 phone:w-11/12 tablet:w-9/12 tabletLandscape:ml-16 computer:mx-0">
         <component :is="currentComponent"></component>
       </div>
       <div class="mx-auto w-3/12 phone:w-11/12 tablet:w-9/12 tabletLandscape:mr-20 computer:mx-0 computer:ml-10">
@@ -23,7 +23,7 @@
       ref="closeChampionshipPopupRef"
     />
     <SearchResultsPopup v-if="isSearchBarShowing" @toggleSearchBar="toggleSearchBar" ref="closeSearchBarRef" />
-    <LogoutPopup v-if="isLogoutPopupShowing" @toggleLogoutPopup="toggleLogoutPopup" ref="closeLogoutPopupRef" @confirm="logout" @cancel="toggleLogoutPopup" />
+    <LogoutPopup text="logout?" v-if="isLogoutPopupShowing" @toggleLogoutPopup="toggleLogoutPopup" ref="closeLogoutPopupRef" @confirm="logout" @cancel="toggleLogoutPopup" />
   </div>
 </template>
 
@@ -60,7 +60,7 @@ const userStore = useUserStore()
 const router = useRouter()
 
 userStore.getItemsFromLocalStorage()
-articleStore.getArticlesFromLocalStorage()
+articleStore.getArticlesFromDatabase()
 commentStore.getCommentsFromLocalStorage()
 
 const isSearchBarShowing = ref(false)

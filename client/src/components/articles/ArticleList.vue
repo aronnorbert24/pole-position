@@ -1,7 +1,7 @@
 <template>
   <div class="mt-10" v-for="category in categories" :key="category.title">
     <div class="computer:ml-auto computer:mr-10 computer:w-3/5">
-    <RouterLink :to="`/pole-position/category/${category.title}`"><TitleSeparator :title="category.title" /></RouterLink>
+    <TitleSeparator :title="category.title" @getArticlesByCategory="getArticlesByCategory(category.title)" />
     <div class="mb-5 rounded-xl bg-white text-center">
       <ul>
         <li v-for="(article, index) in category.category" :key="index">
@@ -14,33 +14,58 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useArticleStore } from '../../stores/ArticleStore'
 import TitleSeparator from '../baseComponents/TitleSeparator.vue';
 import ArticlePreview from './PreviewArticle.vue';
 
+const router = useRouter()
 const articleStore = useArticleStore()
 
-
-const categories = [
+const categories = ref<any>([
   {
-    category: articleStore.getArticlesByCategory('F1').slice(0, 3),
+    category: [],
     title: 'F1',
   },
   {
-    category: articleStore.getArticlesByCategory('F2').slice(0, 3),
+    category: [],
     title: 'F2',
   },
   {
-    category: articleStore.getArticlesByCategory('F3').slice(0, 3),
+    category: [],
     title: 'F3',
   },
   {
-    category: articleStore.getArticlesByCategory('WEC').slice(0, 3),
+    category: [],
     title: 'WEC',
   },
   {
-    category: articleStore.getArticlesByCategory('MotoGP').slice(0, 3),
+    category: [],
     title: 'MotoGP',
   },
-]
+])
+
+function getArticlesByCategory(category: string) {
+  try {
+    articleStore.getArticlesByCategory(category)
+    router.push({path: `/pole-position/category/${category}`})    
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
+
+onMounted(async() => {
+  try {
+    categories.value[0].category = await articleStore.getArticlesByCategory('F1')
+    categories.value[1].category = await articleStore.getArticlesByCategory('F2')
+    categories.value[2].category = await articleStore.getArticlesByCategory('F3')
+    categories.value[3].category = await articleStore.getArticlesByCategory('WEC')
+    categories.value[4].category = await articleStore.getArticlesByCategory('MotoGP')
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+})
 </script>
