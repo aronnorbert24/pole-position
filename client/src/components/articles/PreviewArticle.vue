@@ -20,11 +20,13 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useArticleStore } from '../../stores/ArticleStore';
+import { useCommentStore } from '../../stores/CommentStore';
 import { Article } from '../../types/article.ts'
 
 const router = useRouter()
 
 const articleStore = useArticleStore()
+const commentStore = useCommentStore()
 
 interface Props {
   article: Article
@@ -38,9 +40,10 @@ const previewText = computed(() => {
   return subheading.value.slice(0, 100)
 })
 
-function getSingleArticle() {
+async function getSingleArticle() {
   try {
-    articleStore.getArticleById(props.article._id)
+    await articleStore.getArticleById(props.article._id)
+    await commentStore.getSingleArticleComments(props.article._id)
     router.push({path: `/pole-position/article/${props.article._id}`})
   } catch (error) {
     console.error

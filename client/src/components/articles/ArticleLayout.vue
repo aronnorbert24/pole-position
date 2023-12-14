@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useArticleStore } from '../../stores/ArticleStore'
 import { useCommentStore } from '../../stores/CommentStore'
 import { useUserStore } from '../../stores/UserStore'
@@ -59,16 +59,14 @@ import LikeIcon from '../icons/LikeIcon.vue'
 import { Comment } from '../../types/comment.ts'
 
 const router = useRouter()
-const route = useRoute()
 const articleStore = useArticleStore()
 const commentStore = useCommentStore()
 const userStore = useUserStore()
 
-const link = computed(() => route.params.id)
 const singleArticle = computed(() => articleStore.getSingleArticle)
 
 const rootComments = computed(() => {
-  return commentStore.getSortedComments(link.value).filter((comment: Comment) => !comment.parentId)
+  return commentStore.getArticleComments.filter((comment: Comment) => !comment.parentId)
 })
 
 const isCreateCommentVisible = ref(false)

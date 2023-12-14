@@ -1,9 +1,9 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { stringify } from 'flatted'
-import { sortComment } from '../helpers/helper'
+//import { sortComment } from '../helpers/helper'
 import { Comment } from '../types/comment'
-import { getComments } from '../services/comment'
+import { getComments, getSingleComments } from '../services/comment'
 
 export const useCommentStore = defineStore({
   id: 'comment',
@@ -27,19 +27,28 @@ export const useCommentStore = defineStore({
   }),
   getters: {
     getArticleComments: (state) => {
-      return (articleId: string | string[]) => state.comments.filter((comment: any) => comment.articleId === articleId)
-    },
-    getSortedComments(state) {
-      return (articleId: string | string[]) => sortComment(state.activeSort, this.getArticleComments(articleId))
+      return state.singleArticleComments
     }
+    /*getSortedComments(state) {
+      return (articleId: string | string[]) => sortComment(state.activeSort, this.getArticleComments(articleId))
+    }*/
   },
   actions: {
     async saveCommentsToLocalStorage() {
       localStorage.setItem('comments', stringify(this.comments))
     },
-    async getCommentsFromLocalStorage() {
-      const newComments = await getComments()
-      this.comments = newComments ? newComments : []
+    async getCommentsFromDatabase() {
+      try {
+        const newComments = await getComments()
+        this.comments = newComments ? newComments : []
+      } catch (error) {
+        console.error(error)
+        throw error
+      }
+    },
+    async getSingleArticleComments(id: string) {
+      const singleComments = await getSingleComments(id)
+      this.singleArticleComments = singleComments ? singleComments : []
     },
     saveComment(comment: Comment) {
       const updatedComment: Comment = {

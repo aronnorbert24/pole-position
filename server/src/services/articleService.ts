@@ -26,7 +26,6 @@ class ArticleService {
       return articles
     }
     const updatedArticles = searchArticles(articles, search) 
-    console.log('Updated Articles + ' + updatedArticles)
     return updatedArticles
   }
 

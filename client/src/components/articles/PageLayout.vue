@@ -61,7 +61,7 @@ const router = useRouter()
 
 userStore.getItemsFromLocalStorage()
 articleStore.getArticlesFromDatabase()
-commentStore.getCommentsFromLocalStorage()
+commentStore.getCommentsFromDatabase()
 
 const isSearchBarShowing = ref(false)
 const closeChampionshipPopupRef = ref(null)

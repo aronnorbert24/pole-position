@@ -20,6 +20,21 @@ class CommentController {
             return res.status(500).send('Unable to get Comments at this time. Please try again.')
         } 
     } 
+
+    async getSingleComments(req: Request, res: Response) {
+        try {
+          const articleId = req.params.id
+    
+          if (!articleId) {
+            return res.status(400).send('Invalid article id provided.')
+          }
+    
+          const singleComment = await commentService.findCommentsById(articleId)
+          return res.status(200).json(singleComment)
+        } catch (error) {
+          return res.status(500).send('Unable to get comments at this time. Please try again later.')
+        }
+      }
 }
 
 export default new CommentController()

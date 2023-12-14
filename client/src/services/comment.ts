@@ -12,3 +12,13 @@ export async function getComments() {
       throw error
     }
   }
+
+  export async function getSingleComments(id: string | string[]) {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/comment/${id}`)
+      return response.data
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
+  }

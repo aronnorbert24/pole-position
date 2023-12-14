@@ -17,7 +17,6 @@ class ArticleController {
       const isTrending = req.query.isTrending as string
       const searchQuery = req.query.searchQuery as string
       
-      console.log('Search Query: ' + searchQuery)
       if (searchQuery) {
         const articles = await articleService.getArticles(searchQuery)
         return res.status(201).json(articles)
