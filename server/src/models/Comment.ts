@@ -30,7 +30,7 @@ const commentSchema = new mongoose.Schema({
   },
 
   replies: [{
-    type: Comment
+    type: new mongoose.Schema<Comment>()
   }],
 
   body: {

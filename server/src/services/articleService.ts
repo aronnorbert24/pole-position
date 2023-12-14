@@ -1,4 +1,4 @@
-import { searchArticles } from '../helpers/helper'
+import { searchArticles } from '../helpers/helper.ts'
 import ArticleModel, { Article } from '../models/Article'
 
 class ArticleService {

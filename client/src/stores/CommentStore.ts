@@ -1,8 +1,9 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { parse, stringify } from 'flatted'
+import { stringify } from 'flatted'
 import { sortComment } from '../helpers/helper'
 import { Comment } from '../types/comment'
+import { getComments } from '../services/comment'
 
 export const useCommentStore = defineStore({
   id: 'comment',
@@ -37,8 +38,8 @@ export const useCommentStore = defineStore({
       localStorage.setItem('comments', stringify(this.comments))
     },
     async getCommentsFromLocalStorage() {
-      const newComments = localStorage.getItem('comments')
-      this.comments = newComments ? parse(newComments) : []
+      const newComments = await getComments()
+      this.comments = newComments ? newComments : []
     },
     saveComment(comment: Comment) {
       const updatedComment: Comment = {
