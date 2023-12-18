@@ -1,4 +1,4 @@
-import CommentModel from '../models/Comment'
+import CommentModel, { Comment } from '../models/Comment'
 
 class CommentService {
 
@@ -10,6 +10,25 @@ class CommentService {
   async findCommentsById(id: string) {
     const comments = await CommentModel.find({articleId: id}).exec()
     return comments
+  }
+
+  async saveComment(data: Comment) {
+    const newComment = new CommentModel({
+      articleId: data.articleId,
+      userId: data.userId,
+      username: data.username,
+      userPicture: data.userPicture,
+      parentId: data.parentId,
+      replies: data.replies,
+      body: data.body,
+      date: data.date,
+      likedBy: data.likedBy,
+      likes: data.likes,
+    })
+
+    const savedComment = await newComment.save()
+
+    return savedComment
   }
 }
 

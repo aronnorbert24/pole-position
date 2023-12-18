@@ -1,13 +1,13 @@
 import { Router } from 'express'
 import commentController from '../controllers/commentController'
-//import { Schemas, ValidateSchema } from '../middleware/ValidateSchema'
+import { Schemas, ValidateSchema } from '../middleware/ValidateSchema'
 
 const comment = Router()
 
 comment.get('/getComments/', commentController.getComments)
 comment.get('/:id', commentController.getSingleComments)
-/*comment.post('/save', ValidateSchema(Schemas.comment.create), commentController.saveComment)
-comment.patch('/edit/:id', ValidateSchema(Schemas.comment.update), commentController.editComment)
+comment.post('/save', ValidateSchema(Schemas.comment.create), commentController.saveComment)
+/*comment.patch('/edit/:id', ValidateSchema(Schemas.comment.update), commentController.editComment)
 comment.delete('/delete/:id', commentController.deleteComment)
 comment.get('/category/:id', commentController.getCommentsByCategory)
 */

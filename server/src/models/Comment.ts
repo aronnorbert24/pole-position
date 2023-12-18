@@ -3,6 +3,8 @@ import mongoose from 'mongoose'
 export interface Comment {
   articleId: mongoose.Schema.Types.ObjectId,
   userId: mongoose.Schema.Types.ObjectId,
+  username: string,
+  userPicture: string,
   parentId: mongoose.Schema.Types.ObjectId,
   replies: Comment[]
   body: string
@@ -22,6 +24,16 @@ const commentSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
+  },
+
+  username: {
+    type: String,
+    required: true
+  },
+
+  userPicture: {
+    type: String,
+    required: true
   },
 
   parentId: {

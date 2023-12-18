@@ -1,11 +1,11 @@
 export interface Comment {
-  articleId: number
+  articleId: string
   userId: string
   username: string
   userPicture: string
-  parentId: number
+  parentId: string
   replies: Comment[]
-  commentId: number
+  _id: string
   body: string
   date: Date
   likes: number
