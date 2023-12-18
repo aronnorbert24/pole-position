@@ -17,13 +17,16 @@
 import { useRouter } from 'vue-router'
 import { useArticleStore } from '../../stores/ArticleStore'
 import TitleSeparator from '../baseComponents/TitleSeparator.vue'
+import { useCommentStore } from '../../stores/CommentStore';
 
 const router = useRouter()
 const articleStore = useArticleStore()
+const commentStore = useCommentStore()
 
-function getSingleArticle(id: string) {
+async function getSingleArticle(id: string) {
   try {
-    articleStore.getArticleById(id)
+    await articleStore.getArticleById(id)
+    await commentStore.getSingleArticleComments(id)
     router.push({path: `/pole-position/article/${id}`})
   } catch (error) {
     console.error

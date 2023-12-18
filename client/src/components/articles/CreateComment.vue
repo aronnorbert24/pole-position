@@ -29,6 +29,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia';
+import { stringify } from 'flatted';
 import { useCommentStore } from '../../stores/CommentStore';
 import { useUserStore } from '../../stores/UserStore';
 import { Comment } from '../../types/comment.ts'
@@ -50,12 +51,12 @@ const emit = defineEmits<{
 }>()
 
 const updatedComment = ref<Comment>({
-      articleId: 0,
+      articleId: '',
       userId: '',
       username: 'Anonymous',
       userPicture: 'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
-      commentId: 0,
-      parentId: 0,
+      _id: '',
+      parentId: '',
       replies: [] as Comment[],
       body: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
       date: new Date(),
@@ -69,17 +70,16 @@ function save() {
     return
   }
 
-  if (!updatedComment.value.commentId) {
-    updatedComment.value.articleId = Number(route.params.id)
+  if (!updatedComment.value._id) {
+    updatedComment.value.articleId = route.params.id.toString()
     updatedComment.value.userId = userStore.loggedInUserId
     updatedComment.value.username = userStore.getNewUsername
     updatedComment.value.userPicture = userStore.getUserPicture
     updatedComment.value.date = new Date()
-    updatedComment.value.commentId = new Date().getTime()
     if (props.comment === 'Reply') {
-      updatedComment.value.parentId = singleComment.value.commentId
+      updatedComment.value.parentId = singleComment.value._id
     }
-    commentStore.saveComment(updatedComment.value)
+    commentStore.saveComment(stringify(updatedComment.value))
     emit('cancelComment')
     return
   }

@@ -1,4 +1,4 @@
-import { searchArticles } from '../helpers/helper'
+import { searchArticles } from '../helpers/helper.ts'
 import ArticleModel, { Article } from '../models/Article'
 
 class ArticleService {
@@ -26,7 +26,6 @@ class ArticleService {
       return articles
     }
     const updatedArticles = searchArticles(articles, search) 
-    console.log('Updated Articles + ' + updatedArticles)
     return updatedArticles
   }
 

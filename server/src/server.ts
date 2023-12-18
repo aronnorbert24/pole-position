@@ -4,6 +4,7 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import user from './routes/user'
 import article from './routes/article'
+import comment from './routes/comment'
 const { database, connectionString, port } = require('./dotenv.config')
 
 const app = express()
@@ -50,5 +51,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 app.use('/user', user)
 app.use('/article', article)
+app.use('/comment', comment)
 
 app.listen(port, () => console.log(port))

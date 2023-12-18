@@ -1,20 +1,21 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { parse, stringify } from 'flatted'
-import { sortComment } from '../helpers/helper'
+import { stringify, parse } from 'flatted'
+//import { sortComment } from '../helpers/helper'
 import { Comment } from '../types/comment'
+import { getComments, getSingleComments, save } from '../services/comment'
 
 export const useCommentStore = defineStore({
   id: 'comment',
   state: () => ({
     comments: [] as Comment[],
     singleComment: {
-      articleId: 0,
+      articleId: '',
       userId: '',
       username: 'Anonymous',
       userPicture: 'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/eexpq2iz9v2mv5lmj5fd',
-      commentId: 0,
-      parentId: 0,
+      _id: '',
+      parentId: '',
       replies: [] as Comment[],
       body: 'Lorem ipsum dolor amet conquiro hongkong monkey so on so forth yadi yada lalalala yeyeye',
       date: new Date(),
@@ -26,41 +27,59 @@ export const useCommentStore = defineStore({
   }),
   getters: {
     getArticleComments: (state) => {
-      return (articleId: string | string[]) => state.comments.filter((comment: any) => comment.articleId === articleId)
-    },
-    getSortedComments(state) {
-      return (articleId: string | string[]) => sortComment(state.activeSort, this.getArticleComments(articleId))
+      return state.singleArticleComments
     }
+    /*getSortedComments(state) {
+      return (articleId: string | string[]) => sortComment(state.activeSort, this.getArticleComments(articleId))
+    }*/
   },
   actions: {
     async saveCommentsToLocalStorage() {
       localStorage.setItem('comments', stringify(this.comments))
     },
-    async getCommentsFromLocalStorage() {
-      const newComments = localStorage.getItem('comments')
-      this.comments = newComments ? parse(newComments) : []
-    },
-    saveComment(comment: Comment) {
-      const updatedComment: Comment = {
-        articleId: comment.articleId,
-        userId: comment.userId,
-        username: comment.username,
-        userPicture: comment.userPicture,
-        parentId: comment.parentId,
-        commentId: comment.commentId,
-        replies: comment.replies,
-        body: comment.body,
-        date: comment.date,
-        likedBy: comment.likedBy,
-        likes: comment.likes,
+    async getCommentsFromDatabase() {
+      try {
+        const newComments = await getComments()
+        this.comments = newComments ? newComments : []
+      } catch (error) {
+        console.error(error)
+        throw error
       }
-       if (updatedComment.parentId) {
-          const index = this.comments.findIndex((comment: Comment) => comment.commentId === updatedComment.parentId)
-          this.comments[index].replies.push(updatedComment)
-        } else {
-          this.comments.push(updatedComment)
+    },
+    async getSingleArticleComments(id: string) {
+      const singleComments = await getSingleComments(id)
+      this.singleArticleComments = singleComments ? singleComments : []
+    },
+    async saveComment(newComment: string) {
+      try {
+        const comment = parse(newComment) 
+        console.log(comment)
+        await save(comment)
+        const commentId = localStorage.getItem('commentId')! 
+        const updatedComment: Comment = {
+          articleId: comment.articleId,
+          userId: comment.userId,
+          username: comment.username,
+          userPicture: comment.userPicture,
+          parentId: comment.parentId,
+          _id: commentId,
+          replies: comment.replies,
+          body: comment.body,
+          date: comment.date,
+          likedBy: comment.likedBy,
+          likes: comment.likes,
         }
-        this.saveCommentsToLocalStorage()
+         if (updatedComment.parentId) {
+            const index = this.comments.findIndex((comment: Comment) => comment._id === updatedComment.parentId)
+            this.comments[index].replies.push(updatedComment)
+          } else {
+            this.comments.push(updatedComment)
+          }
+          this.saveCommentsToLocalStorage() 
+      } catch (error) {
+        console.error(error)
+        throw error
+      }
     },
     editComment(comment: Comment) {
       const updatedComment: Comment = {
@@ -69,7 +88,7 @@ export const useCommentStore = defineStore({
         username: comment.username,
         userPicture: comment.userPicture,
         parentId: comment.parentId,
-        commentId: comment.commentId,
+        _id: comment._id,
         replies: comment.replies,
         body: comment.body,
         date: comment.date,
@@ -78,11 +97,11 @@ export const useCommentStore = defineStore({
       }
       
        if (updatedComment.parentId) {
-          const parentIndex = this.comments.findIndex((comment: Comment) => comment.commentId === updatedComment.parentId)
-          const index = this.comments[parentIndex].replies.findIndex((comment: Comment) => comment.commentId === updatedComment.commentId)
+          const parentIndex = this.comments.findIndex((comment: Comment) => comment._id === updatedComment.parentId)
+          const index = this.comments[parentIndex].replies.findIndex((comment: Comment) => comment._id === updatedComment._id)
           this.comments[parentIndex].replies[index] = updatedComment
         } else {
-          const index = this.comments.findIndex((comment: Comment) => comment.commentId === updatedComment.commentId)
+          const index = this.comments.findIndex((comment: Comment) => comment._id === updatedComment._id)
           this.comments[index] = updatedComment
         }
         this.saveCommentsToLocalStorage()
@@ -110,15 +129,15 @@ export const useCommentStore = defineStore({
     },
     deleteComment(commentToDelete: Comment) {
       if (commentToDelete.parentId) {
-        const parentIndex = this.comments.findIndex((comment) => comment.commentId === commentToDelete.parentId)
+        const parentIndex = this.comments.findIndex((comment) => comment._id === commentToDelete.parentId)
         if (parentIndex) {
           const index = this.comments[parentIndex].replies.findIndex(
-            (comment: Comment) => comment.commentId === commentToDelete.commentId
+            (comment: Comment) => comment._id === commentToDelete._id
           )
           this.comments[parentIndex].replies.splice(index, 1)
         }
       } else {
-        const i = this.comments.findIndex((comment) => comment.commentId === commentToDelete.commentId)
+        const i = this.comments.findIndex((comment) => comment._id === commentToDelete._id)
         this.comments.splice(i, 1)
       }
       this.saveCommentsToLocalStorage()
